@@ -149,6 +149,13 @@ $( document ).ready(function() {
 		discountLoadSearchProductDialogForm("&"+$( this ).serialize());
 	});
 
+	// Pagination
+	$(document).on("click", "#product-search-dialog-form .pagination a" , function(event) {
+		event.preventDefault();
+		let urlParams = $(this).attr('href').split('?')[1];
+		discountLoadSearchProductDialogForm("&"+urlParams);
+	});
+
 	//_________________________________________________
 	// RECHERCHE GLOBALE AUTOMATIQUE SUR FIN DE SAISIE
 	// (Uniquement sur la recherche globale)
@@ -244,7 +251,10 @@ $( document ).ready(function() {
 				}
 			},
 			open: function( event, ui ) {
+				//$(this).dialog('option', 'maxHeight', $(window).height()-30);
 				discountLoadSearchProductDialogForm("&element="+element+"&fk_element="+fk_element);
+				$('#'+productSearchDialogBox).parent().css('z-index', 1002);
+				$('.ui-widget-overlay').css('z-index', 1001);
 			}
 		});
 	});
@@ -260,7 +270,14 @@ function discountLoadSearchProductDialogForm(morefilters = ''){
 	$('#'+productSearchDialogBox).load( "<?php print dol_buildpath('discountrules/scripts/interface.php',1)."?action=product-search-form"; ?>" + morefilters, function() {
 		discountDialogCountAddedProduct = 0; // init count of product added for reload action
 		focusAtEndSearchInput($("#search-all-form-input"));
-		$('#'+productSearchDialogBox).dialog( "option", "position", { my: "center", at: "center", of: window } ); // Hack to center vertical the dialog box after ajax load
+
+		if($('#'+productSearchDialogBox).outerHeight() >= $( window ).height()-150 ){
+			$('#'+productSearchDialogBox).dialog( "option", "position", { my: "top", at: "top", of: window } ); // Hack to position the dialog box after ajax load
+		}
+		else{
+			$('#'+productSearchDialogBox).dialog( "option", "position", { my: "center", at: "center", of: window } ); // Hack to center vertical the dialog box after ajax load
+		}
+
 		initToolTip($('#'+productSearchDialogBox+' .classfortooltip')); // restore tooltip after ajax call
 	});
 }

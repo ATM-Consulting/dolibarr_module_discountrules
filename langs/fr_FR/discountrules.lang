@@ -167,6 +167,7 @@ NotEnoughtRights = vos droits utilisateur ne vous permettent pas de réaliser ce
 #
 # Search
 #
+AdvanceProductSearch = Recherche avancée
 resultsDisplayForNbResultsFounds = %s enregistrements affichés sur %s enregistrements trouvés
 OneResultDisplayForOneResultFounds = %s enregistrement affiché sur %s enregistrement trouvé
 SearchProduct = Recherche de produits/services
@@ -182,3 +183,5 @@ CloseDialog = Fermer
 FinalDiscountSubPrice = Prix unitaire remisé
 FournPriceError = Erreur sur le prix fournisseur
 ErrrorRemiseMustBeAValidPercent = Erreur : la remise doit être une valeur comprise entre 0 et 100
+SearchRef = Référence recherchée
+SearchLabel = Libellé recherché

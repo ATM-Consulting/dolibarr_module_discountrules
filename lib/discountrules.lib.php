@@ -288,12 +288,17 @@ function getDiscountRulesInterfaceMessageTpl(Translate $langs, $jsonResponse, $a
 
 /**
  * return an ajax ready search table for product
+ *	@param	string			$pageUrl				Page URL (in most cases provided with $_SERVER["PHP_SELF"])
  * @return string
  */
-function discountProductSearchForm(){
+function discountProductSearchForm($pageUrl = ''){
 global $langs, $conf, $db, $action;
 
 	$output = '';
+
+	if(empty($pageUrl)){
+		$pageUrl = $_SERVER["PHP_SELF"];
+	}
 
 	// Load translation files required by the page
 	$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'stocks', 'margins'));
@@ -326,6 +331,7 @@ global $langs, $conf, $db, $action;
 	$search_type = '';
 	$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 	$search_ref = GETPOST("search_ref", 'alpha');
+	$search_supplierref = GETPOST("search_supplierref", 'alpha');
 	$search_barcode = GETPOST("search_barcode", 'alpha');
 	$search_label = GETPOST("search_label", 'alpha');
 
@@ -371,6 +377,7 @@ global $langs, $conf, $db, $action;
 		$param .= "&search_category_product_list[]=".urlencode($searchCategoryProduct);
 	}
 	if ($search_ref) $param = "&search_ref=".urlencode($search_ref);
+	if ($search_supplierref) $param = "&search_supplierref=".urlencode($search_supplierref);
 	if ($fk_company) $param.= "&socid=".urlencode($fk_company);
 //	if ($search_ref_supplier) $param = "&search_ref_supplier=".urlencode($search_ref_supplier);
 	if ($search_barcode) $param .= ($search_barcode ? "&search_barcode=".urlencode($search_barcode) : "");
@@ -384,7 +391,7 @@ global $langs, $conf, $db, $action;
 	// REQUETTE SQL
 
 	// List of fields to search into when doing a "search in all"
-	$fieldstosearchall = array('p.ref','pfp.ref_fourn','p.label','p.description',"p.note");
+	$fieldstosearchall = array('p.ref','p.label','p.description',"p.note");
 
 	// multilang
 	if (!empty($conf->global->MAIN_MULTILANGS)){
@@ -393,6 +400,11 @@ global $langs, $conf, $db, $action;
 
 	if (!empty($conf->barcode->enabled)) {
 		$fieldstosearchall+=  array('p.barcode','pfp.barcode');
+	}
+
+	// Filter on supplier
+	if (!empty($conf->fournisseur->enabled)){
+		$fieldstosearchall+=  array('pfp.ref_fourn');
 	}
 
 	// SELECT PART
@@ -423,6 +435,11 @@ global $langs, $conf, $db, $action;
 	if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
 	if ($search_label)   $sql .= natural_search('p.label', $search_label);
 	if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
+	// Filter on supplier
+	if (!empty($conf->fournisseur->enabled) && !empty($search_supplierref)){
+		$sql .= natural_search('pfp.ref_fourn', $search_supplierref);
+	}
+
 	if ($catid > 0)     $sql .= " AND cp.fk_categorie = ".$catid;
 	if ($catid == -2)   $sql .= " AND cp.fk_categorie IS NULL";
 
@@ -467,24 +484,40 @@ global $langs, $conf, $db, $action;
 	$output.= '<input type="hidden" id="discountrules-form-fk-project" name="fk_project" value="'.$fk_project.'">';
 	$output.= '<input type="hidden" id="discountrules-form-default-customer-reduction" name="default_customer_reduction" value="'.floatval($object->thirdparty->remise_percent).'">';
 
-	$res = $db->query('SELECT '.$sqlSelectCount.' '.$sql);
-	$countResult = 0;
-	if ($res) {
-		$obj = $db->fetch_object($res);
-		$countResult = $obj->nb_results;
+	$querySearchRes = $db->query('SELECT '.$sqlSelectCount.' '.$sql);
+	$globalCountResult = 0;
+	$curentCountResult = 0;
+	if ($querySearchRes) {
+		$obj = $db->fetch_object($querySearchRes);
+		$globalCountResult = $obj->nb_results;
+
+		$querySearchRes = $db->query('SELECT '.$sqlSelect.' '.$sql.$db->plimit($limit + 1, $offset));
+		if ($querySearchRes) {
+			$curentCountResult = $db->num_rows($querySearchRes);
+		}
 	}
 
-	$output.= '<div class="discountrules-global-search-container" >';
-	$output.= '<input name="sall" value="'.dol_htmlentities($sall).'" id="search-all-form-input" class="discountrules-global-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
-	$output.= '</div>';
+	$morehtmlcenter= '<div class="discountrules-global-search-container" >';
+	$morehtmlcenter.= '<input name="sall" value="'.dol_htmlentities($sall).'" id="search-all-form-input" class="discountrules-global-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off">';
+	$morehtmlcenter.= '</div>';
 
-	if($countResult > 0){
+	$picto = 'product';
+	if ($type == 1) $picto = 'service';
+
+	ob_start(); // parceque dolibarr aime tellement le print ...
+	print_barre_liste($langs->trans('AdvanceProductSearch'), $page, $pageUrl, $param, $sortfield, $sortorder, $morehtmlcenter, $curentCountResult, $globalCountResult, $picto, 0, '', '', $limit, 0, 0, 0);
+	$output.= ob_get_contents();
+	ob_end_clean();
+
+
+
+	if($globalCountResult > 0){
 		$output.= '<div class="discountrules-productsearch__results-count">';
-		if($countResult>1){
-			$output.= $langs->trans('resultsDisplayForNbResultsFounds', min($limit,$countResult), $countResult );
+		if($globalCountResult>1){
+			$output.= $langs->trans('resultsDisplayForNbResultsFounds', min($limit,$globalCountResult), $globalCountResult );
 		}
 		else{
-			$output.= $langs->trans('OneResultDisplayForOneResultFounds', min($limit,$countResult), $countResult );
+			$output.= $langs->trans('OneResultDisplayForOneResultFounds', min($limit,$globalCountResult), $globalCountResult );
 		}
 		$output.= '</div>';
 	}
@@ -496,6 +529,11 @@ global $langs, $conf, $db, $action;
 		$moreforfilter .= '<div class="divsearchfield" >';
 		$moreforfilter .= $langs->trans('Supplier').': ';
 		$moreforfilter .= $form->select_company($fourn_id, 'fourn_id', '', 1, 'supplier');
+		$moreforfilter .= '</div>';
+
+		$moreforfilter .= '<div class="divsearchfield" >';
+		$moreforfilter .= $langs->trans('SupplierRef').': ';
+		$moreforfilter .= '<input type="text" name="search_supplierref" value="'.dol_htmlentities($search_supplierref).'" />';
 		$moreforfilter .= '</div>';
 	}
 
@@ -526,8 +564,50 @@ global $langs, $conf, $db, $action;
 
 	$colnumber = 8;
 
-	$output.= '<table class="noborder centpercent" >';
+	$output.= '<table class="noborder centpercent advance-search-product-results" >';
 	$output.= '<thead>';
+
+	$output.= '<tr class="discount-search-product-row --search liste_titre">';
+
+	$output.= '	<th class="discount-search-product-col --ref" >';
+	$output.= ' <input type="text" class="flat"  name="search_ref" value="'.dol_htmlentities($search_ref).'" placeholder="'.$langs->trans('SearchRef').'" />';
+	$output.= '	</th>';
+
+	$output.= '	<th class="discount-search-product-col --label" >';
+	$output.= ' <input type="text" class="flat"  name="search_label" value="'.dol_htmlentities($search_label).'" placeholder="'.$langs->trans('SearchLabel').'" />';
+	$output.= '	</th>';
+
+
+	if($conf->stock->enabled){
+		$output.= '	<th class="discount-search-product-col --stock-reel center" ></th>';
+		$output.= '	<th class="discount-search-product-col --stock-theorique center" ></th>';
+	}
+
+	if ($conf->fournisseur->enabled) {
+		$output .= '	<th class="discount-search-product-col --buy-price" ></th>';
+	}
+
+	$output.= '	<th class="discount-search-product-col --subprice" ></th>';
+	$output.= '	<th class="discount-search-product-col --discount" ></th>';
+	$output.= '	<th class="discount-search-product-col --finalsubprice" ></th>';
+	$output.= '	<th class="discount-search-product-col --qty" ></th>';
+
+	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		$output.= '<th class="discount-search-product-col --unit" >';
+		$output.= '</th>';
+	}
+
+	$output.= '	<th class="discount-search-product-col --finalprice" ></th>';
+	$output.= '	<th class="discount-search-product-col --action" >';
+
+	$output.= '	</th>';
+	$output.= '</tr>';
+
+
+	//---------------------------
+	// LES TITTRES DES COLONNES -
+	//---------------------------
+
 	$output.= '<tr class="discount-search-product-row --title liste_titre">';
 	$output.= '	<th class="discount-search-product-col --ref" >'.$langs->trans('Ref').'</th>';
 	$output.= '	<th class="discount-search-product-col --label" >'.$langs->trans('Label').'</th>';
@@ -548,9 +628,9 @@ global $langs, $conf, $db, $action;
 
 	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 		$colnumber++;
-		$output.= '<td class="discount-search-product-col --unit" >';
+		$output.= '<th class="discount-search-product-col --unit" >';
 		$output.= $langs->trans('Unit');
-		$output.= '</td>';
+		$output.= '</th>';
 	}
 	$output.= '	<th class="discount-search-product-col --finalprice" >'.$langs->trans('FinalDiscountPrice').'</th>';
 	$output.= '	<th class="discount-search-product-col --action" >';
@@ -567,12 +647,12 @@ global $langs, $conf, $db, $action;
 	$output.= '</thead>';
 	$output.= '<tbody>';
 
-	$res = $db->query('SELECT '.$sqlSelect.' '.$sql.$db->plimit($limit + 1, $offset));
+	$querySearchRes = $db->query('SELECT '.$sqlSelect.' '.$sql.$db->plimit($limit + 1, $offset));
 	//print dol_htmlentities('SELECT '.$sqlSelect.' '.$sql.$db->plimit($limit + 1, $offset));
-	if ($res)
+	if ($querySearchRes)
 	{
-		if($db->num_rows($res) > 0){
-			while ($obj = $db->fetch_object($res)){
+		if($curentCountResult > 0){
+			while ($obj = $db->fetch_object($querySearchRes)){
 				$product = new Product($db);
 				$resProd = $product->fetch($obj->rowid);
 				if($resProd > 0){

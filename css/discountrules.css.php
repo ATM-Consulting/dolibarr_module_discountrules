@@ -258,3 +258,16 @@ else header('Cache-Control: no-cache');
 .search-list-select{
 	max-width: 175px;
 }
+
+.advance-search-product-results{
+	position: relative;
+	border-collapse: collapse;
+}
+
+.discount-search-product-row.--title th, .discount-search-product-row.--title td{
+	position: -webkit-sticky;
+	position: sticky;
+	background: var(--colorbacktitle1);
+	z-index: 1;
+	top: 0; /* Don't forget this, required for the stickiness */
+}
