@@ -28,6 +28,11 @@ ModulediscountrulesDesc = Permet de définir des règles de réductions suivant 
 
 ModulediscountrulesSettings=Configuration
 
+ReadDiscountsRules = Voir règles de remises
+CreateUpdateDiscountsRules = Créer / mettre à jour les règles de remises
+DeleteDiscountsRules = Supprimer les règles de remises
+
+
 #
 # Page d'administration
 #
