@@ -500,7 +500,11 @@ if ($resql)
 	if (!empty($fk_country)) $param .= '&fk_country='.urlencode($fk_country);
 	if (!empty($fk_project)) $param .= '&fk_project='.urlencode($fk_project);
 	if (!empty($fk_c_typent)) $param .= '&fk_c_typent='.urlencode($fk_c_typent);
-	if (!empty($TCategoryCompany)) $param .= '&TCategoryCompany='.urlencode($TCategoryCompany);
+	if (!empty($TCategoryCompany) && is_array($TCategoryCompany)){
+		foreach ($TCategoryCompany as $searchCategoryCompany) {
+			$param .= "&TCategoryCompany[]=".urlencode($searchCategoryCompany);
+		}
+	}
 	if (!empty($fk_company)) $param .= '&fk_company='.urlencode($fk_company);
 
 	// Add $param from extra fields
