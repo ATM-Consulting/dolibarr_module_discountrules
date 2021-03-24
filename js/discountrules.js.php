@@ -297,7 +297,7 @@ function discountFetchOnEditLine(element, idLine, idProd,fkCompany,fkProject,fkC
 		lastidprod = idProd;
 		lastqty = qty;
 
-		var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 2); ?>";
+		var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 1); ?>";
 		var sendData = {
 			'action': "product-discount",
 			'qty': qty,
@@ -442,7 +442,7 @@ function focusAtEndSearchInput($searchAllInput){
  * @param fk_product
  */
 function addProductToCurentDocument(fk_product){
-	var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 2); ?>";
+	var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 1); ?>";
 
 	// disable action button during add
 	disableAddProductFields(fk_product, true);
@@ -587,7 +587,7 @@ function discountUpdate(idprod, fk_company, fk_project, qtySelector = '#qty', su
 		lastidprod = idprod;
 		lastqty = qty;
 
-		var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php',2); ?>";
+		var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php',1); ?>";
 
 		$.ajax({
 			method: "POST",

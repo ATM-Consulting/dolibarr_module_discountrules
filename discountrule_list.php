@@ -433,7 +433,7 @@ if(!empty($fk_product)){
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$shownav = 1;
+	$shownav = 0; // remove this because not implemented yet
 	if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 	dol_banner_tab($product, 'ref', $linkback, $shownav, 'ref');
