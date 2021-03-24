@@ -150,7 +150,7 @@ $( document ).ready(function() {
 	});
 
 	// Pagination
-	$(document).on("click", "#product-search-dialog-form .pagination a" , function(event) {
+	$(document).on("click", "#product-search-dialog-form .pagination a, #product-search-dialog-form .discount-search-product-sort-link" , function(event) {
 		event.preventDefault();
 		let urlParams = $(this).attr('href').split('?')[1];
 		discountLoadSearchProductDialogForm("&"+urlParams);

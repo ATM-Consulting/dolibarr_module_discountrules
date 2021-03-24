@@ -408,7 +408,7 @@ global $langs, $conf, $db, $action;
 	}
 
 	// SELECT PART
-	$sqlSelect = ' DISTINCT p.rowid ';
+	$sqlSelect = ' DISTINCT p.rowid, p.ref, p.label ';
 	if (!empty($conf->global->PRODUCT_USE_UNITS))   $sqlSelect .= ' ,cu.label as cu_label';
 
 	// SELECT COUNT PART
@@ -608,9 +608,17 @@ global $langs, $conf, $db, $action;
 	// LES TITTRES DES COLONNES -
 	//---------------------------
 
+	$classForSortLink = "discount-search-product-sort-link";
+
 	$output.= '<tr class="discount-search-product-row --title liste_titre">';
-	$output.= '	<th class="discount-search-product-col --ref" >'.$langs->trans('Ref').'</th>';
-	$output.= '	<th class="discount-search-product-col --label" >'.$langs->trans('Label').'</th>';
+	$output.= '	<th class="discount-search-product-col --ref" >'
+		. getDialogColSortLink($langs->trans('Ref'), $pageUrl, "p.ref", $param, $sortfield, $sortorder, $classForSortLink)
+		.'</th>';
+
+	$output.= '	<th class="discount-search-product-col --label" >'
+		. getDialogColSortLink($langs->trans('Label'), $pageUrl, "p.label", $param, $sortfield, $sortorder, $classForSortLink)
+		.'</th>';
+
 	if($conf->stock->enabled){
 		$output.= '	<th class="discount-search-product-col --stock-reel center" >'.$langs->trans('RealStock').'</th>';
 		$output.= '	<th class="discount-search-product-col --stock-theorique center" >'.$langs->trans('VirtualStock').'</th>';
@@ -647,8 +655,12 @@ global $langs, $conf, $db, $action;
 	$output.= '</thead>';
 	$output.= '<tbody>';
 
-	$querySearchRes = $db->query('SELECT '.$sqlSelect.' '.$sql.$db->plimit($limit + 1, $offset));
-	//print dol_htmlentities('SELECT '.$sqlSelect.' '.$sql.$db->plimit($limit + 1, $offset));
+	$sqlList = 'SELECT '.$sqlSelect.' '
+		.$sql.$db->order($sortfield, $sortorder)
+		.$db->plimit($limit + 1, $offset);
+
+	$querySearchRes = $db->query($sqlList);
+
 	if ($querySearchRes)
 	{
 		if($curentCountResult > 0){
@@ -793,7 +805,55 @@ global $langs, $conf, $db, $action;
 	return $output;
 }
 
+/**
+ * @param $label		Translation key of field
+ * @param $pageUrl		Url used when we click on sort picto
+ * @param $field		Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
+ * @param $param		Add more parameters on sort url links ("" by default)
+ * @param $sortfield	Current field used to sort (Ex: 'd.datep,d.id')
+ * @param $sortorder	Current sort order (Ex: 'asc,desc')
+ * @return string
+ */
+function getDialogColSortLink($label, $pageUrl, $field, $param, $sortfield, $sortorder, $moreClass = ""){
+	$sortorder = strtoupper($sortorder);
+	$tmpsortfield = explode(',', $sortfield);
+	$sortfield1 = trim($tmpsortfield[0]); // If $sortfield is 'd.datep,d.id', it becomes 'd.datep'
+	$tmpfield = explode(',', $field);
+	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
+
+	$sortordertouseinlink = '';
+	if ($field1 != $sortfield1) // We are on another field than current sorted field
+	{
+		if (preg_match('/^DESC/i', $sortorder))
+		{
+			$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
+		}
+		else		// We reverse the var $sortordertouseinlink
+		{
+			$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
+		}
+	}
+	else                        // We are on field that is the first current sorting criteria
+	{
+		if (preg_match('/^ASC/i', $sortorder))	// We reverse the var $sortordertouseinlink
+		{
+			$sortordertouseinlink .= str_repeat('desc,', count(explode(',', $field)));
+		}
+		else
+		{
+			$sortordertouseinlink .= str_repeat('asc,', count(explode(',', $field)));
+		}
+	}
+	$sortordertouseinlink = preg_replace('/,$/', '', $sortordertouseinlink);
+
+
+	$out = '<a class="reposition '.$moreClass.'" href="'.$pageUrl.'?sortfield='.$field.'&sortorder='.$sortordertouseinlink.$param.'" >';
+	$out.= $label;
+	$out.= '</a>';
+
+	return $out;
+}
 
 /**
  * Return an object
