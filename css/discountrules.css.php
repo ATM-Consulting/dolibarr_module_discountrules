@@ -273,9 +273,9 @@ else header('Cache-Control: no-cache');
 }
 
 .--ajax-loading .--blur-on-loading {
-	-webkit-filter: blur(3px);
+	/*-webkit-filter: blur(3px);
 	filter: blur(3px);
-	cursor: wait; /* Add a pointer on hover */
+	cursor: wait;*/
 }
 
 .inner-dialog-overlay{
@@ -286,8 +286,9 @@ else header('Cache-Control: no-cache');
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: rgba(255,255,255,0.1); /* background with some opacity to be sure under elements are not clikables  */
+	background-color: rgba(255,255,255,0.3); /* background with some opacity to be sure under elements are not clikables  */
 	z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+	cursor: wait; /* Add a pointer on hover */
 }
 
 
