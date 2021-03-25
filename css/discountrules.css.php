@@ -273,8 +273,8 @@ else header('Cache-Control: no-cache');
 }
 
 .--ajax-loading .--blur-on-loading {
-	-webkit-filter: blur(1px);
-	filter: blur(1px);
+	-webkit-filter: blur(3px);
+	filter: blur(3px);
 	cursor: wait; /* Add a pointer on hover */
 }
 
