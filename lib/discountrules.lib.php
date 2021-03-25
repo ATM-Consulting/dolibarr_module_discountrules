@@ -770,7 +770,7 @@ global $langs, $conf, $db, $action;
 
 					$output.= '<td class="discount-search-product-col --action" >';
 //					$output.= '<div class="default-hidden" >';
-					$output.= ' <button type="button" title="'.$langs->trans('ClickToAddProductInDocument').'"  data-product="'.$product->id.'" class="discount-prod-list-action-btn classfortooltip" ><span class="fa fa-plus add-btn-icon"></span> '.$langs->trans('Add').'</button>';
+					$output.= ' <button type="button" title="'.$langs->trans('ClickToAddProductInDocument').'"  data-product="'.$product->id.'" class="discount-prod-list-action-btn" ><span class="fa fa-plus add-btn-icon"></span> '.$langs->trans('Add').'</button>';
 //					$output.= '</div>';
 					$output.= '</td>';
 

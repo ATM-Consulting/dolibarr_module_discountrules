@@ -267,6 +267,11 @@ $( document ).ready(function() {
 
 function discountLoadSearchProductDialogForm(morefilters = ''){
 	var productSearchDialogBox = "product-search-dialog-box";
+
+	$('#'+productSearchDialogBox).addClass('--ajax-loading');
+
+	$('#'+productSearchDialogBox).prepend($('<div class="inner-dialog-overlay"><div class="dialog-loading__loading"><div class="dialog-loading__spinner-wrapper"><span class="dialog-loading__spinner-text">LOADING</span><span class="dialog-loading__spinner"></span></div></div></div>'));
+
 	$('#'+productSearchDialogBox).load( "<?php print dol_buildpath('discountrules/scripts/interface.php',1)."?action=product-search-form"; ?>" + morefilters, function() {
 		discountDialogCountAddedProduct = 0; // init count of product added for reload action
 		focusAtEndSearchInput($("#search-all-form-input"));
@@ -279,6 +284,7 @@ function discountLoadSearchProductDialogForm(morefilters = ''){
 		}
 
 		initToolTip($('#'+productSearchDialogBox+' .classfortooltip')); // restore tooltip after ajax call
+		$('#'+productSearchDialogBox).removeClass('--ajax-loading');
 	});
 }
 

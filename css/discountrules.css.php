@@ -271,3 +271,94 @@ else header('Cache-Control: no-cache');
 	z-index: 1;
 	top: 0; /* Don't forget this, required for the stickiness */
 }
+
+.--ajax-loading #product-search-dialog-form {
+	-webkit-filter: blur(5px);
+	filter: blur(5px);
+	cursor: wait; /* Add a pointer on hover */
+}
+
+.inner-dialog-overlay{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255,255,255,0.1); /* background with some opacity to be sure under elements are not clikables  */
+	z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+}
+
+
+/* LOADING EFFECT */
+.dialog-loading__loading {
+	-webkit-animation:dialog-loading-fadein 2s;
+	-moz-animation:dialog-loading-fadein 2s;
+	-o-animation:dialog-loading-fadein 2s;
+	animation:dialog-loading-fadein 2s;
+}
+@-moz-keyframes dialog-loading-fadein {
+	from {opacity:0}
+	to {opacity:1}
+}
+@-webkit-keyframes dialog-loading-fadein {
+	from {opacity:0}
+	to {opacity:1}
+}
+@-o-keyframes dialog-loading-fadein {
+	from {opacity:0}
+	to {opacity:1}
+}
+@keyframes dialog-loading-fadein {
+	from {opacity:0}
+	to {opacity:1}
+}
+
+.dialog-loading__spinner-wrapper {
+	min-width:100%;
+	min-height:100%;
+	height:100%;
+	top:0;
+	left:0;
+	position:absolute;
+	z-index:300;
+}
+
+.dialog-loading__spinner-text {position:absolute;top:41.5%;left:47%;margin:16px 0 0 35px;font-size:9px;font-family:Arial;color: #808080;letter-spacing:1px;font-weight:700}
+.dialog-loading__spinner {
+	margin:0;
+	display:block;
+	position:absolute;
+	left:45%;
+	top:40%;
+	border:25px solid rgba(100,100,100,0.5);
+	width:1px;
+	height:1px;
+	border-left-color:transparent;
+	border-right-color:transparent;
+	-webkit-border-radius:50px;
+	-moz-border-radius:50px;
+	border-radius:50px;
+	-webkit-animation:dialog-loading-spin 1.5s infinite;
+	-moz-animation:dialog-loading-spin 1.5s infinite;
+	animation:dialog-loading-spin 1.5s infinite;
+}
+
+@-webkit-keyframes dialog-loading-spin {
+	0%,100% {-webkit-transform:rotate(0deg) scale(1)}
+	50%     {-webkit-transform:rotate(720deg) scale(0.6)}
+}
+
+@-moz-keyframes dialog-loading-spin  {
+	0%,100% {-moz-transform:rotate(0deg) scale(1)}
+	50%     {-moz-transform:rotate(720deg) scale(0.6)}
+}
+@-o-keyframes dialog-loading-spin  {
+	0%,100% {-o-transform:rotate(0deg) scale(1)}
+	50%     {-o-transform:rotate(720deg) scale(0.6)}
+}
+@keyframes dialog-loading-spin  {
+	0%,100% {transform:rotate(0deg) scale(1)}
+	50%     {transform:rotate(720deg) scale(0.6)}
+}
