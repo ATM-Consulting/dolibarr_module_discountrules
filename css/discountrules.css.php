@@ -272,9 +272,9 @@ else header('Cache-Control: no-cache');
 	top: 0; /* Don't forget this, required for the stickiness */
 }
 
-.--ajax-loading #product-search-dialog-form {
-	-webkit-filter: blur(5px);
-	filter: blur(5px);
+.--ajax-loading .--blur-on-loading {
+	-webkit-filter: blur(1px);
+	filter: blur(1px);
 	cursor: wait; /* Add a pointer on hover */
 }
 

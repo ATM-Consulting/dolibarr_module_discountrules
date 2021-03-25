@@ -469,7 +469,7 @@ global $langs, $conf, $db, $action;
 	}
 	if ($fourn_id > 0)  $sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 
-	$output.=  '<form id="product-search-dialog-form">';
+	$output.=  '<form id="product-search-dialog-form" class="--blur-on-loading" >';
 
 	$output.=  '<input type="hidden" name="token" value="'.newToken().'">';
 	$output.=  '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
