@@ -299,6 +299,7 @@ function _exportProductsPrices(){
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
+	$csvDelimiter = ';';
 
 	$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 	$search_ref = GETPOST("search_ref", 'alpha');
@@ -582,7 +583,23 @@ function _exportProductsPrices(){
 				$outputRow[$key] = $values['label'];
 			}
 		}
-		fputcsv($csv, $outputRow);
+		fputcsv($csv, $outputRow, $csvDelimiter);
+
+
+		$colForNumbers = array(
+			'p.ref',
+			'p.label' ,
+			'p.sellprice',
+			'p.sellpriceTTC',
+			'p.datec',
+			'p.tms',
+			'p.tosell',
+			'discountproductprice',
+			'product_reduction_amount',
+			'discountsubprice',
+			'discountreduction',
+			'discountfinalsubprice',
+		);
 
 		$lastRowid = 0;
 		while ($obj = $db->fetch_object($resql))
@@ -695,11 +712,15 @@ function _exportProductsPrices(){
 				$outputRow[$key] = '';
 				if(isset($line[$key])){
 					$outputRow[$key] = $line[$key];
+
+					if(in_array($key, $colForNumbers)){
+						$outputRow[$key] = price($line[$key]);
+					}
 				}
 			}
 
 			if(!empty($line['discountfinalsubprice'])){
-				fputcsv($csv, $outputRow);
+				fputcsv($csv, $outputRow, $csvDelimiter);
 			}
 		}
 
