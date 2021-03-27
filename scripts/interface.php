@@ -587,18 +587,13 @@ function _exportProductsPrices(){
 
 
 		$colForNumbers = array(
-			'p.ref',
-			'p.label' ,
 			'p.sellprice',
 			'p.sellpriceTTC',
-			'p.datec',
-			'p.tms',
-			'p.tosell',
 			'discountproductprice',
 			'product_reduction_amount',
 			'discountsubprice',
 			'discountreduction',
-			'discountfinalsubprice',
+			'discountfinalsubprice'
 		);
 
 		$lastRowid = 0;
