@@ -2,6 +2,7 @@
 
 ## Not Released
 
+- FIX : Compatibility V13 - Add token renewal - *18/05/2021* - 2.6.3
 - NEW : Display/Export customer prices
   This new feature add a new page and entry menu in discounts rules menu call "price list".
   
