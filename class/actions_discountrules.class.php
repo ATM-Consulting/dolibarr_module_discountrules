@@ -209,7 +209,7 @@ class Actionsdiscountrules
 					let FormmUpdateLine = 	!document.getElementById("addline");
 					// si nous sommes dans le formulaire Modification
 					if (FormmUpdateLine) {
-						discountFetchOnEditLine('<?php print $object->element; ?>',idLine,idProd,<?php print intval($object->socid); ?>,<?php print intval($object->fk_project); ?>,<?php print intval($object->country_id); ?>);
+						DiscountRule.fetchDiscountOnEditLine('<?php print $object->element; ?>',idLine,idProd,<?php print intval($object->socid); ?>,<?php print intval($object->fk_project); ?>,<?php print intval($object->country_id); ?>);
 					}
 				});
 
@@ -302,7 +302,7 @@ class Actionsdiscountrules
 						let defaultCustomerReduction = '<?php print floatval($object->thirdparty->remise_percent); ?>';
 						let fk_company = '<?php print intval($object->socid); ?>';
 						let fk_project = '<?php print intval($object->fk_project); ?>';
-						discountUpdate($('#idprod').val(), fk_company, fk_project, '#qty', '#price_ht', '#remise_percent', defaultCustomerReduction);
+						DiscountRule.discountUpdate($('#idprod').val(), fk_company, fk_project, '#qty', '#price_ht', '#remise_percent', defaultCustomerReduction);
 					});
 				});
 			</script>

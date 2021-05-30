@@ -140,124 +140,6 @@ $( document ).ready(function() {
 			discountRulesCheckSelectCat = true;
 		}
 	});
-
-	/****************************************************************/
-	/* recherche de produit rapide sur formulaire d'ajout de ligne  */
-	/****************************************************************/
-	$(document).on("submit", "#product-search-dialog-form" , function(event) {
-		event.preventDefault();
-		discountLoadSearchProductDialogForm("&"+$( this ).serialize());
-	});
-
-	// Pagination
-	$(document).on("click", "#product-search-dialog-form .pagination a, #product-search-dialog-form .discount-search-product-sort-link" , function(event) {
-		event.preventDefault();
-		let urlParams = $(this).attr('href').split('?')[1];
-		discountLoadSearchProductDialogForm("&"+urlParams);
-	});
-
-	//_________________________________________________
-	// RECHERCHE GLOBALE AUTOMATIQUE SUR FIN DE SAISIE
-	// (Uniquement sur la recherche globale)
-
-	//setup before functions
-	var typingProductSearchTimer;                //timer identifier
-	var doneTypingProductSearchInterval = 2000;  //time in ms (2 seconds)
-
-	$(document).on("keyup", "#search-all-form-input" , function(event) {
-		clearTimeout(typingProductSearchTimer);
-		if ($('#search-all-form-input').val()) {
-			typingProductSearchTimer = setTimeout(function(){
-				discountLoadSearchProductDialogForm("&"+$( "#product-search-dialog-form" ).serialize());
-			}, doneTypingProductSearchInterval);
-		}
-	});
-
-	// Update prices display
-	$(document).on("change", ".on-update-calc-prices" , function(event) {
-		let fk_product = $(this).attr("data-product");
-		updateLinePricesCalcs(fk_product)
-	});
-
-	$(document).on("keyup", ".on-update-calc-prices" , function(event) {
-		let fk_product = $(this).attr("data-product");
-		updateLinePricesCalcs(fk_product)
-	});
-
-
-	// Ajout de produits sur click du bouton
-	$(document).on("click", ".discount-prod-list-action-btn" , function(event) {
-		event.preventDefault();
-		let fk_product = $(this).attr("data-product");
-		addProductToCurentDocument(fk_product);
-	});
-
-	// Recherche de remise sur modification des quantités
-	// Un timer est ajouté pour eviter de spam les requêtes ajax (notamment à cause des boutons + et - des input de type number)
-	// setup before functions
-	var typingQtySearchDiscountTimer;                //timer identifier
-	var doneTypingQtySearchDiscountInterval = 200;  //time in ms (0.2 seconds)
-	$(document).on("change", ".discount-prod-list-input-qty" , function(event) {
-		var fk_product = $(this).attr("data-product");
-		clearTimeout(typingQtySearchDiscountTimer);
-		typingQtySearchDiscountTimer = setTimeout(function(){
-			discountUpdate(
-				fk_product,
-				$("#product-search-dialog-form").find("input[name=fk_company]").val(),
-				$("#discountrules-form-fk-project").val(),
-				"#discount-prod-list-input-qty-"+fk_product,
-				"#discount-prod-list-input-subprice-"+fk_product,
-				"#discount-prod-list-input-reduction-"+fk_product,
-				"#discountrules-form-default-customer-reduction"
-			);
-		}, doneTypingQtySearchDiscountInterval);
-	});
-
-
-
-	//_______________
-	// LA DIALOG BOX
-
-	$(document).on("click", '#product-search-dialog-button', function(event) {
-		event.preventDefault();
-
-		var element = $(this).attr('data-target-element');
-		var fk_element = $(this).attr('data-target-id');
-
-		var productSearchDialogBox = "product-search-dialog-box";
-		// crée le calque qui sera convertie en popup
-		$('body').append('<div id="'+productSearchDialogBox+'" title="<?php print $langs->transnoentities('SearchProduct'); ?>"></div>');
-
-		// transforme le calque en popup
-		var popup = $('#'+productSearchDialogBox).dialog({
-			autoOpen: true,
-			modal: true,
-			width: Math.min($( window ).width() - 50, 1700),
-			dialogClass: 'discountrule-product-search-box',
-			buttons: [
-				{
-					text: "<?php print $langs->transnoentities('CloseDialog'); ?>",
-					"class": 'ui-state-information',
-					click: function () {
-						$(this).dialog("close");
-						$('#'+productSearchDialogBox).remove();
-					}
-				}
-			],
-			close: function( event, ui ) {
-				if(discountDialogCountAddedProduct>0){
-					// si une ligne a été ajoutée, recharge la page actuelle
-					document.location.reload();
-				}
-			},
-			open: function( event, ui ) {
-				//$(this).dialog('option', 'maxHeight', $(window).height()-30);
-				discountLoadSearchProductDialogForm("&element="+element+"&fk_element="+fk_element);
-				$('#'+productSearchDialogBox).parent().css('z-index', 1002);
-				$('.ui-widget-overlay').css('z-index', 1001);
-			}
-		});
-	});
 });
 
 
@@ -265,132 +147,6 @@ $( document ).ready(function() {
 /* LES LIBRAIRIES  */
 /*******************/
 
-function discountLoadSearchProductDialogForm(morefilters = ''){
-	var productSearchDialogBox = "product-search-dialog-box";
-
-	$('#'+productSearchDialogBox).addClass('--ajax-loading');
-
-	$('#'+productSearchDialogBox).prepend($('<div class="inner-dialog-overlay"><div class="dialog-loading__loading"><div class="dialog-loading__spinner-wrapper"><span class="dialog-loading__spinner-text">LOADING</span><span class="dialog-loading__spinner"></span></div></div></div>'));
-
-	$('#'+productSearchDialogBox).load( "<?php print dol_buildpath('discountrules/scripts/interface.php',1)."?action=product-search-form"; ?>" + morefilters, function() {
-		discountDialogCountAddedProduct = 0; // init count of product added for reload action
-		focusAtEndSearchInput($("#search-all-form-input"));
-
-		if($('#'+productSearchDialogBox).outerHeight() >= $( window ).height()-150 ){
-			$('#'+productSearchDialogBox).dialog( "option", "position", { my: "top", at: "top", of: window } ); // Hack to position the dialog box after ajax load
-		}
-		else{
-			$('#'+productSearchDialogBox).dialog( "option", "position", { my: "center", at: "center", of: window } ); // Hack to center vertical the dialog box after ajax load
-		}
-
-		initToolTip($('#'+productSearchDialogBox+' .classfortooltip')); // restore tooltip after ajax call
-		$('#'+productSearchDialogBox).removeClass('--ajax-loading');
-	});
-}
-
-
-function discountFetchOnEditLine(element, idLine, idProd,fkCompany,fkProject,fkCountry) {
-
-	if (idProd == undefined || $('#qty') == undefined) return 0;
-
-
-	var lastidprod = 0;
-	var lastqty = 0;
-	var qty = $('#qty').val();
-
-	if (idProd != lastidprod || qty != lastqty) {
-
-		lastidprod = idProd;
-		lastqty = qty;
-
-		var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 1); ?>";
-		var sendData = {
-			'action': "product-discount",
-			'qty': qty,
-			'id_line': idLine,
-			'fk_product': idProd,
-			'fk_company': fkCompany,
-			'fk_project' : fkProject,
-			'fk_country' : fkCountry
-		};
-
-
-		$.ajax({
-			method: "POST",
-			url: urlInterface,
-			dataType: 'json',
-			data: sendData,
-			success: function (data) {
-
-
-				var $inputPriceHt = $('#price_ht');
-				var $inputRemisePercent = $('#remise_percent');
-
-				var discountTooltip = data.tpMsg;
-
-				if(data.result && data.element === "discountrule") {
-					$("#suggest-discount").attr('data-discount', data.reduction);
-					$("#suggest-discount").attr('data-subprice', data.subprice);
-
-					$("#suggest-discount").removeClass("--disable");
-					$("#suggest-discount").addClassReload("--dr-rotate-icon");
-				}
-				else if(data.result && (data.element === "facture" || data.element === "commande" || data.element === "propal"  )) {
-					$("#suggest-discount").attr('data-discount', data.reduction);
-					$("#suggest-discount").attr('data-subprice', data.subprice);
-
-					$("#suggest-discount").removeClass("--disable");
-					$("#suggest-discount").addClassReload("--dr-rotate-icon");
-				}
-				else
-				{ // pas de discounRule
-
-					$("#suggest-discount").attr('data-discount', $inputRemisePercent.val());
-					$("#suggest-discount").attr('data-subprice', $inputPriceHt.val());
-
-					if(defaultCustomerReduction > 0) {
-						$("#suggest-discount").attr('data-discount', defaultCustomerReduction).removeClass("--disable --dr-rotate-icon");
-					} else {
-						$("#suggest-discount").addClass("--disable").removeClass("--dr-rotate-icon");
-					}
-				}
-
-				// add tooltip message
-				setToolTip($('#suggest-discount'),"<?php print dol_escape_js($langs->transnoentities('actionClickMeDiscountrule', '<span class="suggest-discount"></span>')); ?><br/><br/>"+ discountTooltip);
-
-				// Show tootip
-				if(data.result){
-					$("#suggest-discount").tooltip("open");//  to explicitly show it here
-					setTimeout(function() {
-						$("#suggest-discount").tooltip("close" );
-					}, 2000);
-				}
-			},
-			error: function (err) {
-
-			}
-		});
-	}
-
-} // FormmUpdateLine
-/**
- * initialisation de la tootip
- * @param element
- */
-function initToolTip(element){
-
-	if(!element.data("tooltipset")){
-		element.data("tooltipset", true);
-		element.tooltip({
-			show: { collision: "flipfit", effect:"toggle", delay:50 },
-			hide: { delay: 50 },
-			tooltipClass: "mytooltip",
-			content: function () {
-				return $(this).prop("title");		/* To force to get title as is */
-			}
-		});
-	}
-}
 
 /**
  * permet de faire un addClass qui reload les animations si la class etait deja la
@@ -406,288 +162,273 @@ function initToolTip(element){
 	};
 }( jQuery ));
 
+// Utilisation d'une sorte de namespace en JS à appeler comme ça : DiscountRule.nomDeLaFonction()
+var DiscountRule = {};
+(function(o) {
 
-/**
- * affectation du contenu dans l'attribut title
- *
- * @param $element
- * @param text
- */
-function setToolTip($element, text){
-	$element.attr("title",text);
-	initToolTip($element);
-}
+	o.discountlang = <?php print json_encode($translate) ?>;
+	o.advanceProductSearchConfig = <?php print json_encode($confToJs) ?>;
 
+	o.fetchDiscountOnEditLine = function (element, idLine, idProd,fkCompany,fkProject,fkCountry) {
 
-function discountRule_setEventMessage(msg, status = true){
-
-	if(msg.length > 0){
-		if(status){
-			$.jnotify(msg, 'notice', {timeout: 5},{ remove: function (){} } );
-		}
-		else{
-			$.jnotify(msg, 'error', {timeout: 0, type: 'error'},{ remove: function (){} } );
-		}
-	}
-	else{
-		$.jnotify('ErrorMessageEmpty', 'error', {timeout: 0, type: 'error'},{ remove: function (){} } );
-	}
-}
-
-/**
- * Positionne le focus et le curseur à la fin de l'input
- * @param {jQuery} $searchAllInput
- */
-function focusAtEndSearchInput($searchAllInput){
-	let searchAllInputVal = $searchAllInput.val();
-	$searchAllInput.blur().focus().val('').val(searchAllInputVal);
-}
-
-/**
- *
- * @param fk_product
- */
-function addProductToCurentDocument(fk_product){
-	var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 1); ?>";
-
-	// disable action button during add
-	disableAddProductFields(fk_product, true);
-
-	var sendData = {
-		'action': "add-product",
-		'fk_product': fk_product,
-		'qty': $("#discount-prod-list-input-qty-"+fk_product).val(),
-		'subprice': $("#discount-prod-list-input-subprice-"+fk_product).val(),
-		'reduction': $("#discount-prod-list-input-reduction-"+fk_product).val(),
-		'fk_element': $("#discountrules-form-fk-element").val(),
-		'element': $("#discountrules-form-element").val()
-	};
-
-	// check if supplier price exist because it could be not activated
-	let fk_fournprice = $("#prodfourprice-" + fk_product);
-	if(fk_fournprice.length > 0){
-		sendData.fk_fournprice = fk_fournprice.val();
-	}
-//console.log(sendData);
-	$.ajax({
-		method: "POST",
-		url: urlInterface,
-		dataType: 'json',
-		data: sendData,
-		success: function (data) {
-			if(data.result) {
-				// do stuff on success
-			}
-			else {
-				// do stuff on error
-			}
-
-			discountDialogCountAddedProduct++; // indique qu'il faudra un rechargement de page à la fermeture de la dialogbox
-			focusAtEndSearchInput($("#search-all-form-input")); // on replace le focus sur la recherche global pour augmenter la productivité
-			discountRule_setEventMessage(data.msg, data.result);
-			// re-enable action button
-			disableAddProductFields(fk_product, false);
-		},
-		error: function (err) {
-			discountRule_setEventMessage(discountlang.errorAjaxCall, false);
-			// re-enable action button
-			disableAddProductFields(fk_product, false);
-		}
-	});
-}
-
-/**
- * Permet de désactiver/activer les inputs/bouttons de formulaire d'une ligne de produit et ajoute quelques animations
- * @param fk_product
- * @param disable
- */
-function disableAddProductFields(fk_product, disable = true){
-
-	var timer = 0
-	if(!disable){
-		timer = 1000; // Add timer on reactivate to avoid doubleclick
-	}
-
-	var buttonAddProduct = $(".discount-prod-list-action-btn[data-product="+fk_product+"]");
-
-	setTimeout(function() {
-		if(!disable){
-			timer = 500; // Add timer on reactivate to avoid doubleclick
-			buttonAddProduct.find('.add-btn-icon').removeClass('fa-spinner fa-pulse').addClass('fa-plus');
-		}else{
-			buttonAddProduct.find('.add-btn-icon').removeClass('fa-plus').addClass('fa-spinner fa-pulse');
-		}
-
-		$("#discount-prod-list-input-qty-"+fk_product).prop("disabled",disable);
-		buttonAddProduct.prop("disabled",disable);
-		$("#discount-prod-list-input-subprice-"+fk_product).prop("disabled",disable);
-		$("#discount-prod-list-input-reduction-"+fk_product).prop("disabled",disable);
-
-		// check if fournprice exist becaus it could be not activated
-		let fk_fournprice = $("#prodfourprice-" + fk_product);
-		if(fk_fournprice.length > 0){
-			fk_fournprice.prop("disabled",disable);
-		}
-
-	}, timer);
-}
-
-/**
- * Met a jour les calcules de prix basé sur les données des input
- * @param fk_product
- */
-function updateLinePricesCalcs(fk_product){
-	 //discountConfig.MAIN_MAX_DECIMALS_TOT
-	 //discountConfig.MAIN_MAX_DECIMALS_UNIT
-	 //discountConfig.dec
-	 //discountConfig.thousand
-
-	inputQty = $("#discount-prod-list-input-qty-"+fk_product);
-	inputSubPrice = $("#discount-prod-list-input-subprice-"+fk_product);
-	inputReduction = $("#discount-prod-list-input-reduction-"+fk_product);
+		if (idProd == undefined || $('#qty') == undefined) return 0;
 
 
-	let qty = Number(inputQty.val());
-	let subPrice = Number(inputSubPrice.val());
-	let reduction = Number(inputReduction.val());
-	if(reduction>100){
-		reduction = 100;
-		inputReduction.val(reduction);
-	}
+		var lastidprod = 0;
+		var lastqty = 0;
+		var qty = $('#qty').val();
 
-	let finalUnitPrice = subPrice - (subPrice * reduction / 100);
-	finalUnitPrice = Number(finalUnitPrice.toFixed(discountConfig.MAIN_MAX_DECIMALS_UNIT));
+		if (idProd != lastidprod || qty != lastqty) {
 
-	let finalPrice = finalUnitPrice*qty;
-	finalPrice = Number(finalPrice.toFixed(discountConfig.MAIN_MAX_DECIMALS_TOT));
+			lastidprod = idProd;
+			lastqty = qty;
 
-	$("#discount-prod-list-final-subprice-"+fk_product).html(finalUnitPrice.toLocaleString(undefined, { minimumFractionDigits: discountConfig.MAIN_MAX_DECIMALS_TOT, maximumFractionDigits: discountConfig.MAIN_MAX_DECIMALS_UNIT }));
-	$("#discount-prod-list-final-price-"+fk_product).html(finalPrice.toLocaleString(undefined, { minimumFractionDigits: discountConfig.MAIN_MAX_DECIMALS_TOT }));
-}
-
-/**
- * this function is used for addline form and discount quick search form
- * cette fonction était à l'origine dans le fichier action_discountrules.class.php
- * placée ici pour factorisation du code
- *
- * @param int idprod
- * @param int fk_company
- * @param int fk_project
- * @param string qtySelector
- * @param string subpriceSelector
- * @param string remiseSelector
- * @param float defaultCustomerReduction
- * @returns {number}
- */
-
-var lastidprod = 0; // TODO remove this global and put in in data of qty input if possible
-var lastqty = 0;  // TODO remove this global and put in in data of qty input if possible
-function discountUpdate(idprod, fk_company, fk_project, qtySelector = '#qty', subpriceSelector = '#price_ht', remiseSelector = '#remise_percent', defaultCustomerReduction = 0){
-
-	if(idprod == null || idprod == 0 || $(qtySelector) == undefined ){  return 0; }
-
-	var qty = $(qtySelector).val();
-	if(idprod != lastidprod || qty != lastqty)
-	{
-
-		lastidprod = idprod;
-		lastqty = qty;
-
-		var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php',1); ?>";
-
-		$.ajax({
-			method: "POST",
-			url: urlInterface,
-			dataType: 'json',
-			data: {
-				'fk_product': idprod,
+			var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php', 1); ?>";
+			var sendData = {
 				'action': "product-discount",
 				'qty': qty,
-				'fk_company': fk_company,
-				'fk_project' : fk_project,
-			}
-		})
-		.done(function( data ) {
-			var $inputPriceHt = $(subpriceSelector);
-			var $inputRemisePercent = $(remiseSelector);
-			var discountTooltip = data.tpMsg;
+				'id_line': idLine,
+				'fk_product': idProd,
+				'fk_company': fkCompany,
+				'fk_project' : fkProject,
+				'fk_country' : fkCountry
+			};
 
 
-			if(data.result && data.element === "discountrule")
-			{
-				$inputRemisePercent.val(data.reduction);
-				$inputRemisePercent.addClassReload("discount-rule-change --info");
+			$.ajax({
+				method: "POST",
+				url: urlInterface,
+				dataType: 'json',
+				data: sendData,
+				success: function (data) {
 
-				if(data.subprice > 0){
-					// application du prix de base
-					$inputPriceHt.val(data.subprice);
-					$inputPriceHt.addClassReload("discount-rule-change --info");
-				}
-			}
-			else if(data.result
-				&& (data.element === "facture" || data.element === "commande" || data.element === "propal"  )
-			)
-			{
-				$inputRemisePercent.val(data.reduction);
-				$inputRemisePercent.addClassReload("discount-rule-change --info");
-				$inputPriceHt.val(data.subprice);
-				$inputPriceHt.addClassReload("discount-rule-change --info");
-			}
-			else
-			{
-				if(defaultCustomerReduction>0)
-				{
-					$inputPriceHt.removeClass("discount-rule-change --info");
-					$inputRemisePercent.val(defaultCustomerReduction); // apply default customer reduction from customer card
-					$inputRemisePercent.addClass("discount-rule-change --info");
-				}
-				else
-				{
-					$inputRemisePercent.val('');
-					$inputPriceHt.removeClass("discount-rule-change --info");
-					$inputRemisePercent.removeClass("discount-rule-change --info");
-				}
-			}
 
-			// add tooltip message
-			$inputRemisePercent.attr("title", discountTooltip);
-			$inputPriceHt.attr("title", discountTooltip);
+					var $inputPriceHt = $('#price_ht');
+					var $inputRemisePercent = $('#remise_percent');
 
-			// add tooltip
-			if(!$inputRemisePercent.data("tooltipset")){
-				$inputRemisePercent.data("tooltipset", true);
-				$inputRemisePercent.tooltip({
-					show: { collision: "flipfit", effect:"toggle", delay:50 },
-					hide: { delay: 50 },
-					tooltipClass: "mytooltip",
-					content: function () {
-						return $(this).prop("title");		/* To force to get title as is */
+					var discountTooltip = data.tpMsg;
+
+					if(data.result && data.element === "discountrule") {
+						$("#suggest-discount").attr('data-discount', data.reduction);
+						$("#suggest-discount").attr('data-subprice', data.subprice);
+
+						$("#suggest-discount").removeClass("--disable");
+						$("#suggest-discount").addClassReload("--dr-rotate-icon");
 					}
-				});
-			}
+					else if(data.result && (data.element === "facture" || data.element === "commande" || data.element === "propal"  )) {
+						$("#suggest-discount").attr('data-discount', data.reduction);
+						$("#suggest-discount").attr('data-subprice', data.subprice);
 
-			if(!$inputPriceHt.data("tooltipset")){
-				$inputPriceHt.data("tooltipset", true);
-				$inputPriceHt.tooltip({
-					show: { collision: "flipfit", effect:"toggle", delay:50 },
-					hide: { delay: 50 },
-					tooltipClass: "mytooltip",
-					content: function () {
-						return $(this).prop("title");		/* To force to get title as is */
+						$("#suggest-discount").removeClass("--disable");
+						$("#suggest-discount").addClassReload("--dr-rotate-icon");
 					}
-				});
-			}
+					else
+					{ // pas de discounRule
 
-			// Show tootip
-			if(data.result){
+						$("#suggest-discount").attr('data-discount', $inputRemisePercent.val());
+						$("#suggest-discount").attr('data-subprice', $inputPriceHt.val());
 
-				// TODO : ajouter une vérification des inputs avant et apres application des remises car si rien n'a changé alors ne pas forcement faire pop la tooltip
+						//if(defaultCustomerReduction > 0) {
+						//	$("#suggest-discount").attr('data-discount', defaultCustomerReduction).removeClass("--disable --dr-rotate-icon");
+						//} else {
+							$("#suggest-discount").addClass("--disable").removeClass("--dr-rotate-icon");
+						//}
+					}
 
-				$inputRemisePercent.tooltip().tooltip( "open" ); //  to explicitly show it here
-				setTimeout(function() {
-					$inputRemisePercent.tooltip().tooltip("close" );
-				}, 2000);
-			}
-		});
+					// add tooltip message
+					DiscountRule.setToolTip($('#suggest-discount'),"<?php print dol_escape_js($langs->transnoentities('actionClickMeDiscountrule', '<span class="suggest-discount"></span>')); ?><br/><br/>"+ discountTooltip);
+
+					// Show tootip
+					if(data.result){
+						$("#suggest-discount").tooltip("open");//  to explicitly show it here
+						setTimeout(function() {
+							$("#suggest-discount").tooltip("close" );
+						}, 2000);
+					}
+				},
+				error: function (err) {
+
+				}
+			});
+		}
+
+	} // FormmUpdateLine
+
+	/**
+	 * affectation du contenu dans l'attribut title
+	 *
+	 * @param $element
+	 * @param text
+	 */
+	o.setToolTip = function ($element, text){
+		$element.attr("title",text);
+		o.initToolTip($element);
 	}
-}
+
+
+	/**
+	 * initialisation de la tootip
+	 * @param element
+	 */
+	o.initToolTip = function (element){
+
+		if(!element.data("tooltipset")){
+			element.data("tooltipset", true);
+			element.tooltip({
+				show: { collision: "flipfit", effect:"toggle", delay:50 },
+				hide: { delay: 50 },
+				tooltipClass: "mytooltip",
+				content: function () {
+					return $(this).prop("title");		/* To force to get title as is */
+				}
+			});
+		}
+	}
+
+
+	o.setEventMessage = function (msg, status = true){
+
+		if(msg.length > 0){
+			if(status){
+				$.jnotify(msg, 'notice', {timeout: 5},{ remove: function (){} } );
+			}
+			else{
+				$.jnotify(msg, 'error', {timeout: 0, type: 'error'},{ remove: function (){} } );
+			}
+		}
+		else{
+			$.jnotify('ErrorMessageEmpty', 'error', {timeout: 0, type: 'error'},{ remove: function (){} } );
+		}
+	}
+
+	/**
+	 * this function is used for addline form and discount quick search form
+	 * cette fonction était à l'origine dans le fichier action_discountrules.class.php
+	 * placée ici pour factorisation du code
+	 *
+	 * MISE EN GARDE : Les module suivant utlisent cette methode donc faites attention si vous modifiez les paramettres
+	 * 				->	module_advancedproductsearch
+	 *
+	 * @param int idprod
+	 * @param int fk_company
+	 * @param int fk_project
+	 * @param string qtySelector
+	 * @param string subpriceSelector
+	 * @param string remiseSelector
+	 * @param float defaultCustomerReduction
+	 * @returns {number}
+	 */
+
+	o.lastidprod = 0;
+	o.lastqty = 0;
+	o.discountUpdate = function (idprod, fk_company, fk_project, qtySelector = '#qty', subpriceSelector = '#price_ht', remiseSelector = '#remise_percent', defaultCustomerReduction = 0){
+
+		if(idprod == null || idprod == 0 || $(qtySelector) == undefined ){  return 0; }
+
+		var qty = $(qtySelector).val();
+		if(idprod != o.lastidprod || qty != o.lastqty)
+		{
+
+			o.lastidprod = idprod;
+			o.lastqty = qty;
+
+			var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php',1); ?>";
+
+			$.ajax({
+				method: "POST",
+				url: urlInterface,
+				dataType: 'json',
+				data: {
+					'fk_product': idprod,
+					'action': "product-discount",
+					'qty': qty,
+					'fk_company': fk_company,
+					'fk_project' : fk_project,
+				}
+			})
+				.done(function( data ) {
+					var $inputPriceHt = $(subpriceSelector);
+					var $inputRemisePercent = $(remiseSelector);
+					var discountTooltip = data.tpMsg;
+
+
+					if(data.result && data.element === "discountrule")
+					{
+						$inputRemisePercent.val(data.reduction);
+						$inputRemisePercent.addClassReload("discount-rule-change --info");
+
+						if(data.subprice > 0){
+							// application du prix de base
+							$inputPriceHt.val(data.subprice);
+							$inputPriceHt.addClassReload("discount-rule-change --info");
+						}
+					}
+					else if(data.result
+						&& (data.element === "facture" || data.element === "commande" || data.element === "propal"  )
+					)
+					{
+						$inputRemisePercent.val(data.reduction);
+						$inputRemisePercent.addClassReload("discount-rule-change --info");
+						$inputPriceHt.val(data.subprice);
+						$inputPriceHt.addClassReload("discount-rule-change --info");
+					}
+					else
+					{
+						if(defaultCustomerReduction>0)
+						{
+							$inputPriceHt.removeClass("discount-rule-change --info");
+							$inputRemisePercent.val(defaultCustomerReduction); // apply default customer reduction from customer card
+							$inputRemisePercent.addClass("discount-rule-change --info");
+						}
+						else
+						{
+							$inputRemisePercent.val('');
+							$inputPriceHt.removeClass("discount-rule-change --info");
+							$inputRemisePercent.removeClass("discount-rule-change --info");
+						}
+					}
+
+					// add tooltip message
+					$inputRemisePercent.attr("title", discountTooltip);
+					$inputPriceHt.attr("title", discountTooltip);
+
+					// add tooltip
+					if(!$inputRemisePercent.data("tooltipset")){
+						$inputRemisePercent.data("tooltipset", true);
+						$inputRemisePercent.tooltip({
+							show: { collision: "flipfit", effect:"toggle", delay:50 },
+							hide: { delay: 50 },
+							tooltipClass: "mytooltip",
+							content: function () {
+								return $(this).prop("title");		/* To force to get title as is */
+							}
+						});
+					}
+
+					if(!$inputPriceHt.data("tooltipset")){
+						$inputPriceHt.data("tooltipset", true);
+						$inputPriceHt.tooltip({
+							show: { collision: "flipfit", effect:"toggle", delay:50 },
+							hide: { delay: 50 },
+							tooltipClass: "mytooltip",
+							content: function () {
+								return $(this).prop("title");		/* To force to get title as is */
+							}
+						});
+					}
+
+					// Show tootip
+					if(data.result){
+
+						// TODO : ajouter une vérification des inputs avant et apres application des remises car si rien n'a changé alors ne pas forcement faire pop la tooltip
+
+						$inputRemisePercent.tooltip().tooltip( "open" ); //  to explicitly show it here
+						setTimeout(function() {
+							$inputRemisePercent.tooltip().tooltip("close" );
+						}, 2000);
+					}
+				});
+		}
+	}
+
+})(DiscountRule);
