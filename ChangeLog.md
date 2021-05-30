@@ -2,7 +2,7 @@
 
 ## Not Released
 
-- NEW : Quick search/add product dialog box on documents add line form (propal, order, invoice) - 2.7.0
+- NEW : Grosse Factorisation du code js - 2.7.0
 - NEW : Display/Export customer prices  - 2.6.0
   This new feature add a new page and entry menu in discounts rules menu call "price list".
   
