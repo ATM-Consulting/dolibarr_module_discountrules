@@ -168,25 +168,3 @@ DiscountUpdateLineError = Erreur lors de la mise à jour de la ligne %s
 DiscountForLinesUpdated = Lines mises à jour : %s
 NoDiscountToApply = Aucune remise à appliquer
 NotEnoughtRights = vos droits utilisateur ne vous permettent pas de réaliser cette action
-
-#
-# Search
-#
-AdvanceProductSearch = Recherche avancée
-resultsDisplayForNbResultsFounds = %s enregistrements affichés sur %s enregistrements trouvés
-OneResultDisplayForOneResultFounds = %s enregistrement affiché sur %s enregistrement trouvé
-SearchProduct = Recherche de produits/services
-ClickToAddProductInDocument = Ajouter ce produit/service au document
-OpenSearchProductBox = Recherche avancée
-ErrorFetchingObject = Erreur : Document non trouvé
-ErrorFetchingProduct = Erreur : Produit non trouvé
-ErrorOnAddLine = Erreur lors de l'ajout de ligne
-LineAdded = ligne ajoutée
-DocumentNotAvailable = Document non disponible
-BuyPrice = Prix d'achat
-CloseDialog = Fermer
-FinalDiscountSubPrice = Prix unitaire remisé
-FournPriceError = Erreur sur le prix fournisseur
-ErrrorRemiseMustBeAValidPercent = Erreur : la remise doit être une valeur comprise entre 0 et 100
-SearchRef = Référence recherchée
-SearchLabel = Libellé recherché

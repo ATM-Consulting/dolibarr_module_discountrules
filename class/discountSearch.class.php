@@ -115,7 +115,7 @@ class DiscountSearch
 
 
 	/**
-	 * @param int   $qty
+	 * @param double   $qty
 	 * @param int   $fk_product
 	 * @param int   $fk_company
 	 * @param int   $fk_project
