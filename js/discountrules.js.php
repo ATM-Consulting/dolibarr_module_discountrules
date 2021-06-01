@@ -77,7 +77,7 @@ $confToJs = array(
 );
 
 
-// BE CAREFULL : According to Dolibarr version there is 2 kind of category imput : single select or multiselect
+// BE CAREFUL : Depending on Dolibarr version, there are 2 kinds of category inputs : single select or multiselect
 if(intval(DOL_VERSION) > 10){
 	// Use an multiselect field
 	$catImput = "search_category_product_list";
