@@ -149,7 +149,7 @@ $( document ).ready(function() {
 
 
 /**
- * permet de faire un addClass qui reload les animations si la class etait deja la
+ * permet de faire un addClass qui reload les animations si la class était déjà là
  */
 (function ( $ ) {
 	$.fn.addClassReload = function(className) {
