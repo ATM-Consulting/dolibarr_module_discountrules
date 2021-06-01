@@ -306,7 +306,7 @@ var DiscountRule = {};
 	 * cette fonction était à l'origine dans le fichier action_discountrules.class.php
 	 * placée ici pour factorisation du code
 	 *
-	 * MISE EN GARDE : Les module suivant utlisent cette methode donc faites attention si vous modifiez les paramettres
+	 * MISE EN GARDE : Les modules suivants utlisent cette methode donc faites attention si vous modifiez les paramètres
 	 * 				->	module_advancedproductsearch
 	 *
 	 * @param int idprod
