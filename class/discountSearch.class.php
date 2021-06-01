@@ -115,7 +115,7 @@ class DiscountSearch
 
 
 	/**
-	 * @param int   $qty
+	 * @param double   $qty
 	 * @param int   $fk_product
 	 * @param int   $fk_company
 	 * @param int   $fk_project
@@ -470,12 +470,24 @@ class DiscountSearchResult
 	public $id;
 	public $label;
 	public $qty;
-	public $subprice;
-	public $product_price;
+
+	/** @var double $standard_product_price  Prix unitaire de vente standard du produit pour la société (incluant les niveaux de prix et hors prix spécifiques produit appliqués par discountrules) */
 	public $standard_product_price;
+
+	/** @var double $product_price  Prix unitaire produit appliqué par discountrules sans aucune réduction */
+	public $product_price;
+	/** @var double $product_reduction_amount  Montant de la réduction à appliquer au prix unitaire avant réduction en pourcentage */
 	public $product_reduction_amount = 0;
+
+	/** @var double $subprice  Prix unitaire produit hors réduction en pourcentage (le prix produit) */
+	public $subprice;
+	/** @var int $reduction  Réduction en pourcentage */
 	public $reduction;
+
+	/** @var int $entity */
 	public $entity;
+	
+	/** @var int $fk_status */
 	public $fk_status;
 	public $date_object;
 	public $date_object_human;

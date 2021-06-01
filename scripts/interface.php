@@ -38,7 +38,7 @@ require_once __DIR__ . '/../class/discountrule.class.php';
 require_once __DIR__ . '/../class/discountSearch.class.php';
 require_once __DIR__ . '/../lib/discountrules.lib.php';
 
-global $langs, $db, $hookmanager, $user;
+global $langs, $db, $hookmanager, $user, $mysoc;
 /**
  * @var DoliDB $db
  */
@@ -53,22 +53,21 @@ $action = GETPOST('action');
 // Security check
 if (empty($conf->discountrules->enabled)) accessforbidden('Module not enabled');
 
-//TODO: why user is not loaded ?
-//if ($action === 'product-discount'
-//	&& ($user->socid > 0 || empty($user->rights->discountrules->read))
-//)
-//{
-//	$jsonResponse = new stdClass();
-//	$jsonResponse->result = false;
-//	$jsonResponse->log = array("Not enough rights", $user->rights->discountrules->read );
-//
-//	// output
-//	print json_encode($jsonResponse, JSON_PRETTY_PRINT);
-//	$db->close();    // Close $db database opened handler
-//	exit;
-//}
+if ($action === 'product-discount'
+	&& ($user->socid > 0 || empty($user->rights->discountrules->read))
+)
+{
+	$jsonResponse = new stdClass();
+	$jsonResponse->result = false;
+	$jsonResponse->log = array("Not enough rights", $user->rights->discountrules->read );
 
+	// output
+	print json_encode($jsonResponse, JSON_PRETTY_PRINT);
+	$db->close();    // Close $db database opened handler
+	exit;
+}
 
+// RECHERCHE DE REMISES
 if ($action === 'product-discount') {
 
 	$fk_product = GETPOST('fk_product', 'int');
@@ -81,7 +80,7 @@ if ($action === 'product-discount') {
 	$search = new DiscountSearch($db);
 	$jsonResponse = $search->search($qty, $fk_product, $fk_company, $fk_project, array(), array(), $fk_c_typent, $fk_country);
 
-	// Mise en page de du résultat
+	// Mise en page du résultat
 	$jsonResponse->tpMsg = getDiscountRulesInterfaceMessageTpl($langs, $jsonResponse, $action);
 
 	// Note that $action and $object may be modified by hook
@@ -103,6 +102,7 @@ if ($action === 'product-discount') {
 	// output
 	print json_encode($jsonResponse, JSON_PRETTY_PRINT);
 }
+
 elseif($action === 'export-price')
 {
 	_exportProductsPrices();
@@ -143,13 +143,6 @@ function _exportProductsPrices(){
 	$fourn_id = GETPOST("fourn_id", 'int');
 	$catid = GETPOST('catid', 'int');
 	$search_tobatch = GETPOST("search_tobatch", 'int');
-	$search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
-	$search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
-	$search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
-	$search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
-	$search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
-	$search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
-	$optioncss = GETPOST('optioncss', 'alpha');
 	$type = GETPOST("type", "int");
 
 	$sortfield = GETPOST("sortfield", 'alpha');

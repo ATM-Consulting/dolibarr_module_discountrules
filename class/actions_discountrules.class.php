@@ -209,7 +209,7 @@ class Actionsdiscountrules
 					let FormmUpdateLine = 	!document.getElementById("addline");
 					// si nous sommes dans le formulaire Modification
 					if (FormmUpdateLine) {
-						discountFetchOnEditLine('<?php print $object->element; ?>',idLine,idProd,<?php print intval($object->socid); ?>,<?php print intval($object->fk_project); ?>,<?php print intval($object->country_id); ?>);
+						DiscountRule.fetchDiscountOnEditLine('<?php print $object->element; ?>',idLine,idProd,<?php print intval($object->socid); ?>,<?php print intval($object->fk_project); ?>,<?php print intval($object->country_id); ?>);
 					}
 				});
 
@@ -284,126 +284,20 @@ class Actionsdiscountrules
 				print dolGetButtonAction($langs->trans("UpdateDiscountsFromRules"),'','default',$btnActionUrl,'',$user->rights->discountrules->read && $updateDiscountBtnRight);
 			}
 
-
 			// ADD DISCOUNT RULES SEARCH ON DOCUMENT ADD LINE FORM
 			?>
 		    <!-- MODULE discountrules -->
 			<script type="text/javascript">
 				$(document).ready(function(){
+					// DISCOUNT RULES CHECK
 					$( "#idprod, #qty" ).change(function() {
-						discountUpdate();
-					});
-					var defaultCustomerReduction = <?php print floatval($object->thirdparty->remise_percent); ?>;
-					var lastidprod = 0;
-					var lastqty = 0;
-
-					function discountUpdate(){
-
 						if($('#idprod') == undefined || $('#qty') == undefined ){  return 0; }
-						
-						var idprod = $('#idprod').val();
-						var qty = $('#qty').val();
-						if(idprod != lastidprod || qty != lastqty)
-						{
 
-							lastidprod = idprod;
-							lastqty = qty;
-
-							var urlInterface = "<?php print dol_buildpath('discountrules/scripts/interface.php',1); ?>";
-
-							$.ajax({
-								  method: "POST",
-								  url: urlInterface,
-								  dataType: 'json',
-								  data: { 
-									    'fk_product': idprod,
-								    	'action': "product-discount",
-								    	'qty': qty,
-								    	'fk_company': '<?php print intval($object->socid); ?>',
-									    'fk_project' : '<?php print intval($object->fk_project); ?>',
-								  		}
-							})
-							.done(function( data ) {
-								var $inputPriceHt = $('#price_ht');
-							    var $inputRemisePercent = $('#remise_percent');
-							    var discountTooltip = data.tpMsg;
-
-
-							    if(data.result && data.element === "discountrule")
-							    {
-							    	$inputRemisePercent.val(data.reduction);
-									$inputRemisePercent.addClassReload("discount-rule-change --info");
-
-							    	if(data.subprice > 0){
-										// application du prix de base
-							    		$inputPriceHt.val(data.subprice);
-										$inputPriceHt.addClassReload("discount-rule-change --info");
-									}
-							    }
-							    else if(data.result
-                                    && (data.element === "facture" || data.element === "commande" || data.element === "propal"  )
-                                )
-                                {
-                                    $inputRemisePercent.val(data.reduction);
-									$inputRemisePercent.addClassReload("discount-rule-change --info");
-									$inputPriceHt.val(data.subprice);
-									$inputPriceHt.addClassReload("discount-rule-change --info");
-                                }
-                                else
-							    {
-								    if(defaultCustomerReduction>0)
-								    {
-										$inputPriceHt.removeClass("discount-rule-change --info");
-								    	$inputRemisePercent.val(defaultCustomerReduction); // apply default customer reduction from customer card
-										$inputRemisePercent.addClass("discount-rule-change --info");
-								    }
-								    else
-								    {
-								    	$inputRemisePercent.val('');
-										$inputPriceHt.removeClass("discount-rule-change --info");
-										$inputRemisePercent.removeClass("discount-rule-change --info");
-								    }
-							    }
-
-								// add tooltip message
-						    	$inputRemisePercent.attr("title", discountTooltip);
-								$inputPriceHt.attr("title", discountTooltip);
-
-						    	// add tooltip
-						    	if(!$inputRemisePercent.data("tooltipset")){
-									$inputRemisePercent.data("tooltipset", true);
-    						    	$inputRemisePercent.tooltip({
-    									show: { collision: "flipfit", effect:"toggle", delay:50 },
-    									hide: { delay: 50 },
-    									tooltipClass: "mytooltip",
-    									content: function () {
-    			              				return $(this).prop("title");		/* To force to get title as is */
-    			          				}
-    								});
-						    	}
-
-								if(!$inputPriceHt.data("tooltipset")){
-									$inputPriceHt.data("tooltipset", true);
-									$inputPriceHt.tooltip({
-										show: { collision: "flipfit", effect:"toggle", delay:50 },
-										hide: { delay: 50 },
-										tooltipClass: "mytooltip",
-										content: function () {
-											return $(this).prop("title");		/* To force to get title as is */
-										}
-									});
-								}
-
-						    	// Show tootip
-						    	if(data.result){
-    						    	 $inputRemisePercent.tooltip().tooltip( "open" ); //  to explicitly show it here
-    						    	 setTimeout(function() {
-    						    		 $inputRemisePercent.tooltip().tooltip("close" );
-    						    	 }, 2000);
-						    	}
-							});
-						}
-					}
+						let defaultCustomerReduction = '<?php print floatval($object->thirdparty->remise_percent); ?>';
+						let fk_company = '<?php print intval($object->socid); ?>';
+						let fk_project = '<?php print intval($object->fk_project); ?>';
+						DiscountRule.discountUpdate($('#idprod').val(), fk_company, fk_project, '#qty', '#price_ht', '#remise_percent', defaultCustomerReduction);
+					});
 				});
 			</script>
 			<!-- END MODULE discountrules -->
