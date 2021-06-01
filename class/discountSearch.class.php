@@ -471,7 +471,8 @@ class DiscountSearchResult
 	public $label;
 	public $qty;
 
-	public $standard_product_price; // le prix unitaire de vente standard du produit pour la société (incluant les niveaux de prix et hors prix spécifiqued produit appliqués par discountrule)
+	/** @var double $standard_product_price  Prix unitaire de vente standard du produit pour la société (incluant les niveaux de prix et hors prix spécifiques produit appliqués par discountrules) */
+	public $standard_product_price;
 
 	public $product_price; // Prix unitaire produit appliqué par discountrule sans aucune réductions
 	public $product_reduction_amount = 0; // le montant de la réduction à appliquer au prix unitaire avant réduction en pourcentage
