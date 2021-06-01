@@ -53,7 +53,6 @@ $action = GETPOST('action');
 // Security check
 if (empty($conf->discountrules->enabled)) accessforbidden('Module not enabled');
 
-//TODO: why user is not loaded ?
 if ($action === 'product-discount'
 	&& ($user->socid > 0 || empty($user->rights->discountrules->read))
 )
