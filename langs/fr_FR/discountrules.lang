@@ -92,7 +92,7 @@ MenuDiscountRulePricesList = Liste des prix
 ListOfDiscountRules=Liste des règles de remises
 PriceSimulationInputs = Données de simulation
 SearchInputs = Filtres de recherche
-DoNotDisplayRulesWithProduct = Ne pas afficher les règles liées à des produits ou services (désactive par conséquent toutes recherches en cours sur un produit ou service)
+DoNotDisplayRulesWithProduct = Ne pas afficher les règles liées à des produits ou services (désactive par conséquent toute recherche en cours sur un produit ou service)
 
 #
 # Price list
