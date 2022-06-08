@@ -190,7 +190,7 @@ llxFooter();
 
 function _showImportForm($form,$startline,$endline) {
 	global $langs;
-
+	$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 	$acceptedEncodings = array(
 		'UTF-8',
 		'latin1',
@@ -206,7 +206,7 @@ function _showImportForm($form,$startline,$endline) {
 				<?php echo $langs->trans('PickCSVFile'); ?> :
 			</label>
 			<input type="hidden" name="action" value="importCSV" />
-			<input type="hidden" name="token" value="<?php echo newToken() ?>" />
+			<input type="hidden" name="token" value="<?php echo $newToken ?>" />
 
 			<input id="CSVFile" name="CSVFile" type="file" required />
 			<br/>

@@ -114,6 +114,7 @@ if ($user->socid > 0 // Protection if external user
 	accessforbidden();
 }
 
+$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -321,7 +322,7 @@ if ($action == 'create')
 	print load_fiche_titre($title, '', 'discountrules@discountrules');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$newToken.'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
     if(!empty($fk_product)){
@@ -370,6 +371,7 @@ if ($id && $action == 'edit')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
     print '<input type="hidden" name="fk_product" value="'.$object->fk_product.'">';
+	print '<input type="hidden" name="token" value="'.$newToken.'">';
 
 	dol_fiche_head();
 
