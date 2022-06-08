@@ -55,7 +55,7 @@ class moddiscountrules extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		// It is used to group modules by family in module setup page
-		$this->family = "products";
+		$this->family = "ATM Consulting - CRM (negoce)  ";
 		// Module position in the family
 		$this->module_position = 500;
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
@@ -73,7 +73,7 @@ class moddiscountrules extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 
-		$this->version = '2.18.2';
+		$this->version = '2.18.5';
 
 		// Key used in llx_const table to save module status enabled/disabled (where discountrules is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
