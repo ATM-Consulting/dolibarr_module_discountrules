@@ -46,7 +46,7 @@ $hookmanager->initHooks('discountruleinterface');
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("discountrules@discountrules", "other", 'main'));
-
+$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 $action = GETPOST('action');
 
 
@@ -79,7 +79,7 @@ if ($action === 'display-documents-lines') {
 		if ($object->fetch($fk_element)>0) {
 			if(!empty($object->lines)){
 				$jsonResponse->html = discountRuleDocumentsLines($object);
-				$jsonResponse->html.= '<input type="hidden" name="token" value="'.newToken().'" />';
+				$jsonResponse->html.= '<input type="hidden" name="token" value="'.$newToken.'" />';
 				$jsonResponse->result = true;
 			}else{
                 $jsonResponse->html = '<div class="dr-big-info-msg">'.$langs->trans('NoProductService').'</div>';

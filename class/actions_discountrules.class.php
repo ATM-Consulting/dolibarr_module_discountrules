@@ -275,7 +275,7 @@ class Actionsdiscountrules
 	public function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf, $user, $langs;
-
+		$newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 		$context = explode(':', $parameters['context']);
 
 		$langs->loadLangs(array('discountrules'));
@@ -298,7 +298,7 @@ class Actionsdiscountrules
 
 				$params = array(
 						'attr' => array(
-								'data-document-url' => $_REQUEST['PHP_SELF'] . '?id=' . $object->id . '&token=' . newToken(),
+								'data-document-url' => $_REQUEST['PHP_SELF'] . '?id=' . $object->id . '&token=' . $newToken,
 								'data-target-id' => $object->id,
 								'data-target-element' => $object->element,
 								'title' => $langs->transnoentities("drreapplyDescription"),
