@@ -3,8 +3,12 @@
 ## Not Released
 
 ## 2.18
-- FIX : V16 FAMILY - *08/06/2022* - 2.18.5  
-- FIX: US price format for discounts - *05/05/2022* - 2.18.2
+
+- FIX : V16 FAMILY - *08/06/2022* - 2.18.6 
+- FIX : US price format for discounts - *05/05/2022* - 2.18.5
+- FIX : UPDATE TRIGGER TO MODIFY  - *08/06/2022* - 2.18.4  
+- FIX : V16 TOKEN - *08/06/2022* - 2.18.3
+- FIX : US price format for discounts - *05/05/2022* - 2.18.2
 - FIX : Import CSV date format with d/m/Y (Exemple : 25/01/2022) *14/04/2022* - 2.18.1
 - FIX : SQL migration file 2.17 => 2.18 to set all_category_project field in llx_discountrule default value to 1 - *13/04/2022* - 2.18.0
 
