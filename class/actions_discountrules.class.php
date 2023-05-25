@@ -132,9 +132,16 @@ class Actionsdiscountrules
 						return -1;
 					}
 
+					// Search discount
+					require_once __DIR__ . '/discountSearch.class.php';
+					$discountSearch = new DiscountSearch($object->db);
+					$discountSearch->date = $dateTocheck;
+
+					$discountSearchResult = $discountSearch->search($line->qty, $line->fk_product, $object->socid, $object->fk_project);
+
 					// RE-Appliquer la description si besoin
 					if($productDescriptionReapply) {
-						$newProductDesc = discountruletools::generateDescForNewDocumentLineFromProduct($object, $product);
+						$newProductDesc = discountruletools::generateDescForNewDocumentLineFromProduct($object, $product, $discountSearchResult->description);
 						if($line->desc != $newProductDesc){
 							$line->desc = $newProductDesc;
 							$lineToUpdate = true;
@@ -143,13 +150,6 @@ class Actionsdiscountrules
 
 					// Met à jour le prix de vente suivant les conditions tarifaires
 					if($priceReapply) {
-
-						// Search discount
-						require_once __DIR__ . '/discountSearch.class.php';
-						$discountSearch = new DiscountSearch($object->db);
-						$discountSearch->date = $dateTocheck;
-
-						$discountSearchResult = $discountSearch->search($line->qty, $line->fk_product, $object->socid, $object->fk_project);
 
 						DiscountRule::clearProductCache();
 						$oldsubprice = $line->subprice;
