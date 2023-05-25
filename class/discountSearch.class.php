@@ -250,6 +250,7 @@ class DiscountSearch
 			$this->result->element = 'discountrule';
 			$this->result->id = $this->discountRule->id;
 			$this->result->label = $this->discountRule->label;
+			$this->result->description = $this->discountRule->description;
 
 			$this->result->subprice = $this->discountRule->getDiscountSellPrice($this->fk_product, $this->fk_company) - $this->discountRule->product_reduction_amount;
 			$this->result->product_price = $this->discountRule->product_price;

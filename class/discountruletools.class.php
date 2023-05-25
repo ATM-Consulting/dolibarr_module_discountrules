@@ -193,14 +193,14 @@ class DiscountRuleTools
 	 * @param Product $prod
 	 * @return string
 	 */
-	public static function generateDescForNewDocumentLineFromProduct($object, $prod)
+	public static function generateDescForNewDocumentLineFromProduct($object, $prod, $discountruledescription = '')
 	{
 		global $db, $conf, $langs;
 
 		$proddesc = $prod->description;
 
 		// Add custom code and origin country into description
-		if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code)))
+		if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (!empty($prod->customcode) || !empty($prod->country_code)) && empty($conf->global->DISCOUNTRULES_ENABLE_RULE_DESCRIPTION))
 		{
 			$tmptxt = '(';
 			// Define output language
@@ -231,6 +231,9 @@ class DiscountRuleTools
 			}
 			$tmptxt .= ')';
 			$proddesc = dol_concatdesc($prod->description, $tmptxt);
+		}
+		else if (!empty($conf->global->DISCOUNTRULES_ENABLE_RULE_DESCRIPTION) && !empty($discountruledescription)) {
+			$proddesc = $discountruledescription;
 		}
 
 		return $proddesc;

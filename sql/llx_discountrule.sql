@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) 2023 Sylvain Legrand - InfraS - technique@infras.fr
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 CREATE TABLE IF NOT EXISTS llx_discountrule (
   rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   label varchar(255) NOT NULL,
+  description text,
   tms timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   entity int(11) NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL,

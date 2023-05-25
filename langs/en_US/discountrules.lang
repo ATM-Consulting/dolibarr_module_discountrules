@@ -150,6 +150,7 @@ UpdateDiscountsFromRules = Update prices
 ParameterForDevelopmentOrDeprecated = Parameters under development
 ParameterForDevelopmentOrDeprecatedHelp = Please note that the following settings are for development purposes only if you know what you are doing.
 DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_ALL_LINES = Please note that the following parameters are under development, activate them only if you know what you are doing.
+DISCOUNTRULES_ENABLE_RULE_DESCRIPTION = Addition of a description (WYSIWYG field) linked to the discount rules => This description replaces the description of the product / service on which the rule applies
 ListOfDiscountRules = List of discount rules
 ThirdPartyType = Type of third party
 InfosProject = Project

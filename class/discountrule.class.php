@@ -422,6 +422,14 @@ class DiscountRule extends CommonObject
 				self::STATUS_ACTIVE => 'Enable'
 			)
 	    ),
+
+		'description' => array(
+			'type' => 'html',
+			'label'	=>	'Description',
+			'enabled' => 1,
+			'visible' => 3,
+			'position' => 2500
+		)
 	);
 	
 
@@ -505,7 +513,10 @@ class DiscountRule extends CommonObject
 			$this->fields['fk_product']['visible'] = 1;
 		}
 
-
+		if (empty($conf->global->DISCOUNTRULES_ENABLE_RULE_DESCRIPTION)){
+			$this->fields['description']['visible'] = 0;
+			$this->fields['description']['enabled'] = 0;
+		}
 
 		if(!empty($this->fk_project)){
 			// visibility

@@ -66,6 +66,7 @@ BestCustomerPrice = Meilleur prix pratiqué
 ParameterForDevelopmentOrDeprecated = Paramettres en développement
 ParameterForDevelopmentOrDeprecatedHelp = Attention les paramettres suivants sont en développements, activez-les seulement si vous savez ce que vous faites.
 DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_ALL_LINES = Permettre de mettre à jours toutes les remises d'un document avec les dernières règles en vigueurs
+DISCOUNTRULES_ENABLE_RULE_DESCRIPTION = Ajout d'une description (champ WYSIWYG) liée aux règles de remise => Cette description remplace la description du produit / service sur lequel s'applique la règle
 
 #
 # Page À propos
