@@ -130,7 +130,7 @@ class InterfaceDiscountrulestrigger extends DolibarrTriggers
 		// insert line
 		if (in_array($action, $insert_actions)) {
 			dol_syslog('Trigger "'.$this->name.'" for action '.$action.' launched by '. __FILE__ .' id = '.$object->rowid);
-			$res	= $this->updateDesc($element, $object, $action);
+			if (!empty($object->fk_product))	$res	= $this->updateDesc($element, $object, $action);
 			return $res;
 		}
 		return 0;
