@@ -5,7 +5,7 @@
 
 
 ## RELEASE 2.23
-
+- FIX : DA025053 change $lineArray in $TLineArray we need an array to import - *29/04/2024* - 2.35.6 
 - FIX : Compat. v19 - selectForForms doesn't get module files properly - *23/04/2024* - 2.23.5
 - FIX : PHP Error : Attempt to assign property "tpMsg" on int in  - *20/03/2024* - 2.23.4
 - FIX : Fatal error : Call to undefined function getCountry() - *20/03/2024* - 2.23.3
