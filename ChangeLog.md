@@ -2,7 +2,7 @@
 
 ## Not Released
 
-
+- NEW : COMPAT V20 - *02/07/2024* - 2.24
 
 ## RELEASE 2.23
 
