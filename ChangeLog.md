@@ -6,6 +6,7 @@
 
 ## RELEASE 2.24
 
+- FIX : Suppression des massActions initialisées par le module car on utilise celle "standard" - **  29/10/2024 ** - 2.24.1
 - NEW : compatibility V20, changed Dolibarr compatibility range 16.0 to 20.0 - *22/07/2024* - 2.24.0
 
 
