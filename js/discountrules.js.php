@@ -107,35 +107,6 @@ $( document ).ready(function() {
 	/***************************************************************/
 	$('#remise_percent').parent().append('<span class="suggest-discount --disable" id="suggest-discount"></span>');
 
-
-	/*****************************************************/
-	/* Pour les actions en masse sur liste des produits  */
-	/*****************************************************/
-	var discountRulesCheckSelectCat = true;
-
-    $("[name='massaction']").change(function() {
-
-    	if($(this).val() == 'addtocategory' || $(this).val() == 'removefromcategory' )
-    	{
-    		var catinput = $('#' + DiscountRule.config.catImput);
-    		if(catinput != undefined)
-    		{
-    			if(catinput.val() == ""){
-					// set error
-					catinput.get(0).setCustomValidity(DiscountRule.langs.CategoryNotSelected); // Apparement le message n'est pas toujours affiché
-					DiscountRule.setEventMessage(DiscountRule.langs.CategoryNotSelected, false); // Du coup ajout d'un set event message
-					discountRulesCheckSelectCat = false;
-				}
-    		}
-    	}
-    	else
-    	{
-			// reset error
-			$(this).get(0).setCustomValidity('');
-			discountRulesCheckSelectCat = true;
-    	}
-    });
-
 	$('#' + DiscountRule.config.catImput).change(function() {
 		if(!discountRulesCheckSelectCat && $(this).val() != "")
 		{
