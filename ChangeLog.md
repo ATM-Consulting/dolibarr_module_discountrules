@@ -1,7 +1,7 @@
 # CHANGELOG FOR DISCOUNTRULES MODULE
 
 ## Not Released
-
+- NEW : COMPAT V21 - **10/12/2024** - 2.25.0
 
 
 ## RELEASE 2.24
