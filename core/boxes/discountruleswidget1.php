@@ -95,7 +95,7 @@ class discountruleswidget1 extends ModeleBoxes
 		$this->param = $param;
 
 		//$this->enabled = $conf->global->FEATURES_LEVEL > 0;         // Condition when module is enabled or not
-		//$this->hidden = ! ($user->rights->discountrules->myobject->read);   // Condition when module is visible by user (test on permission)
+		//$this->hidden = ! ($user->hasRight("discountrules", "myobject", "read"));   // Condition when module is visible by user (test on permission)
 	}
 
 	/**

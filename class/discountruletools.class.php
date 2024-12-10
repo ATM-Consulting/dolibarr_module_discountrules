@@ -173,7 +173,7 @@ class DiscountRuleTools
 		}
 
 
-		if (!empty($conf->$module->enabled))
+		if (isModEnabled($module))
 		{
 			$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 			if ($res)

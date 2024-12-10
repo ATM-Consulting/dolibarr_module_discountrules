@@ -207,9 +207,9 @@ $isInEEC = isInEEC($mysoc);
 // Definition of fields for lists
 $arrayfields = array(
 		'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-		//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
+		//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled("barcode"))),
 		'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1, 'position'=>10),
-		'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(isModEnabled('>product') && !empty($conf->service->enabled)), 'position'=>11),
+		'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(isModEnabled('product') && isModEnabled("service")), 'position'=>11),
 		'p.sellprice'=>array('label'=>$langs->trans("BaseSellingPrice"), 'checked'=>1, 'enabled'=>!getDolGlobalInt('PRODUIT_MULTIPRICES'), 'position'=>40),
 		'discountlabel'=>array('label'=>$langs->trans("Discountrule"), 'checked'=>1,  'position'=>40),
 		'discountproductprice'=>array('label'=>$langs->trans("NewProductPrice"), 'checked'=>1, 'position'=>50),

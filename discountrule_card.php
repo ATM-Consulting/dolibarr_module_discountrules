@@ -503,7 +503,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print dolGetButtonAction($langs->trans("Disable"), '', 'default', $actionUrl . 'disable', '', $user->hasRight('discountrules', 'create'));
         }
 
-        //print dolGetButtonAction($langs->trans("Clone"), '', 'default', $actionUrl . 'clone', '', $user->rights->discountrules->create);
+        //print dolGetButtonAction($langs->trans("Clone"), '', 'default', $actionUrl . 'clone', '', $user->hasRight("discountrules", "create"));
         print dolGetButtonAction($langs->trans("Modify"), '', 'default', $actionUrl . 'edit', '', $user->hasRight('discountrules', 'create'));
         print dolGetButtonAction($langs->trans("Delete"), '', 'danger', $actionUrl . 'delete', '', $user->hasRight('discountrules', 'delete'));
     }

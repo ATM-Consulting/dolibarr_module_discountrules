@@ -122,7 +122,7 @@ class moddiscountrules extends DolibarrModules
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('modCategorie');		// List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of module ids to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(7,0);					// Minimum version of PHP required by module
@@ -195,7 +195,7 @@ class moddiscountrules extends DolibarrModules
             'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
             'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
             'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->discountrules->enabled,$conf->discountrules->enabled,$conf->discountrules->enabled)												// Condition to show each dictionary
+            'tabcond'=>array(isModEnabled("discountrules"),isModEnabled("discountrules"),isModEnabled("discountrules"))												// Condition to show each dictionary
         );
         */
 
@@ -225,30 +225,30 @@ class moddiscountrules extends DolibarrModules
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'ReadDiscountsRules';// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
 
 		$r++;
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'CreateUpdateDiscountsRules';// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'create';			// In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
+		$this->rights[$r][4] = 'create';			// In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
 
 		$r++;
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'DeleteDiscountsRules';// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
+		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
 
 
 		$r++;
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'RightUserCanOverrideForcedMod';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'overrideForcedMod';	// In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
-		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->discountrules->level1->level2)
+		$this->rights[$r][4] = 'overrideForcedMod';	// In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
+		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->hasRight("discountrules", "level1", "level2"))
 
 
 
@@ -269,8 +269,8 @@ class moddiscountrules extends DolibarrModules
 								'url'=>'/discountrules/discountrulesindex.php',
 								'langs'=>'discountrules@discountrules',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
-								'enabled'=>'$conf->discountrules->enabled',	// Define condition to show or hide menu entry. Use '$conf->discountrules->enabled' if entry must be visible if module is enabled.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->discountrules->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'isModEnabled("discountrules")',	// Define condition to show or hide menu entry. Use 'isModEnabled("discountrules")' if entry must be visible if module is enabled.
+								'perms'=>'1',			                // Use 'perms'=>'$user->hasRight("discountrules", "level1", "level2")' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 */
@@ -289,7 +289,7 @@ class moddiscountrules extends DolibarrModules
                     		    'langs'=>'discountrules@discountrules',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                     		    'position'=>1000+$r,
                     		    'enabled'=>'isModEnabled("discountrules")',  // Define condition to show or hide menu entry. Use '$conf->discountrules->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-                    		    'perms'=>'$user->rights->discountrules->read',			                // Use 'perms'=>'$user->rights->discountrules->level1->level2' if you want your menu with a permission rules
+                    		    'perms'=>'$user->hasRight("discountrules", "read")',			                // Use 'perms'=>'$user->hasRight("discountrules", "level1", "level2")' if you want your menu with a permission rules
                     		    'target'=>'',
                     		    'prefix' => '<span class="fas fa-tag em092 pictofixedwidth discount-rules-left-menu-picto" style="color: #e72400;"></span>',
                     		    'user'=>0
@@ -308,7 +308,7 @@ class moddiscountrules extends DolibarrModules
 								'langs'=>'discountrules@discountrules',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000+$r,
 								'enabled'=>'isModEnabled("discountrules")',  // Define condition to show or hide menu entry. Use '$conf->discountrules->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'$user->rights->discountrules->create',			                // Use 'perms'=>'$user->rights->discountrules->level1->level2' if you want your menu with a permission rules
+								'perms'=>'$user->hasRight("discountrules", "create")',			                // Use 'perms'=>'$user->hasRight("discountrules", "level1", "level2")' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
@@ -322,7 +322,7 @@ class moddiscountrules extends DolibarrModules
             'langs'=>'discountrules@discountrules',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'isModEnabled("discountrules")',  // Define condition to show or hide menu entry. Use '$conf->discountrules->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'$user->rights->discountrules->read',			                // Use 'perms'=>'$user->rights->discountrules->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->hasRight("discountrules", "read")',			                // Use 'perms'=>'$user->hasRight("discountrules", "level1", "level2")' if you want your menu with a permission rules
             'target'=>'',
             'user'=>0
 		);
@@ -338,7 +338,7 @@ class moddiscountrules extends DolibarrModules
             'langs'=>'discountrules@discountrules',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'isModEnabled("discountrules")',  // Define condition to show or hide menu entry. Use '$conf->discountrules->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'$user->rights->discountrules->read',			                // Use 'perms'=>'$user->rights->discountrules->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->hasRight("discountrules", "read")',			                // Use 'perms'=>'$user->hasRight("discountrules", "level1", "level2")' if you want your menu with a permission rules
             'target'=>'',
             'user'=>0
 		);
@@ -356,8 +356,8 @@ class moddiscountrules extends DolibarrModules
 			'url'=>'/discountrules/discount_rules_import.php?datatoimport=importdiscountrules&mainmenu=tools',
 			'langs'=>'importdiscountrules@discountrules', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
-			'enabled'=>'isModEnabled("discountrules")', // Define condition to show or hide menu entry. Use '$conf->importdiscountrules->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->discountrules->create',			                // Use 'perms'=>'$user->rights->cliaufildesmatieres->level1->level2' if you want your menu with a permission rules
+			'enabled'=>'isModEnabled("discountrules")', // Define condition to show or hide menu entry. Use 'isModEnabled("importdiscountrules")' if entry must be visible if module is enabled.
+			'perms'=>'$user->hasRight("discountrules", "read")',			                // Use 'perms'=>'$user->hasRight("cliaufildesmatieres", "level1", "level2")' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>0, // 0=Menu for internal users, 1=external users, 2=both
 		);
