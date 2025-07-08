@@ -1658,7 +1658,6 @@ class DiscountRule extends CommonObject
             $tableDet       = 'facturedet';
             $fkObjectCol    = 'fk_facture';
 			$dateDocCol		= 'datef';
-            if(intval(DOL_VERSION) < 10) $refCol = 'facnumber';
         }
         elseif($element === 'commande'){
             $table          = 'commande';

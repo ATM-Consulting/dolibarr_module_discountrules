@@ -92,10 +92,6 @@ if(intval(DOL_VERSION) > 10){
 	// Use an multiselect field
 	$confToJs->catImput = "search_category_product_list";
 }
-else{
-	// Use an single select field
-	$confToJs->catImput = "select_categ_search_categ";
-}
 
 ?>
 

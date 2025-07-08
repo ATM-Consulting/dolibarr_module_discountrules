@@ -4,6 +4,7 @@
 
 
 ## Not Released
+- NEW : COMPAT V22 - *08/07/2025* - 2.26.0
 
 ## RELEASE 2.25
 - FIX : Mark/Margin minimum rate feature did not work properly need to add condition to check there is an empty value - *08/07/2025* - 2.25.2

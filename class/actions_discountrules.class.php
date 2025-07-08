@@ -44,7 +44,7 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 
 
 	/**
-	 * @var array Hook results. Propagated to $hookmanager->resArray for later reuse
+	 * @var array Hook results. Propagated to $this->results for later reuse
 	 */
 	public $results = array();
 
@@ -468,11 +468,6 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 				if (intval(DOL_VERSION) > 10) {
 					// After Dolibarr V10 it's a category multiselect field
 					$TSearch_categ = GETPOST("search_category_product_list", 'array');
-				} else {
-					$get_search_categ = GETPOST('search_categ', 'int');
-					if (!empty($get_search_categ)) {
-						$TSearch_categ[] = $get_search_categ;
-					}
 				}
 
 				// Get current categories
@@ -585,12 +580,6 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 							}
 
 							if ($nbRules > 0) $parameters['head'][$h][1] = $langs->trans('TabTitleDiscountRule') . ' <span class="badge">' . ($nbRules) . '</span>';
-
-
-							if($parameters['head'] && intval(DOL_VERSION) < 14){
-								$this->results = $parameters['head'];
-								return 1;
-							}
 						}
 					}
 				}
