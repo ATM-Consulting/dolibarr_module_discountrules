@@ -73,7 +73,7 @@ class moddiscountrules extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 
-		$this->version = '2.25.2';
+		$this->version = '2.25.3';
 
 		// Key used in llx_const table to save module status enabled/disabled (where discountrules is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -171,7 +171,7 @@ class moddiscountrules extends DolibarrModules
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
         $this->tabs = array(
-            'product:+discountrules:TabTitleDiscountRule:discountrules@discountrules:$user->rights->discountrules->read:/discountrules/discountrule_list.php?contextpage=discountrulelistforproduct&fk_product=__ID__',
+				'product:+discountrules,:TabTitleDiscountRule,DiscountRule,/discountrules/class/discountrule.class.php,countProductOccurrences:discountrules@discountrules:$user->rights->discountrules->read:/discountrules/discountrule_list.php?contextpage=discountrulelistforproduct&fk_product=__ID__',
             'thirdparty:+discountrules:TabTitleDiscountRule:discountrules@discountrules:$user->rights->discountrules->read:/discountrules/discountrule_list.php?contextpage=discountrulelistforcompany&fk_company=__ID__',
             // 'thirdparty:+discountrules:TabTitleDiscountRule:discountrules@discountrules:$user->rights->discountrules->read:/discountrules/discountrule_list.php?fk_company=__ID__', // Todo : rectifier le bug de bouble affichage
         );

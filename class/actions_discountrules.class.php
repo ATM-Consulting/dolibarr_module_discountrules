@@ -544,62 +544,6 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 		return 0;
 	}
 
-	/**
-	 * Overloading the completeTabsHead function : replacing the parent's function with the one below
-	 *
-	 * @param array()         $parameters     Hook metadatas (context, etc...)
-	 * @param CommonObject $object The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
-	 * @param string $action Current action (if set). Generally create or edit or null
-	 * @param HookManager $hookmanager Hook manager propagated to allow calling another hook
-	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
-	 */
-	public function completeTabsHead($parameters, &$object, &$action, $hookmanager)
-	{
-		global $conf, $user, $langs, $db;
-		if (!empty($parameters['object']) && $parameters['mode'] === 'add') {
-			$pObject = $parameters['object'];
-			if (in_array($pObject->element, array('product', 'societe'))) {
-				if ($pObject->element == 'product') {
-					$column = 'fk_product';
-				} elseif ($pObject->element == 'societe') {
-					$column = 'fk_company';
-				}
-
-				if (!empty($parameters['head'])) {
-					foreach ($parameters['head'] as $h => $headV) if(!empty($headV)){
-						if ($headV[2] == 'discountrules') {
-							$nbRules = 0;
-							$resql = $pObject->db->query('SELECT COUNT(*) as nbRules FROM ' . MAIN_DB_PREFIX . 'discountrule drule WHERE ' . $column . ' = ' . intval($pObject->id) . ';');
-
-							if($column == 'fk_company') {
-							    dol_include_once('/discountrules/class/discountSearch.class.php');
-							    $sql = 'SELECT COUNT(*) as nbRules FROM '.MAIN_DB_PREFIX.'discountrule t WHERE 1=1';
-							    $sql .= DiscountSearch::getCompanySQLFilters($pObject->id);
-                            } else {
-							    $sql = 'SELECT COUNT(*) as nbRules FROM '.MAIN_DB_PREFIX.'discountrule drule WHERE '.$column.' = '.intval($pObject->id).';';
-                            }
-							$resql= $pObject->db->query($sql);
-							if($resql>0){
-								$obj = $pObject->db->fetch_object($resql);
-								$nbRules = $obj->nbRules;
-							}
-
-							if ($nbRules > 0) $parameters['head'][$h][1] = $langs->trans('TabTitleDiscountRule') . ' <span class="badge">' . ($nbRules) . '</span>';
-
-
-							if($parameters['head'] && intval(DOL_VERSION) < 14){
-								$this->results = $parameters['head'];
-								return 1;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return 0;
-	}
-
 	public function llxFooter($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf, $langs;
@@ -607,7 +551,12 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 		//Recup le taux selectionné + Taux minimum
 		$options = array(0 => 'MarkRate', 1 => 'MarginRate');
 		$valueConfMarkupMarginRate = $options[getDolGlobalInt('DISCOUNTRULES_MARKUP_MARGIN_RATE')];
-		$minimumRate = getDolGlobalFloat('DISCOUNTRULES_MINIMUM_RATE');
+		if (intval(DOL_VERSION) <= 19)
+		{
+			$minimumRate = (float)getDolGlobalString('DISCOUNTRULES_MINIMUM_RATE');
+		} else {
+			$minimumRate = getDolGlobalFloat('DISCOUNTRULES_MINIMUM_RATE');
+		}
 
 		?>
 		<script type="text/javascript">
