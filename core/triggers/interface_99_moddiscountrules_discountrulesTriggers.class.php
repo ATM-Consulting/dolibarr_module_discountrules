@@ -130,8 +130,7 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 
 			$line = $currentObject;
 
-
-			if(getDolGlobalInt('DISCOUNTRULES_MARKUP_MARGIN_RATE') >= 0 && $action == 'LINEPROPAL_INSERT'){
+			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $action == 'LINEPROPAL_INSERT' && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
 
 					//Define value for conf DISCOUNTRULES_MARKUP_MARGIN_RATE & DISCOUNTRULES_MINIMUM_RATE
 					$options = array(
@@ -156,18 +155,19 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 							$costPrice = $myProduct->cost_price;
 						}
 
-						//Subprice for MarkRate / MarginRate
-						if ($valueConfMarkupMarginRate == 'MarkRate'){
-							$currentObject->subprice = price2num($costPrice / (1 - $minimumRate / 100));
-						}elseif ($valueConfMarkupMarginRate == 'MarginRate'){
-							$currentObject->subprice = price2num($costPrice * (1 + $minimumRate / 100));
-
-						}
-						//Total HT
-						$currentObject->total_ht = $currentObject->subprice * $currentObject->qty;
-						$res = $currentObject->update($user);
-						if(!$res){
-							setEventMessages($currentObject->error, $currentObject->errors, 'errors');
+						if ($costPrice) {
+							//Subprice for MarkRate / MarginRate
+							if ($valueConfMarkupMarginRate == 'MarkRate' ){
+								$currentObject->subprice = price2num($costPrice / (1 - $minimumRate / 100));
+							}elseif ($valueConfMarkupMarginRate == 'MarginRate'){
+								$currentObject->subprice = price2num($costPrice * (1 + $minimumRate / 100));
+							}
+							//Total HT
+							$currentObject->total_ht = $currentObject->subprice * $currentObject->qty;
+							$res = $currentObject->update($user);
+							if(!$res){
+								setEventMessages($currentObject->error, $currentObject->errors, 'errors');
+							}
 						}
 					}
 			}

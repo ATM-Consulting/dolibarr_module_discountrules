@@ -13,211 +13,214 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-###
-# Générique / Generic
 #
-
-amount = Amount
-percentage = Percentage
-Disable = Disable
-Enable = Enable
-Cancel = Cancel
-Apply = Apply
-UpdateProduct = Update products
-priceReapply = Price
-productDescriptionReapply = Product description
-productBuyPriceReapply = Prix d'achat
+# Generic
+#
+amount=Amount
+percentage=Percentage
+Disable=Disabled
+Enable=Enabled
+Cancel=Close
+Apply=Apply
+UpdateProduct=Update products
+priceReapply=Price
+productDescriptionReapply=Product description
 
 # Module label 'ModulediscountrulesName'
-ModulediscountrulesName = Discount rules
-
+ModulediscountrulesName=Discount Rules
 # Module description 'ModulediscountrulesDesc'
-ModulediscountrulesDesc = Enables you to create discount rules using various criteria
+ModulediscountrulesDesc=Allows to define discount rules according to several criteria
 
-ModulediscountrulesSettings = Configuration
+ModulediscountrulesSettings=Settings
+
+ReadDiscountsRules=View discount rules
+CreateUpdateDiscountsRules=Create / update discount rules
+DeleteDiscountsRules=Delete discount rules
 
 
-###
-# Administration page
 #
-
-discountrulesSetup = Module configuration
-Settings = Settings
-discountrulesSetupPage = Discount rules setup page
-
-SearchDiscountAllreadyApplied = Configuring search on already existing documents (for the same third party)
-DISCOUNTRULES_SEARCH_IN_ORDERS = Find the latest discounts on <strong> Orders </ strong>
-DISCOUNTRULES_SEARCH_IN_PROPALS = Find the latest discounts on <strong> Business proposals </ strong>
-DISCOUNTRULES_SEARCH_IN_INVOICES = Find the latest discounts applied to <strong> Invoices </ strong>
-DISCOUNTRULES_SEARCH_DAYS = Number of days limit for searching in the past (leave empty or 0 for no limit)
-DISCOUNTRULES_SEARCH_IN_DOCUMENTS_QTY_EQUIV = Search for lower or equal quantities of the same product / service
-DISCOUNTRULES_SEARCH_IN_DOCUMENTS_PROJECT_EQUIV = Search same project in documents
-DISCOUNTRULES_SEARCH_WITHOUT_DOCUMENTS_DATE = Search rules for current date instead of document date
+# Admin page
+#
+discountrulesSetup=Module setup
+Settings=Settings
+discountrulesSetupPage=Module settings page
+RightUserCanOverrideForcedMod=Is not subject to forced mode
+DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_TAKE_POS=Automatically apply discounts from a TAKEPOS POS terminal (the TAKEPOS POS module must be enabled)
+DISCOUNTRULES_FORCE_RULES_PRICES=Enable "Forced prices and discounts" mode
+DISCOUNTRULES_FORCE_RULES_PRICES_DESC=With this mode, DiscountRule takes control and forces prices and discounts. It is no longer possible to modify prices and discounts before adding or when modifying a line, only users with the extended right "Is not subject to forced mode" are free to make changes.
+SearchDiscountAllreadyApplied=Search configuration on already existing documents (for the same third party)
+DISCOUNTRULES_SEARCH_IN_ORDERS=Search for the last discount applied on <strong>Orders</strong>
+DISCOUNTRULES_SEARCH_IN_PROPALS=Search for the last discount applied on <strong>Commercial proposals</strong>
+DISCOUNTRULES_SEARCH_IN_INVOICES=Search for the last discount applied on <strong>Invoices</strong>
+DISCOUNTRULES_SEARCH_DAYS=Number of days limit for searching in the past (leave empty or 0 for no limit)
+DISCOUNTRULES_SEARCH_IN_DOCUMENTS_QTY_EQUIV=Perform the search for quantities less than or equal to the same product/service
+DISCOUNTRULES_SEARCH_IN_DOCUMENTS_PROJECT_EQUIV=Limit document search to the same projects.
+DISCOUNTRULES_SEARCH_WITHOUT_DOCUMENTS_DATE=Search for rules based on the current date and not on the document date
+SetupSaved=Configuration saved
+GlobalConf=General configurations
+TypeOfDocuments=Document types
+OptionsConditions=Application conditions
 ErrorNoMinRate=Minimum rate not defined
-EmptyDISCOUNTRULES_MARKUP_MARGIN_RATEError=Mark/Margin rate is empty
-###
+EmptyDISCOUNTRULES_MARKUP_MARGIN_RATEError=Markup/margin rate empty
+
+DISCOUNTRULES_DOCUMENT_SEARCH_TYPE=Price search type on documents
+LastCustomerPrice=Last customer price
+BestCustomerPrice=Best customer price
+
+# SETUP IN DEVELOPMENT
+ParameterForDevelopmentOrDeprecated=Parameters in development
+ParameterForDevelopmentOrDeprecatedHelp=Warning the following parameters are in development, enable them only if you know what you are doing.
+DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_ALL_LINES=Enable this feature
+DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_ALL_LINES_DESC=Adds a button to update discounts, sales prices and purchase prices for each line of a document with the latest rules/values in force
+DISCOUNTRULES_PRECHECKED_LINES_ON_DIALOG=Pre-check lines that can be updated when the dialog box is displayed.
+DISCOUNTRULES_MASS_LINE_ALLOW_UPDATE_ON_ZERO=Update sales prices <strong>even</strong> if the new value is 0.
+DataToUpdate=Data to update
+
+#
 # About page
 #
+About=About
+discountrulesAbout=About the module
+discountrulesAboutPage=About the module page
 
-About = About
-discountrulesAbout = About
-discountrulesAboutPage = About Discount Rules module
-
-
-###
+#
 # Menu
 #
+ListDiscountRule=Catalog price rules
+TabTitleDiscountRule=Catalog price rules
 
-ListDiscountRule = Discount rules
-TabTitleDiscountRule = List price rules
-
-
-###
+#
 # List page
 #
+discountrules=catalog price rules
+Discountrule=Catalog price rule
+Discountrules=Catalog price rules
+ProductCategory=Product category
+ProductCategoryHelp=Leave empty to select all categories
+ClientCategory=Customer Category
+ClientCategoryHelp=Leave empty to select all categories
+DiscountruleNotFound=No applicable price rule
+DiscountruleNotFoundUseCustomerReductionInstead=No applicable price rule, using the customer's global discount
+DiscountType=Type
+ImportKey=Import key
+FromQty=From quantity
+NewDiscountRule=New discount rule
+NewDiscountRuleForProduct=New discount rule for product "%s"
+AllCustomers=All customers
+AllCustomersCategories=All customer categories
+AllProductCategories=All product/service categories
+AllCountries=All countries
+MenuDiscountRuleListe=Rules list
+MenuDiscountRulePricesList=Prices list
+ListOfDiscountRules=List of discount rules
+PriceSimulationInputs=Simulation data
+SearchInputs=Search filters
+DoNotDisplayRulesWithProduct=Do not display rules related to products or services (consequently disables any ongoing search for a product or service)
 
-Discountrule = Discount rule
-Discountrules = Discount rules
-ProductCategory = Product category
-ProductCategoryHelp = Leave blank to choose all categories
-ClientCategory = Customer category
-ClientCategoryHelp = Leave blank to choose all categories
-DiscountruleNotFound = No Discount rule available
-DiscountruleNotFoundUseCustomerReductionInstead = No Discount rule available, use of the customer's overall reduction
-DiscountType = Type
-ImportKey = Import key
-FromQty = From quantity
-NewDiscountRule = New Discount rule
-NewDiscountRuleForProduct = New Discount rule for product "%s"
-AllCustomers = All customers
-AllCustomersCategories = All customers category
-AllProductCategories = All products/services category
-AllCountries = All countries
-MenuDiscountRuleListe = List of discount rules
+#
+# Price list
+#
 
+ExportDiscountPrices=CSV
+ProductCategories=Product tags/categories
+FinalDiscountPrice=Final price
+BaseSellingPrice=Base price
+NewProductPrice=New base price
+NewSubPrice=New unit price
+AnErrorOccurDuringSearchDiscount=An error occurred; check the filters
 
-###
+#
 # Mass action
 #
 
-massaction_add_to_category = Add to category
-massaction_remove_from_category = Remove from category
+massaction_add_to_category=Add to a category
+massaction_remove_from_category=Remove from a category
+NumberOfProcessed=%s processed
+CategoryNotSelectedOrUnknow=Category not selected or unknown
+CategoryNotSelected=Category not selected
 
-NumberOfProcessed = %s processed
-
-CategoryNotSelectedOrUnknow = Category not selected or not exist
-CategoryNotSelected = Category not selected
-
-ConfirmDelete = Confirm delete ?
+ConfirmDelete=Confirm deletion?
 
 
-###
+#
 # CARD
 #
-
-DiscountRuleFieldHelp_fk_company = Apply to a specific third party or to all
-Saved = Saved
-Enable = Activated
-Disable = Disabled
-
-DiscountRuleDateFrom = Discount start date
-DiscountRuleDateFromHelp = Always available if not specified
-DiscountRuleDateEnd = Discount end date
-DiscountRuleDateEndHelp = Always available if not specified
-DiscountRuleLabelHelp = A search friendly name
-DiscountRulePrice = The price excluding VAT to apply
-DiscountRulePriceHelp = The price excluding VAT to be used instead of the product price, leave blank to use the product price
-DiscountRulePriceAmount = The fixed discount amount
-DiscountRulePriceAmountHelp = The amount of the discount is applied directly to the <strong> Unit price excluding VAT </strong> of sale of the product. It does not appear as a discount, this comes from the fact that for the moment Dolibarr does not manage fixed discounts linked to the lines. If you want to show the discount you must use the discount field in %%
-DiscountPercent = Discount in %%
-DiscountPercentHelp = This discount appears on the document
-ErrorOneOffThisFieldsAreRequired = You must define at least one of these fields : %s
-ReductionAmount = Fixed discount amount
-InfosProduct = Product informations
-ProductPrice = Product price
-AllTypeEnt = All types
-ExplainPriorityOfRuleApplied = Keep in mind that the rule that will be proposed when adding a product in a document will always be the rule compatible with all the criteria and the most advantageous for the customer.
-
-
-###
+DiscountRuleFieldHelp_fk_company=Apply to a specific third party or to all (enter all)
+Saved=Saved
+Enable=Enabled
+Disable=Disabled
+ThirdPartyType=Third party type
+DiscountRuleDateFrom=Rule application start date
+DiscountRuleDateFromHelp=Always available if not filled
+DiscountRuleDateEnd=Rule application end date
+DiscountRuleDateEndHelp=Always available if not filled
+DiscountRuleLabelHelp=A common name to simplify the search
+DiscountRulePrice=The price excl. tax to apply
+DiscountRulePriceHelp=The price excl. tax to use instead of the product price, leave empty to use the product price
+DiscountRulePriceAmount=The fixed discount amount
+DiscountRulePriceAmountHelp=The discount amount is applied directly to the product's <strong>Unit Price excl. tax</strong>. It does not appear as a discount, this is because Dolibarr does not currently manage fixed discounts related to lines. If you want the discount to appear, you must use the discount field in %%
+DiscountPercent=Discount in %%
+DiscountPercentHelp=This discount appears on the document
+ErrorOneOffThisFieldsAreRequired=You must define at least one of these fields: %s
+ReductionAmount=Fixed discount amount
+InfosProduct=Product information
+ProductPrice=Product price
+AllTypeEnt=All types
+ExplainPriorityOfRuleApplied=Keep in mind that the rule that will be proposed when adding a product to a document will always be the rule compatible with all the criteria and the most advantageous for the customer.
+InfosProject=Project
+ActiveRuleProject=Active project rule
+Customer=Customer
+actionClickMeDiscountrule=Click on the %s icon to assign the discount
+AvailableDiscountInfo=Info on the applicable discount
+PriorityRuleRank=Rule priority
+PriorityRuleRankHelp=By default, with equal priority, the rule that will be proposed when adding a product to a document will always be the most advantageous rule for the customer (among the rules compatible with all the criteria). The priority allows to define the rules that override this behavior. In the end, if 2 rules are in competition, the highest priority wins.
+NoDiscountRulePriority=No priority
+DiscountRulePriorityLevel01=Level 1
+DiscountRulePriorityLevel02=Level 2
+DiscountRulePriorityLevel03=Level 3
+DiscountRulePriorityLevel04=Level 4
+DiscountRulePriorityLevel05=Level 5
+DISCOUNTRULES_SEARCH_DOCUMENTS_PRIORITY_RANK=Priority of discounts from documents
+#
 # Actions for Common documents
 #
 
-confirmUpdateDiscountsTitle = Update prices?
-confirmUpdateDiscounts = Update line prices according to discount rules?
-UpdateDiscountsFromRules = Update prices
+confirmUpdateDiscountsTitle=Update prices?
+confirmUpdateDiscounts=Do you really want to update the line prices by applying the discount rules?
+UpdateDiscountsFromRules=Update prices
+DiscountUpdateLineError=Error updating line %s
+DiscountForLinesUpdated=Lines updated: %s
+NoDiscountToApply=No discount to apply
+NotEnoughtRights=Your user rights do not allow you to perform this action
+RequestError=Request error
+drreapplyDescription=Update of prices and/or product descriptions by selection
 
-ParameterForDevelopmentOrDeprecated = Parameters under development
-ParameterForDevelopmentOrDeprecatedHelp = Please note that the following settings are for development purposes only if you know what you are doing.
-DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_ALL_LINES = Please note that the following parameters are under development, activate them only if you know what you are doing.
-ListOfDiscountRules = List of discount rules
-ThirdPartyType = Type of third party
-InfosProject = Project
-ActiveRuleProject = Active project rule
-Customer = Client
-actionClickMeDiscountrule = Click the %s icon to assign the discount
-AvailableDiscountInfo = Applicable discount info
-PriorityRuleRank = Rule priority
-PriorityRuleRankHelp = By default, with equal priority, the rule that will be proposed when adding a product to a document will always be the rule most advantageous for the customer (among the rules compatible with all the criteria). The priority allows you to define the rules that override this behavior. Finally, if 2 rules are in competition the highest priority wins.
-NoDiscountRulePriority = No priority
-DiscountRulePriorityLevel01 = Level 1
-DiscountRulePriorityLevel02 = Level 2
-DiscountRulePriorityLevel03 = Level 3
-DiscountRulePriorityLevel04 = Level 4
-DiscountRulePriorityLevel05 = Level 5
-DISCOUNTRULES_SEARCH_DOCUMENTS_PRIORITY_RANK = Priority of discounts from documents
-DiscountUpdateLineError = Error updating row %s
-DiscountForLinesUpdated = Updated lines : %s
-NoDiscountToApply = No discount to apply
-NotEnoughtRights = Your user permissions do not allow you to perform this action
-RequestError = Request error
-drreapplyDescription = Update products prices and/or descriptions by select options
+NotEnoughRights=This action is not authorized for you
+errorAjaxCall=Ajax call error
+ErrorProduct=Product ID error
 
-ErrorProduct = Error product ID
-UnitPriceET = U.P. ET
-Reduction = Reduc.
-DescriptionCompare = Compare descriptions
-NewDescription = New description available
-CurrentDescription = Current description
-AllLinesAreUpToDate = Already up-to-date
-NoProductService = No product or service
+UnitPriceET=Unit Price Excl. Tax
+Reduction=Disc.
+DescriptionCompare=Show available description
+NewDescription=New available description
+CurrentDescription=Current description
+AllLinesAreUpToDate=Everything is up to date
+NoProductService=No Product/Service
+ProjectCategory=Project category
+ProjectCategoryHelp=Leave empty to select all categories
+AllProjectCategories=All project categories
+CountryOrigin=Country of origin
+CustomCode=Customs nomenclature or HS Code
+DiscountRulesExtraFields=Extra attributes
+DiscountRulesSetupExtrafield=DiscountRules extra attributes settings
+BuyPriceHt=Buying Price Excl. Tax
+DialogUpdatePrice=Configuration of the dialog box for updating document lines
+SelectMarkupMarginRate=Selected rate
+SelectMinimumRate=Desired minimum rate
+SelectMarkupMarginRateHelp=When adding a quote line, ensure that the applied markup/margin is the one present in the "Desired minimum rate" configuration
+UsedMarkupMarginRateHelp=<strong> Not compatible with the MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND conf </strong>
+WarningDiscountrulesMinimumRate=%s lower than the minimum rate: %s%%
 
-#
-# MISSING TRANSLATION FROM fr_FR
-#
-ReadDiscountsRules=Voir règles de remises
-CreateUpdateDiscountsRules=Créer / mettre à jour les règles de remises
-DeleteDiscountsRules=Supprimer les règles de remises
-SetupSaved=configuration sauvegardée
-GlobalConf=Configurations générales
-TypeOfDocuments=Types de documents
-OptionsConditions=Conditions d'application
-DISCOUNTRULES_DOCUMENT_SEARCH_TYPE=Type de recherche tarifaire sur les documents
-LastCustomerPrice=Dernier prix pratiqué
-BestCustomerPrice=Meilleur prix pratiqué
-discountrules=règles de prix catalogue
-MenuDiscountRulePricesList=Liste des prix
-PriceSimulationInputs=Données de simulation
-SearchInputs=Filtres de recherche
-DoNotDisplayRulesWithProduct=Ne pas afficher les règles liées à des produits ou services (désactive par conséquent toute recherche en cours sur un produit ou service)
-ExportDiscountPrices=CSV
-ProductCategories=Tags/catégories produits
-FinalDiscountPrice=Prix final
-BaseSellingPrice=Prix de base
-NewProductPrice=Nouveau prix de base
-NewSubPrice=Nouveau prix unitaire
-AnErrorOccurDuringSearchDiscount=Une erreur est survenue ; vérifiez les filtres
-NotEnoughRights=Cette action ne vous est pas authorisée
-errorAjaxCall=Erreur d'appel ajax
-ProjectCategory=Catégorie projet
-ProjectCategoryHelp=Laisser vide pour choisir toutes les catégories
-AllProjectCategories=Toutes les catégories projet
-CountryOrigin=Pays d'origine
-CustomCode=Nomenclature douanière ou Code SH
-RightUserCanOverrideForcedMod = Not subject to forced mode
-DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_TAKE_POS = Automatically apply discounts from a TAKEPOS POS terminal (TAKEPOS POS module must be activated)
-DiscountRulesExtraFields = Additional attributes
-DiscountRulesSetupExtrafield = Additional DiscountRules attribute parameters
-DISCOUNTRULES_FORCE_RULES_PRICES = Activate Forced prices and discounts mode
-DISCOUNTRULES_FORCE_RULES_PRICES_DESC = With this mode, DiscountRule takes control and forces prices and discounts. It is no longer possible to modify prices and discounts before adding or modifying a line; only users with the extended right ''Not subject to forced mode'' are free to make modifications.
+DISCOUNTRULES_USE_MARKUP_MARGIN_RATE=Apply a default margin / markup rate
+DISCOUNTRULES_MARKRATE=Markup Rate
+DISCOUNTRULES_MARGINRATE=Margin Rate

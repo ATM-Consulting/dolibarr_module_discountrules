@@ -218,4 +218,9 @@ DialogUpdatePrice = Configuration de la boite de dialogue permettant la mise à 
 SelectMarkupMarginRate = Taux sélectionné
 SelectMinimumRate = Taux minimum souhaité
 SelectMarkupMarginRateHelp = Lors de l'ajout d'une ligne de devis, faire en sorte que la marque/marge appliquée soit celle présente dans la configuration "Taux minimum souhaité"
+UsedMarkupMarginRateHelp = <strong> Non compatible avec la conf MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND </strong>
 WarningDiscountrulesMinimumRate = %s inférieur au taux minimum : %s%%
+
+DISCOUNTRULES_USE_MARKUP_MARGIN_RATE = Appliquer un taux de marge / marque par défaut
+DISCOUNTRULES_MARKRATE = Taux de marque
+DISCOUNTRULES_MARGINRATE = Taux de marge

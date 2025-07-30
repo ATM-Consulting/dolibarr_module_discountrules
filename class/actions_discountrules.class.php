@@ -146,14 +146,6 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 					return -1;
 				}
 
-				// TODO Mis en commentaire le 23/08/2023 car normalement useless à virer en 2024 si tjs là
-//				$discountrule = new DiscountRule($this->db);
-//				$c = new Categorie($this->db);
-//				$client = new Societe($this->db);
-//				$client->fetch($object->socid);
-//				$TCompanyCat = $c->containing($object->socid, Categorie::TYPE_CUSTOMER, 'id');
-//				$TCompanyCat = DiscountRule::getAllConnectedCats($TCompanyCat);
-
 				$updated = 0;
 				$updaterror = 0;
 

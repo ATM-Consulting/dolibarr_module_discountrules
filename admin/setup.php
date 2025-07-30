@@ -139,10 +139,14 @@ _printOnOff('DISCOUNTRULES_SEARCH_WITHOUT_DOCUMENTS_DATE');
 _printOnOff('DISCOUNTRULES_ALLOW_APPLY_DISCOUNT_TO_TAKE_POS');
 _printOnOff('DISCOUNTRULES_FORCE_RULES_PRICES', $langs->trans('DISCOUNTRULES_FORCE_RULES_PRICES'), $langs->trans('DISCOUNTRULES_FORCE_RULES_PRICES_DESC'));
 
+_printOnOff('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE', '' , $langs->trans('UsedMarkupMarginRateHelp'));
+
 // Taux sélectionné
-$options = array('MarkRate','MarginRate');
+$options = array($langs->trans('DISCOUNTRULES_MARKRATE'),
+				 $langs->trans('DISCOUNTRULES_MARGINRATE')
+		   );
 $confKey = 'DISCOUNTRULES_MARKUP_MARGIN_RATE';
-$type = Form::selectarray('value'.($inputCount+1), $options, getDolGlobalInt($confKey, -1),1,0,0,'',1);
+$type = Form::selectarray('value'.($inputCount+1), $options, getDolGlobalInt($confKey, -1),1,0,0,'',1 );
 _printInputFormPart($confKey, $langs->trans('SelectMarkupMarginRate'), '', array(), $type, 'SelectMarkupMarginRateHelp');
 
 // Taux minimum souhaité

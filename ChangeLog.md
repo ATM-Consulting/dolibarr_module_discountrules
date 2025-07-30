@@ -6,6 +6,7 @@
 ## Not Released
 
 ## RELEASE 2.25
+- FIX : DA026873 Not compatible with the MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND conf - *30/07/2025* - 2.25.4
 - FIX : Count of Tabs is now link to the entity - *23/07/2025* - 2.25.3
 - FIX : Mark/Margin minimum rate feature did not work properly need to add condition to check there is an empty value - *08/07/2025* - 2.25.2
 - FIX : Mark/Margin minimum rate feature did not work with the module quickcustomerprice - *03/06/2025* - 2.25.1
