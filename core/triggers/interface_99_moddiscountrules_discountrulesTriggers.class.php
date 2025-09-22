@@ -130,6 +130,31 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 
 			$line = $currentObject;
 
+			if($line->element == 'facturedet'){
+				/** @var FactureLigne $line  */
+				$parentObject = new Facture($line->db);
+				$resFetchParent = $parentObject->fetch($line->fk_facture);
+			}
+			elseif($line->element == 'commandedet'){
+				/** @var OrderLine $line */
+				$parentObject = new Commande($line->db);
+				$resFetchParent = $parentObject->fetch($line->fk_commande);
+			}
+			elseif($line->element == 'propaldet'){
+				/** @var PropaleLigne $line */
+				$parentObject = new Propal($line->db);
+				$resFetchParent = $parentObject->fetch($line->fk_propal);
+			}
+			else{
+				// UNKNOW ELEMENT OR NOT COMPATIBLE
+				return 0;
+			}
+
+			if($resFetchParent < 0){
+				$this->errors[] = 'Error fetching parent document for discount rules';
+				return -1;
+			}
+
 			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $action == 'LINEPROPAL_INSERT' && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
 
 					//Define value for conf DISCOUNTRULES_MARKUP_MARGIN_RATE & DISCOUNTRULES_MINIMUM_RATE
@@ -152,6 +177,15 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 						} else {
 							$myProduct = new Product($this->db);
 							$myProduct->fetch($currentObject->fk_product);
+							if ($valueConfMarkupMarginRate == 'MarkRate') {
+								$parentObject->fetch_thirdparty();
+								if (! empty($parentObject->thirdparty->array_options['options_discountrules_min_markup_percent'])) {
+									$minimumRate = $parentObject->thirdparty->array_options['options_discountrules_min_markup_percent'];
+								} else if (! empty($myProduct->array_options['options_discountrules_min_markup_percent'])) {
+									$minimumRate = $myProduct->array_options['options_discountrules_min_markup_percent'];
+								}
+							}
+
 							$costPrice = $myProduct->cost_price;
 						}
 
@@ -194,31 +228,6 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 
 			if($forceUpdateDiscount){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$line->id);
-
-				if($line->element == 'facturedet'){
-					/** @var FactureLigne $line  */
-					$parentObject = new Facture($line->db);
-					$resFetchParent = $parentObject->fetch($line->fk_facture);
-				}
-				elseif($line->element == 'commandedet'){
-					/** @var OrderLine $line */
-					$parentObject = new Commande($line->db);
-					$resFetchParent = $parentObject->fetch($line->fk_commande);
-				}
-				elseif($line->element == 'propaldet'){
-					/** @var PropaleLigne $line */
-					$parentObject = new Propal($line->db);
-					$resFetchParent = $parentObject->fetch($line->fk_propal);
-				}
-				else{
-					// UNKNOW ELEMENT OR NOT COMPATIBLE
-					return 0;
-				}
-
-				if($resFetchParent < 0){
-					$this->errors[] = 'Error fetching parent document for discount rules';
-					return -1;
-				}
 
 				$dateTocheck = time();
 				if (!getDolGlobalInt('DISCOUNTRULES_SEARCH_WITHOUT_DOCUMENTS_DATE')) $dateTocheck = $parentObject->date;

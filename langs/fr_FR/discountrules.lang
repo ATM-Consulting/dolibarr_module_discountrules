@@ -224,3 +224,5 @@ WarningDiscountrulesMinimumRate = %s inférieur au taux minimum : %s%%
 DISCOUNTRULES_USE_MARKUP_MARGIN_RATE = Appliquer un taux de marge / marque par défaut
 DISCOUNTRULES_MARKRATE = Taux de marque
 DISCOUNTRULES_MARGINRATE = Taux de marge
+
+DiscountRulesMinMarkupPercent=Taux de marque (en %)

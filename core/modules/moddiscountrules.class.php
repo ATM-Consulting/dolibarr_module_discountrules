@@ -488,8 +488,8 @@ class moddiscountrules extends DolibarrModules
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1, 3, 'thirdparty');
-		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'string', 1, 10, 'project');
+		$extrafields->addExtraField('discountrules_min_markup_percent', 'DiscountRulesMinMarkupPercent', 'double', 100, '24,2', 'societe', 0, 0, '', array ( 'options' => array ( '' => NULL, ), ), 1, '', 'get_class($object) == \'Client\' ? 1:0', '', '', 0, 'discountrules@discountrules', 1, 0, '0', array ( 'css' => '', 'cssview' => '', 'csslist' => '', ));
+		$extrafields->addExtraField('discountrules_min_markup_percent', 'DiscountRulesMinMarkupPercent', 'double', 100, '24,2', 'product', 0, 0, '', array ( 'options' => array ( '' => NULL, ), ), 1, '', '1', '', '', 0, 'discountrules@discountrules', 1, 0, '0', array ( 'css' => '', 'cssview' => '', 'csslist' => '', ));
 
 		return $this->_init($sql, $options);
 	}
