@@ -380,7 +380,7 @@ class DiscountrulesApi extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
+	 * @param   DiscountRule  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
@@ -391,50 +391,70 @@ class DiscountrulesApi extends DolibarrApi
 		unset($object->rowid);
 		unset($object->canvas);
 
-		/*unset($object->name);
-		unset($object->lastname);
-		unset($object->firstname);
-		unset($object->civility_id);
+  		unset($object->reserror);
+  		unset($object->entity);
+  		unset($object->status);
+  		unset($object->product);
+		unset($object->array_languages);
+		unset($object->contacts_ids);
+		unset($object->linked_objects);
+		unset($object->linkedObjectsIds);
+		unset($object->oldref);
+		unset($object->contact_id);
+		unset($object->user);
+		unset($object->origin);
+		unset($object->origin_id);
+		unset($object->ref_ext);
 		unset($object->statut);
-		unset($object->state);
-		unset($object->state_id);
-		unset($object->state_code);
-		unset($object->region);
-		unset($object->region_code);
-		unset($object->country);
 		unset($object->country_id);
 		unset($object->country_code);
+ 		unset($object->state_id);
+ 		unset($object->region_id);
 		unset($object->barcode_type);
-		unset($object->barcode_type_code);
-		unset($object->barcode_type_label);
 		unset($object->barcode_type_coder);
-		unset($object->total_ht);
-		unset($object->total_tva);
-		unset($object->total_localtax1);
-		unset($object->total_localtax2);
-		unset($object->total_ttc);
-		unset($object->fk_account);
-		unset($object->comments);
-		unset($object->note);
 		unset($object->mode_reglement_id);
-		unset($object->cond_reglement_id);
-		unset($object->cond_reglement);
-		unset($object->shipping_method_id);
-		unset($object->fk_incoterms);
-		unset($object->label_incoterms);
-		unset($object->location_incoterms);
-		*/
-
-		// If object has lines, remove $db property
-		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
-			$nboflines = count($object->lines);
-			for ($i = 0; $i < $nboflines; $i++) {
-				$this->_cleanObjectDatas($object->lines[$i]);
-
-				unset($object->lines[$i]->lines);
-				unset($object->lines[$i]->note);
-			}
-		}
+ 		unset($object->cond_reglement_id);
+ 		unset($object->demand_reason_id);
+ 		unset($object->transport_mode_id);
+ 		unset($object->shipping_method_id);
+ 		unset($object->shipping_method);
+ 		unset($object->multicurrency_code);
+  		unset($object->multicurrency_tx);
+  		unset($object->model_pdf);
+  		unset($object->last_main_doc);
+   		unset($object->fk_bank);
+   		unset($object->fk_account);
+   		unset($object->note_public);
+   		unset($object->note_private);
+   		unset($object->total_ht);
+   		unset($object->total_tva);
+   		unset($object->total_localtax1);
+   		unset($object->total_localtax2);
+   		unset($object->total_ttc);
+   		unset($object->lines);
+   		unset($object->name);
+   		unset($object->lastname);
+   		unset($object->firstname);
+   		unset($object->civility_id);
+   		unset($object->date_validation);
+   		unset($object->date_modification);
+   		unset($object->date_update);
+   		unset($object->date_cloture);
+   		unset($object->user_author);
+   		unset($object->user_creation);
+   		unset($object->user_creation_id);
+   		unset($object->user_valid);
+   		unset($object->user_validation);
+   		unset($object->user_validation_id);
+   		unset($object->user_closing_id);
+   		unset($object->user_modification);
+   		unset($object->user_modification_id);
+   		unset($object->specimen);
+   		unset($object->labelStatus);
+   		unset($object->showphoto_on_popup);
+   		unset($object->nb);
+   		unset($object->output);
+   		unset($object->extraparams);
 
 		return $object;
 	}
