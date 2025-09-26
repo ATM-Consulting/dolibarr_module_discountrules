@@ -336,6 +336,46 @@ class DiscountrulesApi extends DolibarrApi
 	/*END CRUD FOR DISCOUNTRULE*/
 	/*end methods CRUD*/
 
+	/**
+	 * List discountrules
+	 *
+	 * Get a list of discountrules
+	 *
+	 * @param int	       $product	        ID of Product object
+	 * @param int	       $thirdparty		ID of Societe object
+	 * @return  array                       Array of discountrule infos
+	 *
+	 * @throws RestException
+	 *
+	 * @url	GET /getdiscount/{product}/{thirdparty}
+	 */
+	public function getdiscount($product, $thirdparty)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('discountrules','read')) {
+			throw new RestException(401);
+		}
+
+		$result = $this->discountrule->fetchByCrit(0, $product, 0, 0, $thirdparty);
+		if (!$result) {
+			throw new RestException(404, 'DiscountRule not found for product/client pair');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, 'discountrules_discountrule')) {
+			throw new RestException(401, 'Access to instance id='.$this->discountrule->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$resarray = array(
+			'fk_product' => $product,
+			'socid'		=> $thirdparty,
+			'discount_rule' => $this->discountrule->id,
+			'catalog_price' => $this->discountrule->getDiscountSellPrice($product, $thirdparty),
+			'discount_rate' => $this->discountrule->reduction,
+			'discounted_subprice' => (float) $this->discountrule->getDiscountSellPrice($product, $thirdparty) - ((float) $this->discountrule->getDiscountSellPrice($product, $thirdparty) * (float) $this->discountrule->reduction / 100),
+		);
+
+		return $resarray;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas

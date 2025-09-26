@@ -1113,6 +1113,27 @@ class DiscountRule extends CommonObject
 
 		$product = $this->getProductCache($fk_product);
 
+		if (empty($fk_category_product) && !empty($fk_product)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			$prod = new Product($this->db);
+			$prod->id = $fk_product;
+			$fk_category_product = $prod->getCategoriesCommon('product');
+		}
+
+		if (empty($fk_category_company) && !empty($fk_company)) {
+			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+			$company = new Societe($this->db);
+			$company->id = $fk_company;
+			$fk_category_company = $company->getCategoriesCommon('customer');
+		}
+
+		if (empty($fk_category_project) && !empty($fk_project)) {
+			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+			$proj = new Project($this->db);
+			$proj->id = $fk_project;
+			$fk_category_project = $project->getCategoriesCommon('project');
+		}
+
 	    $baseSubprice = 0;
 	    if(!empty($product)){
 
@@ -1143,17 +1164,24 @@ class DiscountRule extends CommonObject
 
 	    $sql.= ' WHERE from_quantity <= '.floatval($from_quantity).' AND `fk_status` = 1 ' ;
 
-	    $sql.= self::prepareSearch('fk_country', $fk_country);
-	    $sql.= self::prepareSearch('fk_c_typent', $fk_c_typent);
-		$sql.= self::prepareSearch('fk_company', $fk_company);
-		$sql.= self::prepareSearch('fk_project', $fk_project);
-
-		$sql.= self::prepareSearch('fk_product', $fk_product);
-
+		if (!empty($fk_country)) {
+			$sql.= self::prepareSearch('fk_country', $fk_country);
+		}
+		if (!empty($fk_c_typent)) {
+			$sql.= self::prepareSearch('fk_c_typent', $fk_c_typent);
+		}
+		if (!empty($fk_company)) {
+			$sql.= self::prepareSearch('fk_company', $fk_company);
+		}
+		if (!empty($fk_project)) {
+			$sql.= self::prepareSearch('fk_project', $fk_project);
+		}
+		if (!empty($fk_product)) {
+			$sql.= self::prepareSearch('fk_product', $fk_product);
+		}
 
 	    $this->lastFetchByCritResult = false;
 
-	    
 	    if(!empty($date)){
 	        $date = $this->db->idate($date);
 	    }
@@ -1165,9 +1193,15 @@ class DiscountRule extends CommonObject
 	    $sql.= ' AND ( date_to >= \''.$date.'\' OR date_to IS NULL OR YEAR(`date_to`) = 0 )'; // le YEAR(`date_to`) = 0 est une astuce MySQL pour chercher les dates vides le tout compatible avec les diférentes versions de MySQL
 
 		// test for "FOR ALL CAT"
-        $sql.= ' AND ( (d.all_category_product > 0 AND cp.fk_category_product IS NULL) OR (d.all_category_product = 0 AND cp.fk_category_product > 0 '.self::prepareSearch('cp.fk_category_product', $fk_category_product).' )) ';
-		$sql.= ' AND ( (d.all_category_company > 0 AND cc.fk_category_company IS NULL) OR (d.all_category_company = 0 AND cc.fk_category_company > 0 '.self::prepareSearch('cc.fk_category_company', $fk_category_company).' )) ';
-		$sql.= ' AND ( (d.all_category_project > 0 AND cpj.fk_category_project IS NULL) OR (d.all_category_project = 0 AND cpj.fk_category_project > 0 '.self::prepareSearch('cpj.fk_category_project', $fk_category_project).' )) ';
+		if (!empty($fk_category_product)) {
+			$sql.= ' AND ( (d.all_category_product > 0 AND cp.fk_category_product IS NULL) OR (d.all_category_product = 0 AND cp.fk_category_product > 0 '.self::prepareSearch('cp.fk_category_product', $fk_category_product).' )) ';
+		}
+		if (!empty($fk_category_company)) {
+			$sql.= ' AND ( (d.all_category_company > 0 AND cc.fk_category_company IS NULL) OR (d.all_category_company = 0 AND cc.fk_category_company > 0 '.self::prepareSearch('cc.fk_category_company', $fk_category_company).' )) ';
+		}
+		if (!empty($fk_category_project)) {
+			$sql.= ' AND ( (d.all_category_project > 0 AND cpj.fk_category_project IS NULL) OR (d.all_category_project = 0 AND cpj.fk_category_project > 0 '.self::prepareSearch('cpj.fk_category_project', $fk_category_project).' )) ';
+		}
 
 		$sql.= ' ORDER BY ';
 
@@ -1178,9 +1212,15 @@ class DiscountRule extends CommonObject
 		if(!empty($fk_product)){
 			$sql.= ' net_subprice ASC, ' ;
 		}
-	    $sql.= ' reduction DESC, from_quantity DESC, fk_company DESC, '.self::prepareOrderByCase('fk_category_company', $fk_category_company).', '.self::prepareOrderByCase('fk_category_product', $fk_category_product);
+	    $sql.= ' reduction DESC, from_quantity DESC, fk_company DESC';
+		if (!empty($fk_category_company)) {
+			$sql .= ', ' . self::prepareOrderByCase('fk_category_company', $fk_category_company);
+		}
+		if (!empty($fk_category_product)) {
+			$sql .= ', '.self::prepareOrderByCase('fk_category_product', $fk_category_product);
+		}
 
-	    $sql.= ' LIMIT 1';
+		$sql.= ' LIMIT 1';
 
 	    $res = $this->db->query($sql);
 		$this->lastquery = $this->db->lastquery;
