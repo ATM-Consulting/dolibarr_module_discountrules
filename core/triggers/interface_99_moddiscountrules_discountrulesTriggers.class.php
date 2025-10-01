@@ -149,13 +149,14 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 				// UNKNOW ELEMENT OR NOT COMPATIBLE
 				return 0;
 			}
+			$isInsertAction = (substr($action, -7) === '_INSERT'); // ou str_ends_with() si PHP 8+
 
 			if($resFetchParent < 0){
 				$this->errors[] = 'Error fetching parent document for discount rules';
 				return -1;
 			}
 
-			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $action == 'LINEPROPAL_INSERT' && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
+			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $isInsertAction && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
 
 					//Define value for conf DISCOUNTRULES_MARKUP_MARGIN_RATE & DISCOUNTRULES_MINIMUM_RATE
 					$options = array(
@@ -167,37 +168,28 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 					$minimumRate = getDolGlobalInt('DISCOUNTRULES_MINIMUM_RATE');
 
 					if (!empty($valueConfMarkupMarginRate)){
-						$costPrice = 0;
-						if(empty($line->fk_product)){
-							$costPrice = GETPOST('buying_price', 'int');
-							if (empty($costPrice)){
-								return 0;
-							}
+						$costPrice = GETPOST('buying_price', 'int');
 
-						} else {
-							$myProduct = new Product($this->db);
-							$myProduct->fetch($currentObject->fk_product);
-							if ($valueConfMarkupMarginRate == 'MarkRate') {
-								$parentObject->fetch_thirdparty();
-								if (! empty($parentObject->thirdparty->array_options['options_discountrules_min_markup_percent'])) {
-									$minimumRate = $parentObject->thirdparty->array_options['options_discountrules_min_markup_percent'];
-								} else if (! empty($myProduct->array_options['options_discountrules_min_markup_percent'])) {
-									$minimumRate = $myProduct->array_options['options_discountrules_min_markup_percent'];
-								}
-							}
-
-							$costPrice = $myProduct->cost_price;
+						$myProduct = new Product($this->db);
+						$myProduct->fetch($currentObject->fk_product);
+						$parentObject->fetch_thirdparty();
+						if (! empty($parentObject->thirdparty->array_options['options_discountrules_min_markup_margin_percent'])) {
+							$minimumRate = $parentObject->thirdparty->array_options['options_discountrules_min_markup_margin_percent'];
+						} else if (! empty($myProduct->array_options['options_discountrules_min_markup_margin_percent'])) {
+							$minimumRate = $myProduct->array_options['options_discountrules_min_markup_margin_percent'];
 						}
+						$costPrice = $currentObject->pa_ht ?? $myProduct->cost_price;
+
 
 						if ($costPrice) {
 							//Subprice for MarkRate / MarginRate
 							if ($valueConfMarkupMarginRate == 'MarkRate' ){
-								$currentObject->subprice = price2num($costPrice / (1 - $minimumRate / 100));
+								$currentObject->subprice = price2num($costPrice / (1 - $minimumRate / 100), 'MT');
 							}elseif ($valueConfMarkupMarginRate == 'MarginRate'){
-								$currentObject->subprice = price2num($costPrice * (1 + $minimumRate / 100));
+								$currentObject->subprice = price2num($costPrice * (1 + $minimumRate / 100), 'MT');
 							}
 							//Total HT
-							$currentObject->total_ht = $currentObject->subprice * $currentObject->qty;
+							$currentObject->total_ht = price2num($currentObject->subprice * $currentObject->qty, 'MT');
 							$res = $currentObject->update($user);
 							if(!$res){
 								setEventMessages($currentObject->error, $currentObject->errors, 'errors');

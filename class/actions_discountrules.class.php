@@ -634,10 +634,10 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
             if(!empty($parameters['line']->fk_product)){
                 $parameters['line']->fetch_product();
             }
-            if (!empty($object->thirdparty->array_options['options_discountrules_min_markup_percent'])) {
-                $minimumRate = (float) $object->thirdparty->array_options['options_discountrules_min_markup_percent'];
-            } elseif (!empty($parameters['line']->fk_product) && !empty($parameters['line']->product->array_options['options_discountrules_min_markup_percent'])) {
-                $minimumRate = (float) $parameters['line']->product->array_options['options_discountrules_min_markup_percent'];
+            if (!empty($object->thirdparty->array_options['options_discountrules_min_markup_margin_percent'])) {
+                $minimumRate = (float) $object->thirdparty->array_options['options_discountrules_min_markup_margin_percent'];
+            } elseif (!empty($parameters['line']->fk_product) && !empty($parameters['line']->product->array_options['options_discountrules_min_markup_margin_percent'])) {
+                $minimumRate = (float) $parameters['line']->product->array_options['options_discountrules_min_markup_margin_percent'];
             }
 
             self::$lineData[$parameters['line']->id] = [

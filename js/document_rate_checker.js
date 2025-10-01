@@ -44,9 +44,9 @@
          * @param {HTMLElement} trElement - The <tr> element of the line to check.
          */
         const checkLineRate = (trElement) => {
-            const { minRate, rateType, imgWarning } = trElement.dataset;
+            const {minRate, rateType, imgWarning} = trElement.dataset;
             if (minRate === undefined || rateType === undefined) return;
-
+            console.log(minRate);
             const targetTd = trElement.querySelector(
                 rateType === 'MarginRate' ? '.linecolmargin2' : '.linecolmark1'
             );
@@ -72,20 +72,15 @@
             }
         };
 
-        // --- Execution Sequence ---
         attachDataToDomRows();
         document.querySelectorAll('tr[id^="row"]').forEach(checkLineRate);
 
-        const table = document.getElementById('tablelines');
-        if (table) {
-            table.addEventListener('change', (event) => {
-                if (event.target.matches('input[name^="qty"], input[name^="price"], input[name^="remise_percent"]')) {
-                    const changedRow = event.target.closest('tr');
-                    if (changedRow) {
-                        setTimeout(() => checkLineRate(changedRow), 100);
-                    }
-                }
-            });
-        }
+        $(document).ajaxComplete(function (event, xhr, settings) {
+            if (settings.url.includes('/quickcustomerprice/script/interface.php')) {
+                $('tr[id^="row-"]').each(function () {
+                    checkLineRate(this);
+                });
+            }
+        });
     });
 })();

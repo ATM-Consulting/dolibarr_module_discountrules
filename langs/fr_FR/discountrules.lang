@@ -225,4 +225,4 @@ DISCOUNTRULES_USE_MARKUP_MARGIN_RATE = Appliquer un taux de marge / marque par d
 DISCOUNTRULES_MARKRATE = Taux de marque
 DISCOUNTRULES_MARGINRATE = Taux de marge
 
-DiscountRulesMinMarkupPercent=Taux de marque (en %)
+DiscountRulesMinMarkupMarginPercent=Taux de marque/marge minimum (en %)

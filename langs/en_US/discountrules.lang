@@ -225,4 +225,4 @@ DISCOUNTRULES_USE_MARKUP_MARGIN_RATE=Apply a default margin / markup rate
 DISCOUNTRULES_MARKRATE=Markup Rate
 DISCOUNTRULES_MARGINRATE=Margin Rate
 
-DiscountRulesMinMarkupPercent=Taux de marque minimum (en %)
+DiscountRulesMinMarkupMarginPercent=Taux de marque/marge minimum (en %)
