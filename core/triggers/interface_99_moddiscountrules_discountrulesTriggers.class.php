@@ -149,14 +149,14 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 				// UNKNOW ELEMENT OR NOT COMPATIBLE
 				return 0;
 			}
-			$isInsertAction = (substr($action, -7) === '_INSERT'); // ou str_ends_with() si PHP 8+
 
 			if($resFetchParent < 0){
 				$this->errors[] = 'Error fetching parent document for discount rules';
 				return -1;
 			}
 
-			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $isInsertAction && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
+			//Only on propal cause error during conversion
+			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $action == 'LINEPROPAL_INSERT' && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
 
 					//Define value for conf DISCOUNTRULES_MARKUP_MARGIN_RATE & DISCOUNTRULES_MINIMUM_RATE
 					$options = array(
