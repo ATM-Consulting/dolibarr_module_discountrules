@@ -73,7 +73,7 @@ class moddiscountrules extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 
-		$this->version = '2.26.0';
+		$this->version = '2.27.0';
 
 		// Key used in llx_const table to save module status enabled/disabled (where discountrules is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -488,8 +488,8 @@ class moddiscountrules extends DolibarrModules
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1, 3, 'thirdparty');
-		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'string', 1, 10, 'project');
+		$extrafields->addExtraField('discountrules_min_markup_margin_percent', 'DiscountRulesMinMarkupMarginPercent', 'double', 100, '24,2', 'societe', 0, 0, '', array ( 'options' => array ( '' => NULL, ), ), 1, '', 'get_class($object) == \'Client\' ? 1:0', '', '', 0, 'discountrules@discountrules', 1, 0, '0', array ( 'css' => '', 'cssview' => '', 'csslist' => '', ));
+		$extrafields->addExtraField('discountrules_min_markup_margin_percent', 'DiscountRulesMinMarkupMarginPercent', 'double', 100, '24,2', 'product', 0, 0, '', array ( 'options' => array ( '' => NULL, ), ), 1, '', '1', '', '', 0, 'discountrules@discountrules', 1, 0, '0', array ( 'css' => '', 'cssview' => '', 'csslist' => '', ));
 
 		return $this->_init($sql, $options);
 	}
