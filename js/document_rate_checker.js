@@ -46,7 +46,6 @@
         const checkLineRate = (trElement) => {
             const {minRate, rateType, imgWarning} = trElement.dataset;
             if (minRate === undefined || rateType === undefined) return;
-            console.log(minRate);
             const targetTd = trElement.querySelector(
                 rateType === 'MarginRate' ? '.linecolmargin2' : '.linecolmark1'
             );
