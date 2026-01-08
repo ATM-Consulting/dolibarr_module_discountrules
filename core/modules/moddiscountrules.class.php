@@ -73,14 +73,14 @@ class moddiscountrules extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 
-		$this->version = '2.28.1';
+		$this->version = '2.28.2';
 
 		// Key used in llx_const table to save module status enabled/disabled (where discountrules is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='discountrules_card.png';
+		$this->picto='discountrules_card@discountrules';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /discountrules/core/xxxxx) (0=disable, 1=enable)
@@ -171,8 +171,8 @@ class moddiscountrules extends DolibarrModules
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
 		$this->tabs = array(
-			'product:+discountrules,:TabTitleDiscountRule,DiscountRule,/discountrules/class/discountrule.class.php,countProductOccurrences:discountrules@discountrules:'.$user->hasRight('discountrules', 'read').':/discountrules/discountrule_list.php?contextpage=discountrulelistforproduct&fk_product=__ID__',
-			'thirdparty:+discountrules:TabTitleDiscountRule:discountrules@discountrules:'.$user->hasRight('discountrules', 'read').':/discountrules/discountrule_list.php?contextpage=discountrulelistforcompany&fk_company=__ID__',
+			'product:+discountrules,:TabTitleDiscountRule,DiscountRule,/discountrules/class/discountrule.class.php,countProductOccurrences:discountrules@discountrules:$user->hasRight("discountrules", "read"):/discountrules/discountrule_list.php?contextpage=discountrulelistforproduct&fk_product=__ID__',
+			'thirdparty:+discountrules:TabTitleDiscountRule:discountrules@discountrules:$user->hasRight("discountrules", "read"):/discountrules/discountrule_list.php?contextpage=discountrulelistforcompany&fk_company=__ID__',
 			// 'thirdparty:+discountrules:TabTitleDiscountRule:discountrules@discountrules:$user->hasRight('discountrules', 'read'):/discountrules/discountrule_list.php?fk_company=__ID__', // Todo : rectifier le bug de bouble affichage
 		);
 
