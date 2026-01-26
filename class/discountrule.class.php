@@ -1133,7 +1133,7 @@ class DiscountRule extends CommonObject
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 			$proj = new Project($this->db);
 			$proj->id = $fk_project;
-			$fk_category_project = $project->getCategoriesCommon('project');
+			$fk_category_project = $proj->getCategoriesCommon('project');
 		}
 
 	    $baseSubprice = 0;
