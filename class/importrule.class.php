@@ -129,7 +129,7 @@ class ImportRule{
 					$TImportLog[] = $this->newImportLogLine('error', $e->getMessage());
 					$this->nbErrors++;
 					$this->db->rollback();
-					$TImportLog[] = $this->newImportLogLine('error rollback db');
+					$TImportLog[] = $this->newImportLogLine('error', 'rollback db');
 				}
 			}
 		}

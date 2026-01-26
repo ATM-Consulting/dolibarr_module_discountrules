@@ -46,7 +46,7 @@ $res=0;
 if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
+while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) $res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
 if (!$res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php")) $res = @include dirname(substr($tmp, 0, ($i + 1)))."/main.inc.php";
 // Try main.inc.php using relative path
@@ -69,17 +69,17 @@ dol_include_once('/discountrules/class/discountSearch.class.php');
 // Load traductions files requiredby by page
 $langs->loadLangs(array("discountrules","other"));
 
-$action     = GETPOST('action','alpha');
-$massaction = GETPOST('massaction','alpha');
-$show_files = GETPOST('show_files','int');
-$confirm    = GETPOST('confirm','alpha');
+$action     = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
+$confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'discountrulelist';   // To manage different context of search
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'discountrulelist';   // To manage different context of search
 
-$id			= GETPOST('id','int');
+$id			= GETPOST('id', 'int');
 $backtopage = GETPOST('backtopage');
-$optioncss  = GETPOST('optioncss','alpha');
+$optioncss  = GETPOST('optioncss', 'alpha');
 
 $fk_product = GETPOST('fk_product', 'int');
 $fk_company = GETPOST('fk_company', 'int');
@@ -93,10 +93,10 @@ $TCategoryCompany = GETPOST('search_TCategoryCompany', 'array');
 
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -106,10 +106,10 @@ $pagenext = $page + 1;
 $object=new DiscountRule($db);
 
 // for this list
-if(empty($fk_product)){
+if (empty($fk_product)) {
 	$object->fields['fk_product']['visible'] = 1;
 }
-if(!empty($fk_company)){
+if (!empty($fk_company)) {
 	$object->fields['fk_company']['visible'] = 0;
 	$object->fields['fk_c_typent']['visible'] = 0;
 }
@@ -135,26 +135,24 @@ if (!(isModEnabled('discountrules'))) accessforbidden('Module not enabled');
 $socid=0;
 if ($user->socid > 0 // Protection if external user
 		|| !$user->hasRight('discountrules', 'read') // Check user right
-)
-{
+) {
 	//$socid = $user->societe_id;
 	accessforbidden();
 }
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
-foreach($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
 /*$ASearchTest = array('fk_category_company','fk_category_product', 'fk_company');
 foreach ($ASearchTest as $key)
 {
-    if(!empty($search[$key]) && $search[$key] < 0){
-        unset($search[$key]);
-    }
+	if(!empty($search[$key]) && $search[$key] < 0){
+		unset($search[$key]);
+	}
 }*/
 
 
@@ -162,15 +160,13 @@ foreach ($ASearchTest as $key)
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	if (!empty($val['searchall'])) $fieldstosearchall['t.'.$key]=$val['label'];
 }
 
 // Definition of fields for list
 $arrayfields=array();
-foreach($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
 }
@@ -201,54 +197,49 @@ if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
-	{
-
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$searchCategoryProductOperator = $searchCategorySocieteOperator = 0;
 		$TCategoryProduct = $TCategoryCompany = array();
 
-		foreach($object->fields as $key => $val)
-		{
+		foreach ($object->fields as $key => $val) {
 			$search[$key]='';
 		}
 		$toselect='';
 		$search_array_options=array();
 	}
-	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')
-		|| GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') || GETPOST('button_search','alpha'))
-	{
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
+		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
 		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 
 	// Mass actions
 	$objectclass='discountrule';
 	$objectlabel='discountrule';
-	$permtoread = $user->hasRight('discountrules','read');
-	$permtodelete = $user->hasRight('discountrules','delete');
+	$permtoread = $user->hasRight('discountrules', 'read');
+	$permtodelete = $user->hasRight('discountrules', 'delete');
 	$uploaddir = $conf->discountrules->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 
-	if($massaction === "delete" && is_array($toselect) && $user->hasRight('discountrules', 'delete')){
+	if ($massaction === "delete" && is_array($toselect) && $user->hasRight('discountrules', 'delete')) {
 		$deleteCount = 0;
 		$deleteErrorCount = 0;
-		foreach ($toselect as $selectedId){
+		foreach ($toselect as $selectedId) {
 			$objectToDelete = new DiscountRule($db);
 			$res = $objectToDelete->fetch($selectedId);
-			if($res){
+			if ($res) {
 				$result=$objectToDelete->delete($user);
-				if ($result > 0){
+				if ($result > 0) {
 					$deleteCount++;
-				}else{
+				} else {
 					$deleteErrorCount++;
 					if (! empty($objectToDelete->errors)) setEventMessages(null, $objectToDelete->errors, 'errors');
 					else setEventMessages($objectToDelete->error, null, 'errors');
@@ -256,7 +247,7 @@ if (empty($reshook))
 			}
 		}
 
-		if(!empty($deleteCount)){
+		if (!empty($deleteCount)) {
 			setEventMessage($langs->trans('Deleted'));
 		}
 	}
@@ -285,8 +276,7 @@ $title = $langs->trans('ListOfDiscountRules');
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
-foreach($object->fields as $key => $val)
-{
+foreach ($object->fields as $key => $val) {
 	$sql.='t.'.$key.', ';
 }
 
@@ -301,9 +291,9 @@ if (!empty($discountRulesExtrafields->attributes[$object->table_element]['label'
 }
 // Add fields from hooks
 $parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/','', $sql);
+$sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".$db->prefix()."discountrule as t";
 if (isset($discountRulesExtrafields->attribute_label) && is_array($discountRulesExtrafields->attribute_label) && count($discountRulesExtrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."discountrule_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".$db->prefix()."societe as s on (s.rowid = t.fk_company)";
@@ -313,40 +303,38 @@ $sql.= " LEFT JOIN ".$db->prefix()."societe as s on (s.rowid = t.fk_company)";
 $sql.= " WHERE t.entity IN (".getEntity('discountrule').") ";
 
 
-if($displayRulesWithoutProduct) {
+if ($displayRulesWithoutProduct) {
 	$sql.= ' AND t.fk_product = 0 ';
-}elseif(!empty($fk_product)) {
+} elseif (!empty($fk_product)) {
 	$sql.= ' AND t.fk_product = ' . intval($fk_product) . ' ';
 }
 
-if(!empty($fk_company)) {
-   $sql .= DiscountSearch::getCompanySQLFilters($fk_company);
-}
-elseif (!empty($search['fk_company'])){
+if (!empty($fk_company)) {
+	$sql .= DiscountSearch::getCompanySQLFilters($fk_company);
+} elseif (!empty($search['fk_company'])) {
 	$sql .= natural_search('s.nom', $search['fk_company']);
 }
 
-if(!empty($TCategoryProduct)){
+if (!empty($TCategoryProduct)) {
 	$TCategoryProduct = array_map('intval', $TCategoryProduct);
 
-	$sql.= ' AND t.rowid IN (SELECT dcp.fk_discountrule 
-	FROM '.$db->prefix().'discountrule_category_product dcp 
+	$sql.= ' AND t.rowid IN (SELECT dcp.fk_discountrule
+	FROM '.$db->prefix().'discountrule_category_product dcp
 	WHERE dcp.fk_category_product IN ('.implode(',', $TCategoryProduct).')
 	)';
 }
 
-if(!empty($TCategoryCompany)){
+if (!empty($TCategoryCompany)) {
 	$TCategoryCompany = array_map('intval', $TCategoryCompany);
 
-	$sql.= ' AND t.rowid IN (SELECT dcc.fk_discountrule 
-	FROM '.$db->prefix().'discountrule_category_company dcc 
+	$sql.= ' AND t.rowid IN (SELECT dcc.fk_discountrule
+	FROM '.$db->prefix().'discountrule_category_company dcc
 	WHERE dcc.fk_category_company IN ('.implode(',', $TCategoryCompany).')
 	)';
 }
 
 
-foreach($search as $key => $val)
-{
+foreach ($search as $key => $val) {
 	if ($key == 'fk_status' && $search[$key] == -1) continue;
 
 	if (in_array($key, array('all_category_product', 'all_category_company', 'fk_company' ))) continue;
@@ -373,7 +361,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val)
 {
-    $sql.='t.'.$key.', ';
+	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
 if (! empty($discountRulesExtrafields->attributes[$object->table_element]['label'])) {
@@ -386,33 +374,27 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/,\s*$/','', $sql);
 */
 
-$sql.=$db->order($sortfield,$sortorder);
+$sql.=$db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST'))
-{
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
-	{
+	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 }
 
 // if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
-{
+if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql=$db->query($sql);
-	if (! $resql)
-	{
+	if (! $resql) {
 		dol_print_error($db);
 		exit;
 	}
@@ -421,8 +403,7 @@ else
 }
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page)
-{
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/discountrules/discountrule_card.php?id='.$id);
@@ -435,8 +416,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 
 llxHeader('', $title, $help_url);
 
-if(!empty($fk_product)){
-
+if (!empty($fk_product)) {
 	$product = new Product($db);
 	$product->fetch($fk_product);
 
@@ -455,22 +435,21 @@ if(!empty($fk_product)){
 	dol_banner_tab($product, 'ref', $linkback, $shownav, 'ref');
 }
 
-if(!empty($fk_company)){
-
+if (!empty($fk_company)) {
 	$societe = new Societe($db);
 	$res = $societe->fetch($fk_company);
-    if($res > 0) {
-        $object->fk_soc = $fk_company;
-        $object->initFieldsParams();
-        $head = societe_prepare_head($societe);
-        $titre = $langs->trans("ThirdParty");
-        $picto = $societe->picto;
-        dol_fiche_head($head, 'discountrules', $titre, -1, $picto);
+	if ($res > 0) {
+		$object->fk_soc = $fk_company;
+		$object->initFieldsParams();
+		$head = societe_prepare_head($societe);
+		$titre = $langs->trans("ThirdParty");
+		$picto = $societe->picto;
+		dol_fiche_head($head, 'discountrules', $titre, -1, $picto);
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($societe, 'ref', $linkback, 0, 'ref');
-    }
+		dol_banner_tab($societe, 'ref', $linkback, 0, 'ref');
+	}
 }
 
 
@@ -482,8 +461,7 @@ if (!empty($fk_company)) $param .= '&fk_company=' . $fk_company;
 if (!empty($displayRulesWithoutProduct)) $param .= '&display-rules-without-product=' . $displayRulesWithoutProduct;
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-foreach($search as $key => $val)
-{
+foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) foreach ($search[$key] as $skey) $param .= '&search_'.$key.'[]='.urlencode($skey);
 	else $param .= '&search_'.$key.'='.urlencode($search[$key]);
 }
@@ -522,22 +500,17 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // LIST TITLE BUTTONS
 $newcardbutton='';
-$urlNew = dol_buildpath('discountrules/discountrule_card.php',1).'?action=create';
-if(!empty($fk_product))
-{
-	$urlNew.= '&fk_product=' . intval($fk_product) ;
+$urlNew = dol_buildpath('discountrules/discountrule_card.php', 1).'?action=create';
+if (!empty($fk_product)) {
+	$urlNew.= '&fk_product=' . intval($fk_product);
 }
-if(!empty($fk_company))
-{
-	$urlNew.= '&fk_company=' . intval($fk_company) ;
+if (!empty($fk_company)) {
+	$urlNew.= '&fk_company=' . intval($fk_company);
 }
 
-if(function_exists('dolGetButtonTitle'))
-{
+if (function_exists('dolGetButtonTitle')) {
 	$newcardbutton.= dolGetButtonTitle($langs->trans('NewDiscountRule'), '', 'fa fa-plus-circle', $urlNew, '', $user->hasRight('discountrules', 'create'));
-}
-elseif ($user->hasRight('discountrules', 'create'))
-{
+} elseif ($user->hasRight('discountrules', 'create')) {
 	$newcardbutton.= '<a class="butActionNew" href="'.$urlNew.'"><span class="valignmiddle">'.$langs->trans('NewDiscountRule').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
@@ -545,9 +518,8 @@ elseif ($user->hasRight('discountrules', 'create'))
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'discountrules@discountrules', 0, $newcardbutton, '', $limit);
 
 
-if ($search_all)
-{
-	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
 }
 
@@ -561,8 +533,7 @@ $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $ob
 if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 else $moreforfilter = $hookmanager->resPrint;
 
-if (! empty($moreforfilter))
-{
+if (! empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
 	print '</div>';
@@ -573,21 +544,20 @@ $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfiel
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $countNbCols = 0;
-foreach($object->fields as $key => $val){
-	if(empty($val['visible'])){ continue; }
-	if (! empty($arrayfields['t.'.$key]['checked'])){
+foreach ($object->fields as $key => $val) {
+	if (empty($val['visible'])) { continue; }
+	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		$countNbCols++;
 	}
 }
 
-if (isModEnabled('categorie'))
-{
+if (isModEnabled('categorie')) {
 	$moreforfilter = true;
 	print '<div class="liste_titre liste_titre_bydiv centpercent" >';
 
 
 	print '<table style="width: 100%" >';
-	if(empty($fk_product)) {
+	if (empty($fk_product)) {
 		// Filtre catégories produit
 		print '<tr>';
 		print '<td>';
@@ -596,25 +566,25 @@ if (isModEnabled('categorie'))
 		$object->TCategoryProduct = $TCategoryProduct;
 		print $object->showInputField($object->fields['all_category_product'], 'all_category_product', $TCategoryProduct, '', '', 'search_', 'minwidth300', 1);
 		print '</td>';
-//	print '<td>';
-//  print ' <label><input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> '.$langs->trans('UseOrOperatorForCategories').'</label>';
-//	print '</td>';
+		//  print '<td>';
+		//  print ' <label><input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> '.$langs->trans('UseOrOperatorForCategories').'</label>';
+		//  print '</td>';
 		print '</tr>';
 	}
-	if(empty($fk_company)) {
-        // Filtre catégories societe
-        print '<tr>';
-        print '<td  >';
-        print $langs->trans($object->fields['all_category_company']['label']);
-        print '</td><td style="min-width: 300px;">';
-        $object->TCategoryCompany = $TCategoryCompany;
-        print $object->showInputField($object->fields['all_category_company'], 'all_category_company', $TCategoryCompany, '', '', 'search_', 'minwidth300', 1);
-        print '</td>';
-//	print '<td>';
-//	print ' <label><input type="checkbox" class="valignmiddle" name="search_category_societe_operator" value="1"'.($searchCategorySocieteOperator == 1 ? ' checked="checked"' : '').'/> '.$langs->trans('UseOrOperatorForCategories').'</label>';
-//	print '</td>';
-        print '</tr>';
-    }
+	if (empty($fk_company)) {
+		// Filtre catégories societe
+		print '<tr>';
+		print '<td  >';
+		print $langs->trans($object->fields['all_category_company']['label']);
+		print '</td><td style="min-width: 300px;">';
+		$object->TCategoryCompany = $TCategoryCompany;
+		print $object->showInputField($object->fields['all_category_company'], 'all_category_company', $TCategoryCompany, '', '', 'search_', 'minwidth300', 1);
+		print '</td>';
+		//  print '<td>';
+		//  print ' <label><input type="checkbox" class="valignmiddle" name="search_category_societe_operator" value="1"'.($searchCategorySocieteOperator == 1 ? ' checked="checked"' : '').'/> '.$langs->trans('UseOrOperatorForCategories').'</label>';
+		//  print '</td>';
+		print '</tr>';
+	}
 
 
 
@@ -631,9 +601,8 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-foreach($object->fields as $key => $val)
-{
-	if(empty($val['visible'])){ continue; }
+foreach ($object->fields as $key => $val) {
+	if (empty($val['visible'])) { continue; }
 
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
 	if ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -641,12 +610,11 @@ foreach($object->fields as $key => $val)
 	elseif (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield .= ($cssforfield ? ' ' : '').'right';
 
-	if (! empty($arrayfields['t.'.$key]['checked']))
-	{
+	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="nowrap liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 
 		if (!in_array($key, array('all_category_product', 'all_category_company'))) {
-            if(empty($search[$key])) $search[$key] = '';
+			if (empty($search[$key])) $search[$key] = '';
 			if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) print Form::selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], 1, 0, 0, '', 1, 0, 0, '', 'maxwidth75');
 			elseif (strpos($val['type'], 'integer:') === 0 && !in_array($key, array('fk_company')) || in_array($key, array('fk_country', 'fk_product'))) {
 				$object->{$key} = $search[$key];
@@ -655,8 +623,7 @@ foreach($object->fields as $key => $val)
 				if ($key == 'fk_product') {
 					print '<input class="classfortooltip" title="'.$langs->trans('DoNotDisplayRulesWithProduct').'" type="checkbox" name="display-rules-without-product" value="1" '.(!empty($displayRulesWithoutProduct)?'checked':'').'>';
 				}
-			}
-			elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+			} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		}
 
 		print '</td>';
@@ -688,16 +655,14 @@ print '</tr>'."\n";
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-foreach($object->fields as $key => $val)
-{
-	if(empty($val['visible'])){ continue; }
+foreach ($object->fields as $key => $val) {
+	if (empty($val['visible'])) { continue; }
 	$cssforfield = (empty($val['css']) ? '' : $val['css']);
 	if ($key == 'fk_status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 	elseif (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield .= ($cssforfield ? ' ' : '').'right';
-	if (!empty($arrayfields['t.'.$key]['checked']))
-	{
+	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 	}
 }
@@ -714,11 +679,9 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
-{
-	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
-	{
-		if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
+		if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
 	}
 }
 
@@ -727,23 +690,21 @@ if (!empty($extrafields->attributes[$object->table_element]['computed']) && is_a
 // --------------------------------------------------------------------
 $i=0;
 $totalarray=array();
-while ($i < ($limit ? min($num, $limit) : $num))
-{
+while ($i < ($limit ? min($num, $limit) : $num)) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) break; // Should not happen
 
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
-	$object->fetch_categoryCompany();
-	$object->fetch_categoryProduct();
+	$object->fetchCategoryCompany();
+	$object->fetchCategoryProduct();
 
 	// Show here line of result
 	print '<tr class="oddeven" id="discountrule-row-'.$object->id.'" >';
-    if(empty($totalarray['nbfield']))$totalarray['nbfield']=0;
-	foreach($object->fields as $key => $val)
-	{
-		if(empty($val['visible'])){ continue; }
+	if (empty($totalarray['nbfield']))$totalarray['nbfield']=0;
+	foreach ($object->fields as $key => $val) {
+		if (empty($val['visible'])) { continue; }
 		$cssforfield = (empty($val['css']) ? '' : $val['css']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		elseif ($key == 'fk_status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -754,16 +715,14 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'fk_status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
 		//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
-		if (!empty($arrayfields['t.'.$key]['checked']))
-		{
+		if (!empty($arrayfields['t.'.$key]['checked'])) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'fk_status') print $object->getLibStatut(5);
 			elseif ($key == 'label') print $object->getNomUrl(1);
 			else print $object->showOutputField($val, $key, $object->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! empty($val['isameasure']))
-			{
+			if (! empty($val['isameasure'])) {
 				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
 				$totalarray['val']['t.'.$key] += $object->$key;
 			}
@@ -777,8 +736,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	print $hookmanager->resPrint;
 	// Action column
 	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-	{
+	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		$selected=0;
 		if (in_array($object->id, $arrayofselected)) $selected = 1;
 		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -792,15 +750,14 @@ while ($i < ($limit ? min($num, $limit) : $num))
 }
 
 // Show total line
-if(file_exists(DOL_DOCUMENT_ROOT. '/core/tpl/list_print_total.tpl.php')) {
+if (file_exists(DOL_DOCUMENT_ROOT. '/core/tpl/list_print_total.tpl.php')) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 }
 
 // If no record found
-if ($num == 0)
-{
+if ($num == 0) {
 	$colspan=1;
-	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+	foreach ($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

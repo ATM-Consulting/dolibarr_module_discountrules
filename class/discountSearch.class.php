@@ -1,4 +1,19 @@
 <?php
+/* Copyright (C) 2025 ATM Consulting
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 require_once __DIR__ . '/discountrule.class.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
@@ -127,20 +142,23 @@ class DiscountSearch
 
 
 	/**
-	 * @param int $qty
-	 * @param int $fk_product
-	 * @param int $fk_company
-	 * @param int $fk_project
-	 * @param array $TProductCat
-	 * @param array $TCompanyCat
-	 * @param int $fk_c_typent
-	 * @param int $fk_country
-	 * @param int $nocache
-	 * @param string $date
-	 * @param array $TProjectCat
-	 * @return DiscountSearchResult|int
+	 * Search discount rules and applied document discounts.
+	 *
+	 * @param int    $qty          Quantity of product
+	 * @param int    $fk_product   Product id
+	 * @param int    $fk_company   Company id
+	 * @param int    $fk_project   Project id
+	 * @param array  $TProductCat  Product category ids
+	 * @param array  $TCompanyCat  Company category ids
+	 * @param int    $fk_c_typent  Company type id
+	 * @param int    $fk_country   Country id
+	 * @param int    $nocache      Disable cache flag
+	 * @param string $date         Date used for search (timestamp or string)
+	 * @param array  $TProjectCat  Project category ids
+	 * @return DiscountSearchResult|int Result object or -1 on error
 	 */
-	public function search($qty = 0, $fk_product = 0, $fk_company = 0, $fk_project = 0, $TProductCat = array(), $TCompanyCat = array(), $fk_c_typent = 0, $fk_country = 0, $nocache = 0, $date = '', $TProjectCat = array()){
+	public function search($qty = 0, $fk_product = 0, $fk_company = 0, $fk_project = 0, $TProductCat = array(), $TCompanyCat = array(), $fk_c_typent = 0, $fk_country = 0, $nocache = 0, $date = '', $TProjectCat = array())
+	{
 		$fk_product = intval($fk_product);
 		$this->qty = $qty;
 		$this->fk_product = $fk_product;
@@ -148,29 +166,26 @@ class DiscountSearch
 		if (empty($this->date)) $this->date = time();
 		if (! empty($date)) $this->date = $date;
 
-		if(!empty($fk_product)){
+		if (!empty($fk_product)) {
 			$res = $this->feedByProduct($fk_product, $nocache);
-			if(!$res){ return -1; }
-		}
-		else{
+			if (!$res) { return -1; }
+		} else {
 			// TODO : voir si je laisse là ou si on part du principe que si != de vide alors ça écrase les valeurs courantes mais si feedByProduct à fait des modifs
 			$this->TProductCat = $TProductCat;
 		}
 
-		if(!empty($fk_project)){
+		if (!empty($fk_project)) {
 			$res = $this->feedByProject($fk_project, $nocache);
-			if(!$res){ return -1; }
-		}
-		else{
+			if (!$res) { return -1; }
+		} else {
 			// TODO : voir si je laisse là ou si on part du principe que si != de vide alors ça écrase les valeurs courantes mais si feedByProject à fait des modifs
 			$this->TProjectCat = $TProjectCat;
 		}
 
-		if(!empty($fk_company)){
+		if (!empty($fk_company)) {
 			$res = $this->feedBySoc($fk_company, $nocache);
-			if(!$res){ return -1; }
-		}
-		else{
+			if (!$res) { return -1; }
+		} else {
 			// TODO : voir si je laisse là ou si on part du principe que si != de vide alors ça écrase les valeurs courantes mais si feedBySoc à fait des modifs
 			$this->TCompanyCat = $TCompanyCat;
 			$this->fk_country = $fk_country;
@@ -203,7 +218,7 @@ class DiscountSearch
 		$useDocumentReduction = false;
 		if (!empty($this->documentDiscount)) {
 			$documentLastNetPrice = DiscountRule::calcNetPrice($this->documentDiscount->subprice, $this->documentDiscount->remise_percent);
-			if($documentLastNetPrice>0) {
+			if ($documentLastNetPrice>0) {
 				$useDocumentReduction = true;
 			}
 
@@ -211,19 +226,18 @@ class DiscountSearch
 			if ($useDocumentReduction
 				&& !empty($this->discountRule)
 			) {
-				if(getDolGlobalInt('DISCOUNTRULES_SEARCH_DOCUMENTS_PRIORITY_RANK') == $this->discountRule->priority_rank) {
+				if (getDolGlobalInt('DISCOUNTRULES_SEARCH_DOCUMENTS_PRIORITY_RANK') == $this->discountRule->priority_rank) {
 					// Search product net price
 					$discountNetPrice = $this->discountRule->getDiscountSellPrice($this->fk_product, $this->fk_company) - $this->discountRule->product_reduction_amount;
-					if(!empty($discountNetPrice) && $discountNetPrice > 0 && $documentLastNetPrice > $discountNetPrice) {
+					if (!empty($discountNetPrice) && $discountNetPrice > 0 && $documentLastNetPrice > $discountNetPrice) {
 						$useDocumentReduction = false;
 					}
-				}
-				elseif(getDolGlobalInt('DISCOUNTRULES_SEARCH_DOCUMENTS_PRIORITY_RANK') < $this->discountRule->priority_rank) {
+				} elseif (getDolGlobalInt('DISCOUNTRULES_SEARCH_DOCUMENTS_PRIORITY_RANK') < $this->discountRule->priority_rank) {
 					$useDocumentReduction = false;
 				}
 			}
 
-			if($useDocumentReduction) {
+			if ($useDocumentReduction) {
 				$this->discountRule = false;
 
 				$this->result->result = true;
@@ -247,7 +261,6 @@ class DiscountSearch
 		 */
 
 		if (!empty($this->discountRule)) {
-
 			$this->result->result = true;
 			$this->result->element = 'discountrule';
 			$this->result->id = $this->discountRule->id;
@@ -264,7 +277,7 @@ class DiscountSearch
 			$this->result->priority_rank = $this->discountRule->priority_rank;
 
 			$this->result->typentlabel  = getTypeEntLabel($this->discountRule->fk_c_typent);
-			if(!$this->result->typentlabel ){ $this->result->typentlabel = ''; }
+			if (!$this->result->typentlabel ) { $this->result->typentlabel = ''; }
 
 			$this->result->fk_status = $this->discountRule->fk_status;
 			$this->result->fk_product = $this->discountRule->fk_product;
@@ -274,7 +287,7 @@ class DiscountSearch
 				// Here there are matching parameters for product categories or company categories
 				// ADD humain readable informations from search result
 				$this->result->match_on->product_info = '';
-				if($this->product && !empty($this->discountRule->fk_product) && $this->product->id == $this->discountRule->fk_product ){
+				if ($this->product && !empty($this->discountRule->fk_product) && $this->product->id == $this->discountRule->fk_product ) {
 					$this->result->match_on->product_info = $this->product->ref . ' - '.$this->product->label;
 				}
 
@@ -310,7 +323,7 @@ class DiscountSearch
 		}
 
 		// revoit au minimum des infos de prix produit et réduction client
-		if(!$this->result->result){
+		if (!$this->result->result) {
 			$this->result->subprice = $this->result->product_price = $this->result->standard_product_price;
 			$this->result->reduction = $this->result->defaultCustomerReduction;
 		}
@@ -349,8 +362,7 @@ class DiscountSearch
 		$this->debugLog($discountRes->error);
 		if ($res > 0) {
 			$this->discountRule = $discountRes;
-		}
-		else{
+		} else {
 			$this->discountRule = false;
 			$this->result->log[] = $discountRes->error;
 		}
@@ -371,12 +383,11 @@ class DiscountSearch
 
 		$this->documentDiscount = false;
 
-		if($this->fk_product) {
-
+		if ($this->fk_product) {
 			$from_quantity 	= getDolGlobalInt('DISCOUNTRULES_SEARCH_IN_DOCUMENTS_QTY_EQUIV') ? $this->qty : 0;
 
 			$fk_project = 0; // Search documents in all projects
-			if (getDolGlobalInt('DISCOUNTRULES_SEARCH_IN_DOCUMENTS_PROJECT_EQUIV')){
+			if (getDolGlobalInt('DISCOUNTRULES_SEARCH_IN_DOCUMENTS_PROJECT_EQUIV')) {
 				if (!empty($this->fk_project)) {
 					$fk_project = $this->fk_project; // Search documents not linked to project
 				} else {
@@ -391,16 +402,14 @@ class DiscountSearch
 			if (getDolGlobalInt('DISCOUNTRULES_SEARCH_IN_PROPALS')) {
 				$propal = DiscountRule::searchDiscountInDocuments('propal', $this->fk_product, $this->fk_company, $from_quantity, $fk_project);
 				if (!empty($propal)
-					&& (empty($this->documentDiscount) || DiscountRule::calcNetPrice($this->documentDiscount->subprice, $this->documentDiscount->remise_percent) > DiscountRule::calcNetPrice($propal->subprice, $propal->remise_percent) ))
-				{
+					&& (empty($this->documentDiscount) || DiscountRule::calcNetPrice($this->documentDiscount->subprice, $this->documentDiscount->remise_percent) > DiscountRule::calcNetPrice($propal->subprice, $propal->remise_percent) )) {
 					$this->documentDiscount = $propal;
 				}
 			}
 			if (getDolGlobalInt('DISCOUNTRULES_SEARCH_IN_INVOICES')) {
 				$facture = DiscountRule::searchDiscountInDocuments('facture', $this->fk_product, $this->fk_company, $from_quantity, $fk_project);
 				if (!empty($facture)
-					&& (empty($this->documentDiscount)|| DiscountRule::calcNetPrice($this->documentDiscount->subprice, $this->documentDiscount->remise_percent) > DiscountRule::calcNetPrice($facture->subprice, $facture->remise_percent) ) )
-				{
+					&& (empty($this->documentDiscount)|| DiscountRule::calcNetPrice($this->documentDiscount->subprice, $this->documentDiscount->remise_percent) > DiscountRule::calcNetPrice($facture->subprice, $facture->remise_percent) ) ) {
 					$this->documentDiscount = $facture;
 				}
 			}
@@ -413,11 +422,12 @@ class DiscountSearch
 	/**
 	 * Add company info to search query
 	 *
-	 * @param int $fk_company
-	 * @param bool $nocache
-	 * @return boolean
+	 * @param int  $fk_company Company id
+	 * @param bool $nocache    Disable cache flag
+	 * @return boolean True if company found, false otherwise
 	 */
-	public function feedBySoc($fk_company, $nocache){
+	public function feedBySoc($fk_company, $nocache)
+	{
 
 		$this->fk_company = 0;
 
@@ -438,8 +448,7 @@ class DiscountSearch
 				$this->defaultCustomerReduction = $this->societe->remise_percent;
 				$this->fk_company = $this->societe->id;
 				return true;
-			}
-			else{
+			} else {
 				$this->societe = false;
 				return false;
 			}
@@ -451,11 +460,12 @@ class DiscountSearch
 	/**
 	 * Add product info to search query
 	 *
-	 * @param int $fk_product
-	 * @param int $nocache
-	 * @return boolean
+	 * @param int $fk_product Product id
+	 * @param int $nocache    Disable cache flag
+	 * @return boolean True if product found, false otherwise
 	 */
-	public function feedByProduct($fk_product, $nocache = 0){
+	public function feedByProduct($fk_product, $nocache = 0)
+	{
 		// GET product infos and categories
 		$this->product = false;
 		$this->fk_product = 0;
@@ -469,7 +479,7 @@ class DiscountSearch
 				$c = new Categorie($this->db);
 				$this->TProductCat = $c->containing($this->product->id, Categorie::TYPE_PRODUCT, 'id');
 				return true;
-			}else {
+			} else {
 				$this->product = false;
 				return false;
 			}
@@ -481,11 +491,12 @@ class DiscountSearch
 	/**
 	 * Add project info to search query
 	 *
-	 * @param int $fk_project
-	 * @param int $nocache
-	 * @return boolean
+	 * @param int $fk_project Project id
+	 * @param int $nocache    Disable cache flag
+	 * @return boolean True if project found, false otherwise
 	 */
-	public function feedByProject($fk_project, $nocache = 0){
+	public function feedByProject($fk_project, $nocache = 0)
+	{
 		// GET product infos and categories
 		$this->project = false;
 		$this->fk_project = 0;
@@ -499,7 +510,7 @@ class DiscountSearch
 				$c = new Categorie($this->db);
 				$this->TProjectCat = $c->containing($this->project->id, Categorie::TYPE_PROJECT, 'id');
 				return true;
-			}else {
+			} else {
 				$this->project = false;
 				return false;
 			}
@@ -510,32 +521,38 @@ class DiscountSearch
 
 
 	/**
-	 * @param string $log
+	 * Add a debug entry into internal log array.
+	 *
+	 * @param mixed $log Message or data to log
+	 * @return void
 	 */
-	public function debugLog($log = null){
-		if(!empty($log)) $this->TDebugLog[] = $log;
+	public function debugLog($log = null)
+	{
+		if (!empty($log)) $this->TDebugLog[] = $log;
 	}
 
-    /**
-     * @param int $id fk_company
-     * @return string SQL
-     */
-    public static function getCompanySQLFilters($id) {
+	/**
+	 * Build SQL filter for a given company.
+	 *
+	 * @param int $id Company id
+	 * @return string SQL filter fragment
+	 */
+	public static function getCompanySQLFilters($id)
+	{
 		global $db;
 
-        $sql = '';
-        $sql .= ' AND ( t.fk_company = '.intval($id).' ';
-        $sql .= ' OR  ((t.fk_c_typent = (SELECT fk_typent FROM '.$db->prefix().'societe WHERE rowid = '.intval($id).') OR t.fk_c_typent = 0)'; //0 => Tous
-        $sql .= ' AND  (t.fk_country = (SELECT fk_pays FROM '.$db->prefix().'societe WHERE rowid = '.intval($id).') OR t.fk_country = 0)';
-        $sql .= ' AND  (t.fk_project IN (SELECT rowid FROM '.$db->prefix().'projet WHERE fk_soc = '.intval($id).') OR t.fk_project = 0 )  ';
-        $sql .= ' AND  (t.rowid IN (SELECT dcc.fk_discountrule 
-                                FROM '.$db->prefix().'discountrule_category_company dcc 
+		$sql = '';
+		$sql .= ' AND ( t.fk_company = '.intval($id).' ';
+		$sql .= ' OR  ((t.fk_c_typent = (SELECT fk_typent FROM '.$db->prefix().'societe WHERE rowid = '.intval($id).') OR t.fk_c_typent = 0)'; //0 => Tous
+		$sql .= ' AND  (t.fk_country = (SELECT fk_pays FROM '.$db->prefix().'societe WHERE rowid = '.intval($id).') OR t.fk_country = 0)';
+		$sql .= ' AND  (t.fk_project IN (SELECT rowid FROM '.$db->prefix().'projet WHERE fk_soc = '.intval($id).') OR t.fk_project = 0 )  ';
+		$sql .= ' AND  (t.rowid IN (SELECT dcc.fk_discountrule
+                                FROM '.$db->prefix().'discountrule_category_company dcc
                                 LEFT JOIN '.$db->prefix().'categorie_societe cs ON (dcc.fk_category_company = cs.fk_categorie)
-                                WHERE cs.fk_soc =  '.intval($id).') OR t.all_category_company = 1)) 
+                                WHERE cs.fk_soc =  '.intval($id).') OR t.all_category_company = 1))
                 AND t.fk_company = 0) '; //Si pas de tiers associé alors vérifie sur les autres params
-        return $sql;
-    }
-
+		return $sql;
+	}
 }
 
 
@@ -579,7 +596,7 @@ class DiscountSearchResult
 
 	/** @var int $entity */
 	public $entity;
-	
+
 	/** @var int $fk_status */
 	public $fk_status;
 	public $date_object;
@@ -604,7 +621,8 @@ class DiscountSearchResult
 	 *
 	 * @return double
 	 */
-	public function calcFinalSubprice(){
+	public function calcFinalSubprice()
+	{
 		return $this->subprice - $this->subprice*$this->reduction/100;
 	}
 }

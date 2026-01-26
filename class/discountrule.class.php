@@ -41,6 +41,10 @@ require_once __DIR__ . '/discountruletools.class.php';
 class DiscountRule extends CommonObject
 {
 	/**
+	 * @var string Prefix used for automatic triggers
+	 */
+	const TRIGGER_PREFIX = 'DISCOUNTRULE';
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'discountrules_discountrule';
@@ -48,9 +52,9 @@ class DiscountRule extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'discountrule';
-	const table_element_category_product = 'discountrule_category_product';
-	const table_element_category_company = 'discountrule_category_company';
-	const table_element_category_project = 'discountrule_category_project';
+	const TABLE_ELEMENT_CATEGORY_PRODUCT = 'discountrule_category_product';
+	const TABLE_ELEMENT_CATEGORY_COMPANY = 'discountrule_category_company';
+	const TABLE_ELEMENT_CATEGORY_PROJECT = 'discountrule_category_project';
 
 	/**
 	 * @var array  Does this field is linked to a thirdparty ?
@@ -69,43 +73,43 @@ class DiscountRule extends CommonObject
 
 	public $reserror;
 
-    /**
-     * Activate status
-     */
-    const STATUS_ACTIVE = 1;
-    /**
-     * Disabled status
-     */
-    const STATUS_DISABLED = 0;
+	/**
+	 * Activate status
+	 */
+	const STATUS_ACTIVE = 1;
+	/**
+	 * Disabled status
+	 */
+	const STATUS_DISABLED = 0;
 
-    public $rowid;
-    public $entity;
+	public $rowid;
+	public $entity;
 	/**
 	 * @deprecated use fk_status
 	 * @var $status;
 	 */
-    public $status;
-    public $label;
-    public $priority_rank;
-    public $date_creation;
-    public $tms;
-    public $import_key;
+	public $status;
+	public $label;
+	public $priority_rank;
+	public $date_creation;
+	public $tms;
+	public $import_key;
 
-    public $fk_country;
-    public $fk_company;
+	public $fk_country;
+	public $fk_company;
 	public $fk_c_typent;
 
-    public $fk_product;
+	public $fk_product;
 	/** @var Product $product */
-    public $product;
-    public $from_quantity;
-    public $reduction;
-    public $product_price;
-    public $product_reduction_amount;
-    public $fk_reduction_tax; // Actuelement non utilisée :  type de taxe utilisée pour $product_price && $product_reduction_amount :  0 = TTC, 1 = HT
+	public $product;
+	public $from_quantity;
+	public $reduction;
+	public $product_price;
+	public $product_reduction_amount;
+	public $fk_reduction_tax; // Actuelement non utilisée :  type de taxe utilisée pour $product_price && $product_reduction_amount :  0 = TTC, 1 = HT
 
-    public $date_from;
-    public $date_to;
+	public $date_from;
+	public $date_to;
 
 	public $all_category_product;
 	public $all_category_company;
@@ -149,15 +153,15 @@ class DiscountRule extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array(
-		      'type'=>'integer',
-		    'label'=>'TechnicalID',
-		    'visible'=> 0,
-		    'enabled'=>1,
-		    'position'=>1,
-		    'notnull'=>1,
-		    'index'=>1,
-		    'comment'=>'Id',
-		    'search'=>1,
+			  'type'=>'integer',
+			'label'=>'TechnicalID',
+			'visible'=> 0,
+			'enabled'=>1,
+			'position'=>1,
+			'notnull'=>1,
+			'index'=>1,
+			'comment'=>'Id',
+			'search'=>1,
 		),
 
 		'entity' => array(
@@ -171,7 +175,7 @@ class DiscountRule extends CommonObject
 			'position' => 20
 		),
 
-	    'label' => array(
+		'label' => array(
 			'type' => 'varchar(255)',
 			'label' => 'Label',
 			'enabled' => 1,
@@ -182,7 +186,7 @@ class DiscountRule extends CommonObject
 			'css' => 'minwidth200',
 			'help' => 'DiscountRuleLabelHelp',
 			'showoncombobox' => 1
-	    ),
+		),
 		'fk_product' => array(
 			'type' => 'integer:Product:product/class/product.class.php:1',
 			'label' => 'Product',
@@ -195,15 +199,15 @@ class DiscountRule extends CommonObject
 			'position' => 2
 		),
 		'priority_rank' => array(
-	        'type'=>'integer',
-	        'label'=>'PriorityRuleRank',
+			'type'=>'integer',
+			'label'=>'PriorityRuleRank',
 			'help' => 'PriorityRuleRankHelp',
-	        'visible'=>1,
-	        'enabled'=>1,
-	        'position'=>5,
-	        'notnull'=>0,
+			'visible'=>1,
+			'enabled'=>1,
+			'position'=>5,
+			'notnull'=>0,
 			'nullvalue'=>0,
-	        'default_value' => 0, 'default' => 0, // for compatibility
+			'default_value' => 0, 'default' => 0, // for compatibility
 			'arrayofkeyval'=>array(
 				'0'=>'NoDiscountRulePriority',
 				'1'=>'DiscountRulePriorityLevel01',
@@ -212,9 +216,9 @@ class DiscountRule extends CommonObject
 				'4'=>'DiscountRulePriorityLevel04',
 				'5'=>'DiscountRulePriorityLevel05'
 			),
-	        'langfile' => 'discountrules@discountrules',
-	        'search'=>1,
-	    ),
+			'langfile' => 'discountrules@discountrules',
+			'search'=>1,
+		),
 		'fk_project' => array(
 			'type' => 'integer:Project:projet/class/project.class.php:1',
 			'label' => 'Project',
@@ -226,17 +230,17 @@ class DiscountRule extends CommonObject
 			'index' => 1,
 			'position' => 100
 		),
-	    'from_quantity' => array(
-	        'type'=>'integer',
-	        'label'=>'FromQty',
-	        'visible'=>1,
-	        'enabled'=>1,
-	        'position'=>40,
-	        'notnull'=>0,
+		'from_quantity' => array(
+			'type'=>'integer',
+			'label'=>'FromQty',
+			'visible'=>1,
+			'enabled'=>1,
+			'position'=>40,
+			'notnull'=>0,
 			'nullvalue'=>0,
-	        'default_value' => 1,
-	        'search'=>1,
-	    ),
+			'default_value' => 1,
+			'search'=>1,
+		),
 
 
 		'product_price' =>array(
@@ -266,18 +270,18 @@ class DiscountRule extends CommonObject
 			'help' => 'DiscountRulePriceAmountHelp',
 		),
 
-	    'reduction' =>array(
-	        'type'=>'double(24,8)',
-	        'label'=>'DiscountPercent',
-	        'visible'=>1,
-	        'enabled'=>1,
-	        'position'=>70,
-	        'notnull'=>1,
-	        'index'=>0,
-	        'comment'=>'',
-	        'search'=>1,
+		'reduction' =>array(
+			'type'=>'double(24,8)',
+			'label'=>'DiscountPercent',
+			'visible'=>1,
+			'enabled'=>1,
+			'position'=>70,
+			'notnull'=>1,
+			'index'=>0,
+			'comment'=>'',
+			'search'=>1,
 			'help' => 'DiscountPercentHelp',
-	    ),
+		),
 
 
 		'fk_country' =>array(
@@ -318,29 +322,29 @@ class DiscountRule extends CommonObject
 			//'help' => 'CustomerHelp'
 		),
 
-	    'date_from' =>array(
-	        'type'=>'date',
-	        'label'=>'DiscountRuleDateFrom',
-	        'visible'=>1,
-	        'enabled'=>1,
-	        'position'=>100,
-	        'notnull'=>0,
-	        'index'=>0,
-	        'comment'=>'date from',
+		'date_from' =>array(
+			'type'=>'date',
+			'label'=>'DiscountRuleDateFrom',
+			'visible'=>1,
+			'enabled'=>1,
+			'position'=>100,
+			'notnull'=>0,
+			'index'=>0,
+			'comment'=>'date from',
 			'help' => 'DiscountRuleDateFromHelp'
-	    ),
+		),
 
-	    'date_to' =>array(
-	        'type'=>'date',
-	        'label'=>'DiscountRuleDateEnd',
-	        'visible'=>1,
-	        'enabled'=>1,
-	        'position'=>101,
-	        'notnull'=>0,
-	        'index'=>0,
-	        'comment'=>'',
+		'date_to' =>array(
+			'type'=>'date',
+			'label'=>'DiscountRuleDateEnd',
+			'visible'=>1,
+			'enabled'=>1,
+			'position'=>101,
+			'notnull'=>0,
+			'index'=>0,
+			'comment'=>'',
 			'help' => 'DiscountRuleDateEndHelp'
-	    ),
+		),
 
 		// also used to display categories
 		// Note : category search is disabled directly on list
@@ -427,9 +431,9 @@ class DiscountRule extends CommonObject
 				self::STATUS_DISABLED => 'Disable',
 				self::STATUS_ACTIVE => 'Enable'
 			)
-	    ),
+		),
 	);
-	
+
 
 
 
@@ -447,7 +451,6 @@ class DiscountRule extends CommonObject
 		$this->db = $db;
 		$this->ismultientitymanaged = 1;
 		$this->initFieldsParams();
-
 	}
 
 	/**
@@ -455,29 +458,32 @@ class DiscountRule extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-     * @param string $morewhere More SQL filters (' AND ...')
-     * @param int $noextrafields 0=Default to load extrafields, 1=No extrafields
+	 * @param string $morewhere More SQL filters (' AND ...')
+	 * @param int $noextrafields 0=Default to load extrafields, 1=No extrafields
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $morewhere = '', $noextrafields = 0)
 	{
-	    $return = parent::fetchCommon($id,$ref, $morewhere, $noextrafields);
-	    
-	    if($return > 0){
-	        $this->fetch_categoryCompany();
-	        $this->fetch_categoryProduct();
-	        $this->fetch_categoryProject();
+		$return = parent::fetchCommon($id, $ref, $morewhere, $noextrafields);
+
+		if ($return > 0) {
+			$this->fetchCategoryCompany();
+			$this->fetchCategoryProduct();
+			$this->fetchCategoryProject();
 
 			$this->initFieldsParams();
-	    }
-	    
-	    return $return;
+		}
+
+		return $return;
 	}
 
 	/**
 	 * Init this class fields params values
+	 *
+	 * @return void
 	 */
-	public function initFieldsParams(){
+	public function initFieldsParams()
+	{
 		global $conf;
 
 
@@ -489,7 +495,7 @@ class DiscountRule extends CommonObject
 		// 4=Visible on list and update/view form only (not create).
 		// Using a negative value means field is not shown by default on list but can be selected for viewing)
 
-		if(isModEnabled('categorie')){
+		if (isModEnabled('categorie')) {
 			// visibility
 			$this->fields['all_category_product']['visible'] = 1; // set to 0 if fk_product is defined
 			$this->fields['all_category_product']['enabled'] = 1; // set to 0 if fk_product is defined
@@ -499,7 +505,7 @@ class DiscountRule extends CommonObject
 			$this->fields['all_category_project']['enabled'] = 1;
 		}
 
-		if(!empty($this->fk_product)){
+		if (!empty($this->fk_product)) {
 			// visibility
 			$this->fields['product_price']['visible'] = 1;
 			$this->fields['product_reduction_amount']['visible'] = 1;
@@ -515,164 +521,147 @@ class DiscountRule extends CommonObject
 
 
 
-		if(!empty($this->fk_project)){
+		if (!empty($this->fk_project)) {
 			// visibility
 			$this->fields['all_category_project']['visible'] = 1;// if fk_project is defined it can create a self incompatible rule
 			$this->fields['all_category_project']['enabled'] = 1;// if fk_project is defined it can create a self incompatible rule
 		}
 	}
 
-	
+
 	/**
 	 *	Delete
 	 *
 	 *	@param	User	$user        	Object user that delete
 	 *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return	int						1 if ok, otherwise if error
+	 *	@return	int						1 if ok, -1 or -2 if error
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
-	    global $conf;
-	    
-	    $error=0;
-	    
-	    $this->db->begin();
-	    
-	    if (! $notrigger)
-	    {
-	        // Call trigger
-	        $result=$this->call_trigger('DISCOUNTRULE_DELETE',$user);
-	        if ($result < 0) { $error++; }
-	        // End call triggers
-	    }
-	    
-	    $this->TCategoryProject = array();
-	    if ($this->update_categoryProject(1) < 0){
-	        $error++;
-	    }
+		global $conf;
+
+		$error=0;
+
+		$this->db->begin();
+
+		if (! $notrigger) {
+			// Call trigger
+			$result=$this->call_trigger('DISCOUNTRULE_DELETE', $user);
+			if ($result < 0) { $error++; }
+			// End call triggers
+		}
+
+		$this->TCategoryProject = array();
+		if ($this->updateCategoryProject(1) < 0) {
+			$error++;
+		}
 
 		$this->TCategoryProduct = array();
-	    if ($this->update_categoryProduct(1) < 0){
-	        $error++;
-	    }
+		if ($this->updateCategoryProduct(1) < 0) {
+			$error++;
+		}
 
-	    $this->TCategoryCompany = array();
-	    if ($this->update_categoryCompany(1) < 0){
-	        $error++;
-	    }
-	    
-	    if (! $error)
-	    {
-	        $sql = "DELETE FROM ".$this->db->prefix().$this->table_element." WHERE rowid = ".$this->id;
+		$this->TCategoryCompany = array();
+		if ($this->updateCategoryCompany(1) < 0) {
+			$error++;
+		}
+
+		if (! $error) {
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element." WHERE rowid = ".$this->id;
 			$res = $this->db->query($sql);
-	        if ($res)
-	        {
-	            $this->db->commit();
+			if ($res) {
+				$this->db->commit();
 				$this->db->free($res);
-	            return 1;
-	        }
-	        else
-	        {
-	            $this->error=$this->db->lasterror();
-	            $this->db->rollback();
-	            return -2;
-	        }
-	    }
-	    else
-	    {
-	        $this->db->rollback();
-	        return -1;
-	    }
+				return 1;
+			} else {
+				$this->error=$this->db->lasterror();
+				$this->db->rollback();
+				return -2;
+			}
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 
-    /**
-     * @param User  $user   User object
-     * @return int
-     */
-    public function setDisabled($user)
-    {
-        $this->fk_status = self::STATUS_DISABLED;
-        $ret = $this->updateCommon($user);
-        return $ret;
-    }
+	/**
+	 * Set rule as disabled.
+	 *
+	 * @param User $user User object
+	 * @return int       >0 if OK, <0 if KO
+	 */
+	public function setDisabled($user)
+	{
+		$this->fk_status = self::STATUS_DISABLED;
+		$ret = $this->updateCommon($user);
+		return $ret;
+	}
 
-    /**
-     * @param User  $user   User object
-     * @return int
-     */
-    public function setActive($user)
-    {
-        $this->fk_status = self::STATUS_ACTIVE;
-        $ret = $this->updateCommon($user);
-        return $ret;
-    }
+	/**
+	 * Set rule as active.
+	 *
+	 * @param User $user User object
+	 * @return int       >0 if OK, <0 if KO
+	 */
+	public function setActive($user)
+	{
+		$this->fk_status = self::STATUS_ACTIVE;
+		$ret = $this->updateCommon($user);
+		return $ret;
+	}
 
 	/**
 	 * Function to prepare the values to insert.
 	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
 	 *
-	 * @return array
+	 * @return array Array of fieldname => value to save
 	 */
 	private function set_save_query()
 	{
-	    global $conf;
-	    
-	    $queryarray=array();
-	    foreach ($this->fields as $field=>$info)	// Loop on definition of fields
-	    {
-	        // Depending on field type ('datetime', ...)
-	        if($this->isDate($info))
-	        {
-	            if(empty($this->{$field}))
-	            {
-	                $queryarray[$field] = NULL;
-	            }
-	            else
-	            {
-	                $queryarray[$field] = $this->db->idate($this->{$field});
-	                
-	                if($field == 'date_to'){
-	                    $queryarray[$field] = empty($this->{$field})?'':dol_print_date($this->{$field},"%Y-%m-%d 23:59:59");
-	                }
-	                
-	                if($field == 'date_from'){
-	                    $queryarray[$field] = empty($this->{$field})?'':dol_print_date($this->{$field},"%Y-%m-%d 00:00:00");
-	                }
-	            }
-	        }
-	        else if($this->isArray($info))
-	        {
-	            $queryarray[$field] = serialize($this->{$field});
-	        }
-	        else if($this->isInt($info))
-	        {
-	            if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
-	            else
-	            {
-	                $queryarray[$field] = (int) price2num($this->{$field});
-	                if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be rest to null later if property 'nullifempty' is on for this field.
-	            }
-	        }
-	        else if($this->isFloat($info))
-	        {
-	            $queryarray[$field] = (double) price2num($this->{$field});
-	            if (empty($queryarray[$field])) $queryarray[$field]=0;
-	        }
-	        else
-	        {
-	            $queryarray[$field] = $this->{$field};
-	        }
-	        
-	        if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
-	        if (! empty($info['nullifempty']) && empty($queryarray[$field])) $queryarray[$field] = null;
-	    }
-	    
-	    return $queryarray;
-	}
-	
+		global $conf;
 
-	
+		$queryarray=array();
+		foreach ($this->fields as $field=>$info) {	// Loop on definition of fields
+			// Depending on field type ('datetime', ...)
+			if ($this->isDate($info)) {
+				if (empty($this->{$field})) {
+					$queryarray[$field] = null;
+				} else {
+					$queryarray[$field] = $this->db->idate($this->{$field});
+
+					if ($field == 'date_to') {
+						$queryarray[$field] = empty($this->{$field})?'':dol_print_date($this->{$field}, "%Y-%m-%d 23:59:59");
+					}
+
+					if ($field == 'date_from') {
+						$queryarray[$field] = empty($this->{$field})?'':dol_print_date($this->{$field}, "%Y-%m-%d 00:00:00");
+					}
+				}
+			} elseif ($this->isArray($info)) {
+				$queryarray[$field] = serialize($this->{$field});
+			} elseif ($this->isInt($info)) {
+				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
+				else {
+					$queryarray[$field] = (int) price2num($this->{$field});
+					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be rest to null later if property 'nullifempty' is on for this field.
+				}
+			} elseif ($this->isFloat($info)) {
+				$queryarray[$field] = (double) price2num($this->{$field});
+				if (empty($queryarray[$field])) $queryarray[$field]=0;
+			} else {
+				$queryarray[$field] = $this->{$field};
+			}
+
+			if ($info['type'] == 'timestamp' && empty($queryarray[$field])) unset($queryarray[$field]);
+			if (! empty($info['nullifempty']) && empty($queryarray[$field])) $queryarray[$field] = null;
+		}
+
+		return $queryarray;
+	}
+
+
+
 	/**
 	 * Create object into database
 	 *
@@ -686,32 +675,30 @@ class DiscountRule extends CommonObject
 		// null is forbiden
 		$this->from_quantity = doubleval($this->from_quantity);
 
-	    $res = parent::createCommon($user, $notrigger);
-        $error= 0;
-	    if($res)
-	    {
-	        if ($this->update_categoryProduct(1) < 0){
-	            $error++;
-	        }
-
-			if ($this->update_categoryCompany(1) < 0){
+		$res = parent::createCommon($user, $notrigger);
+		$error= 0;
+		if ($res) {
+			if ($this->updateCategoryProduct(1) < 0) {
 				$error++;
 			}
 
-			if ($this->update_categoryProject(1) < 0){
+			if ($this->updateCategoryCompany(1) < 0) {
 				$error++;
 			}
-	    }
-	    else{
-	        $error++;
-	    }
 
-	    
-	    if ($error) {
-	        return -1 * $error;
-	    } else {
-	        return 1;
-	    }
+			if ($this->updateCategoryProject(1) < 0) {
+				$error++;
+			}
+		} else {
+			$error++;
+		}
+
+
+		if ($error) {
+			return -1 * $error;
+		} else {
+			return 1;
+		}
 	}
 
 	/**
@@ -723,26 +710,24 @@ class DiscountRule extends CommonObject
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-	    $error = 0;
+		$error = 0;
 
-	    $fieldvalues = $this->set_save_query();
-	    unset($fieldvalues['rowid']);	// We don't update this field, it is the key to define which record to update.
-	    unset($fieldvalues['date_creation']);
-	    unset($fieldvalues['entity']);
-	    
-	    foreach ($fieldvalues as $k => $v) {
-	        $tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
-	    }
-	    $sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode( ',', $tmp ).' WHERE rowid='.$this->id ;
+		$fieldvalues = $this->set_save_query();
+		unset($fieldvalues['rowid']);	// We don't update this field, it is the key to define which record to update.
+		unset($fieldvalues['date_creation']);
+		unset($fieldvalues['entity']);
 
-	    $this->db->begin();
-	    if (! $error)
-	    {
-	        $res = $this->db->query($sql);
-	        if ($res===false)
-	        {
-	            $error++;
-	        }
+		foreach ($fieldvalues as $k => $v) {
+			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+		}
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET '.implode(',', $tmp).' WHERE rowid='.$this->id ;
+
+		$this->db->begin();
+		if (! $error) {
+			$res = $this->db->query($sql);
+			if ($res===false) {
+				$error++;
+			}
 
 			// Update extrafield
 			if (!$error) {
@@ -752,88 +737,82 @@ class DiscountRule extends CommonObject
 				}
 			}
 
-	        if ($this->update_categoryProduct(1) < 0)
-	        {
-	            $error++;
-	        }
-
-			if ($this->update_categoryProject(1) < 0)
-			{
+			if ($this->updateCategoryProduct(1) < 0) {
 				$error++;
 			}
 
-	        if ($this->update_categoryCompany(1) < 0)
-	        {
-	            $error++;
-	        }
+			if ($this->updateCategoryProject(1) < 0) {
+				$error++;
+			}
+
+			if ($this->updateCategoryCompany(1) < 0) {
+				$error++;
+			}
 			$this->db->free($res);
-	    }
+		}
 
-	    if (! $error && ! $notrigger) {
-	        // Call triggers
-	        $result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY',$user);
-	        if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
-	        // End call triggers
-	    }
+		if (! $error && ! $notrigger) {
+			// Call triggers
+			$result=$this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+			if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
+			// End call triggers
+		}
 
-	    // Commit or rollback
-	    if ($error) {
-	        $this->db->rollback();
-	        return -1 * $error;
-	    } else {
-	        $this->db->commit();
-	        return $this->id;
-	    }
+		// Commit or rollback
+		if ($error) {
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return $this->id;
+		}
 	}
-	
+
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
-     *  @param	int  	$notooltip			1=Disable tooltip
-     *  @param  string  $morecss            Add more css on link
+	 *  @param	int  	$notooltip			1=Disable tooltip
+	 *  @param  string  $morecss            Add more css on link
+	 *  @param  int     $urlOnly            1=Return only URL, 0=Return full HTML link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $urlOnly = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $urlOnly = 0)
 	{
 		global $db, $conf, $langs;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        $result = '';
+		$result = '';
 
-        $label = '<u>' . $langs->trans("discountrules") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
+		$label = '<u>' . $langs->trans("discountrules") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->label;
 
-        $url = $url = dol_buildpath('/discountrules/discountrule_card.php',1).'?id='.$this->id;
+		$url = $url = dol_buildpath('/discountrules/discountrule_card.php', 1).'?id='.$this->id;
 
-        $linkclose='';
-        if (empty($notooltip))
-        {
-            if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER'))
-            {
-                $label=$langs->trans("Showdiscountrule");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-            }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
-        }
-        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+		$linkclose='';
+		if (empty($notooltip)) {
+			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label=$langs->trans("Showdiscountrule");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		} else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
-        if($urlOnly) return $url;
-        
+		if ($urlOnly) return $url;
+
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object(($notooltip?'':$label), 'discountrules@discountrules', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
+		if ($withpicto) {
+			$result.=($linkstart.img_object(($notooltip?'':$label), 'discountrules@discountrules', ($notooltip?'':'class="classfortooltip"')).$linkend);
+			if ($withpicto != 2) $result.=' ';
 		}
 		$result.= $linkstart . $this->label . $linkend;
 		return $result;
@@ -845,9 +824,9 @@ class DiscountRule extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of fk_status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->fk_status,$mode);
+		return $this->LibStatut($this->fk_status, $mode);
 	}
 
 	/**
@@ -857,22 +836,22 @@ class DiscountRule extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public static function LibStatut($status, $mode = 0)
 	{
 		global $langs;
 
-        $statusLabel = $statusType = "";
+		$statusLabel = $statusType = "";
 
-        if ($status == 1){
-            $statusLabel = $langs->trans('Enabled');
-            $statusType = 'status4';
-        }
-        if ($status == 0){
-            $statusLabel = $langs->trans('Disabled');
-            $statusType = 'status5';
-        }
+		if ($status == 1) {
+			$statusLabel = $langs->trans('Enabled');
+			$statusType = 'status4';
+		}
+		if ($status == 0) {
+			$statusLabel = $langs->trans('Disabled');
+			$statusType = 'status5';
+		}
 
-        return dolGetStatus($statusLabel, '', '', $statusType, $mode);
+		return dolGetStatus($statusLabel, '', '', $statusType, $mode);
 	}
 
 
@@ -887,86 +866,92 @@ class DiscountRule extends CommonObject
 		$this->initAsSpecimenCommon();
 	}
 
-	
-	
+
+
 	/**
-	 * @param int $cat
-	 * @param int $deep
-	 * @return array|NULL[]
+	 * Get all children categories of a category.
+	 *
+	 * @param int $cat  Category id
+	 * @param int $deep Current depth (internal use)
+	 * @return array    List of children category ids
 	 */
-	static function getCategoryChild($cat,$deep=0)
+	public static function getCategoryChild($cat, $deep = 0)
 	{
-	    global $db;
-	    
-	    dol_include_once('categories/class/categorie.class.php');
-	    
-	    $Tlist = array();
-	    
-	    $category = new Categorie($db);
-	    $res = $category->fetch($cat);
-	    
-	    $Tfilles = $category->get_filles();
-	    if(!empty($Tfilles) && $Tfilles>0)
-	    {
-	        foreach ($Tfilles as &$fille)
-	        {
-	            $Tlist[] = $fille->id;
-	            
-	            $Tchild = self::getCategoryChild($fille->id,$deep++);
-	            if(!empty($Tchild)){
-	                $Tlist = array_merge($Tlist,$Tchild);
-	            }
-	        }
-	    }
-	    
-	    return $Tlist;
-	    
-	}
-	
-	/**
-	 * @param int $cat
-	 * @param bool $isParent
-	 * @param bool $reverse
-	 * @return array
-	 */
-	static function getCategoryParent($cat,$isParent = 0, $reverse = 0)
-	{
-	    global $db;
-	    
-	    dol_include_once('categories/class/categorie.class.php');
-	    
-	    $Tlist = array();
-	    
-	    if($isParent){
-	        $Tlist[] = $cat;
-	    }
-	    
-	    $category = new Categorie($db);
-	    $res = $category->fetch($cat);
-	   
-	    if($res > 0 && !empty( $category->fk_parent ) )
-	    {
-	        $TParent = self::getCategoryParent($category->fk_parent, 1, 0);
-	        if(!empty($TParent)){
-                $Tlist = array_merge($Tlist,$TParent);
-            }
-	    }
-	    
-	    if($reverse){ 
-	        $Tlist = array_reverse ($Tlist); 
-	    }
-	    
-	    return $Tlist;
-	    
+		global $db;
+
+		dol_include_once('categories/class/categorie.class.php');
+
+		$Tlist = array();
+
+		$category = new Categorie($db);
+		$res = $category->fetch($cat);
+
+		$Tfilles = $category->get_filles();
+		if (!empty($Tfilles) && $Tfilles>0) {
+			foreach ($Tfilles as &$fille) {
+				$Tlist[] = $fille->id;
+
+				$Tchild = self::getCategoryChild($fille->id, $deep++);
+				if (!empty($Tchild)) {
+					$Tlist = array_merge($Tlist, $Tchild);
+				}
+			}
+		}
+
+		return $Tlist;
 	}
 
-	static public function getAllConnectedCats($TCat){
+	/**
+	 * Get all parent categories of a category.
+	 *
+	 * @param int $cat      Category id
+	 * @param int $isParent 1 to include given category as parent
+	 * @param int $reverse  1 to reverse order of returned list
+	 * @return array        List of parent category ids
+	 */
+	public static function getCategoryParent($cat, $isParent = 0, $reverse = 0)
+	{
+		global $db;
+
+		dol_include_once('categories/class/categorie.class.php');
+
+		$Tlist = array();
+
+		if ($isParent) {
+			$Tlist[] = $cat;
+		}
+
+		$category = new Categorie($db);
+		$res = $category->fetch($cat);
+
+		if ($res > 0 && !empty($category->fk_parent) ) {
+			$TParent = self::getCategoryParent($category->fk_parent, 1, 0);
+			if (!empty($TParent)) {
+				$Tlist = array_merge($Tlist, $TParent);
+			}
+		}
+
+		if ($reverse) {
+			$Tlist = array_reverse($Tlist);
+		}
+
+		return $Tlist;
+	}
+
+	/**
+	 * Return list of all connected categories (itself + parents).
+	 *
+	 * @param int[] $TCat List of category ids
+	 * @return int[]      Unique list of connected category ids
+	 */
+	public static function getAllConnectedCats($TCat)
+	{
 		$TAllCat = array();
 		foreach ($TCat as $cat) {
 			$TAllCat[] = $cat;
 
 			// SEARCH AT PARENT
-			if(!empty($cat)){ // To avoid strange behavior
+			if (!empty($cat)) { // To avoid strange behavior
 				$parents = DiscountRule::getCategoryParent($cat);
 				if (!empty($parents)) {
 					foreach ($parents as $parentCat) {
@@ -980,95 +965,96 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * @param string $col database col
-	 * @param string $val value to search
-	 * @param int $ignoreEmpty si true et que la valeur cherchée est "vide" alors la recherche s'éffecture sur 0 (tous)
-	 * @return string
+	 * Prepare SQL filter for a column and values.
+	 *
+	 * @param string       $col         Database column name
+	 * @param int|int[]    $val         Value or list of values to search
+	 * @param int          $ignoreEmpty If true and value is empty, no filter is added
+	 * @return string                   SQL fragment
 	 */
-	static function prepareSearch($col, $val, $ignoreEmpty = 0)
+	public static function prepareSearch($col, $val, $ignoreEmpty = 0)
 	{
-	    $sql = '';
-	    
-	    if($ignoreEmpty && empty($val) ) return '';
-	    
-	    $in = '0';
-	    if(!empty($val)){
-	        
-	        if(is_array($val)){
-	            $val = array_map('intval', $val);
-	            $in.= ','.implode(',', $val);
-	        }
-	        else {
-	            $in.= ','.intval($val);
-	        }
-	        
-	    }
-	    $sql.= ' AND '.$col.' IN ('.$in.') '; 
-	    
-	    return $sql;
-	}
-	
-	/**
-	 * @param string $col
-	 * @param string $val
-	 * @return string
-	 */
-	static function prepareOrderByCase($col, $val)
-	{
-	    $sql = $col.' DESC ';
-	    
-	    if(!empty($val) && is_array($val) && count($val)>1)
-	    {
-	        
-	        $sql = ' CASE ';
-	        
-	        $i = 0;
-	        foreach($val as $id)
-	        {
-	            $i++;
-	            if (empty($id)){
-	                continue;
-	            }
-	            
-	            $sql.= ' WHEN '.$col.' = '.intval($id).' THEN '.$i.' ';
+		$sql = '';
 
-	        }
-	        
-	        $sql.= ' ELSE '.PHP_INT_SIZE.' END DESC';
-	        
-	    }
-	    
-	    return $sql;
+		if ($ignoreEmpty && empty($val) ) return '';
+
+		$in = '0';
+		if (!empty($val)) {
+			if (is_array($val)) {
+				$val = array_map('intval', $val);
+				$in.= ','.implode(',', $val);
+			} else {
+				$in.= ','.intval($val);
+			}
+		}
+		$sql.= ' AND '.$col.' IN ('.$in.') ';
+
+		return $sql;
 	}
 
 	/**
-	 * @param $fk_product
-	 * @param $fk_company
+	 * Prepare ORDER BY CASE fragment to prioritize given values.
+	 *
+	 * @param string $col Column name
+	 * @param int[]  $val Values list used for CASE ordering
+	 * @return string     SQL ORDER BY fragment
 	 */
-	function getDiscountSellPrice($fk_product, $fk_company){
+	public static function prepareOrderByCase($col, $val)
+	{
+		$sql = $col.' DESC ';
+
+		if (!empty($val) && is_array($val) && count($val)>1) {
+			$sql = ' CASE ';
+
+			$i = 0;
+			foreach ($val as $id) {
+				$i++;
+				if (empty($id)) {
+					continue;
+				}
+
+				$sql.= ' WHEN '.$col.' = '.intval($id).' THEN '.$i.' ';
+			}
+
+			$sql.= ' ELSE '.PHP_INT_SIZE.' END DESC';
+		}
+
+		return $sql;
+	}
+
+	/**
+	 * Get discounted sell price for product and company.
+	 *
+	 * @param int $fk_product Product id
+	 * @param int $fk_company Company id
+	 * @return float          Unit price (discounted or standard)
+	 */
+	public function getDiscountSellPrice($fk_product, $fk_company)
+	{
 		global $conf;
 
-		if(!empty($this->product_price)){
+		if (!empty($this->product_price)) {
 			return round($this->product_price, getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));
-		}
-		else{
+		} else {
 			return self::getProductSellPrice($fk_product, $fk_company);
 		}
 	}
 
-
 	/**
-	 * @param int $fk_product
-	 * @param int $fk_company
-	 * @return bool|float|mixed
+	 * Get base selling price of a product for a given company.
+	 *
+	 * @param int $fk_product Product id
+	 * @param int $fk_company Company id
+	 * @return bool|float|mixed False if no product, or unit price
 	 */
-	public static function getProductSellPrice($fk_product, $fk_company){ // TODO add Cache for result
+	public static function getProductSellPrice($fk_product, $fk_company)
+	{
+		// TODO add Cache for result
 		global $mysoc, $conf;
 		$product = self::getProductCache($fk_product);
 		$societe = self::getSocieteCache($fk_company);
 
-		if(!empty($product)) {
-
+		if (!empty($product)) {
 			// Dans le cas d'une règle liée à un produit, c'est le prix net qui sert de base de comparaison
 
 			// récupération du prix client
@@ -1094,16 +1080,18 @@ class DiscountRule extends CommonObject
 
 
 	/**
-	 * @param int $from_quantity
-	 * @param int $fk_product
-	 * @param int|int[] $fk_category_product
-	 * @param int|int[] $fk_category_company
-	 * @param int $fk_company
-	 * @param int $date
-	 * @param int $fk_country
-	 * @param int $fk_c_typent
-	 * @param int $fk_project
-	 * @param int|int[] $fk_category_project
+	 * Fetch discount rule from search criteria.
+	 *
+	 * @param int        $from_quantity       Minimum quantity
+	 * @param int        $fk_product          Product id
+	 * @param int|int[]  $fk_category_product Product category id(s)
+	 * @param int|int[]  $fk_category_company Company category id(s)
+	 * @param int        $fk_company          Company id
+	 * @param int        $date                Date (timestamp)
+	 * @param int        $fk_country          Country id
+	 * @param int        $fk_c_typent         Company type id
+	 * @param int        $fk_project          Project id
+	 * @param int|int[]  $fk_category_project Project category id(s)
 	 * @return int <0 if KO, 0 if not found, > 0 if OK
 	 * @see $this->lastFetchByCritResult: last fetched database object
 	 */
@@ -1138,7 +1126,6 @@ class DiscountRule extends CommonObject
 
 	    $baseSubprice = 0;
 	    if(!empty($product)){
-
 	    	// Dans le cas d'une règle liée à un produit, c'est le prix net qui sert de base de comparaison
 
 			// récupération du prix client
@@ -1151,20 +1138,20 @@ class DiscountRule extends CommonObject
 			$sql.= ' 		THEN d.product_price - d.product_reduction_amount ';
 			$sql.= ' 	WHEN d.reduction > 0 AND  (d.product_price <=0 OR d.product_price IS NULL)';
 			$sql.= ' 		THEN ('.doubleval($baseSubprice).' - d.product_reduction_amount ) - ( '.doubleval($baseSubprice).' - d.product_reduction_amount  ) * d.reduction / 100 ';
-//			$sql.= ' 	WHEN (d.product_price <=0 OR d.product_price IS NULL) AND (d.reduction <= 0 OR  d.reduction IS NULL) ';
-//			$sql.= ' 		THEN '.doubleval($baseSubprice).' - d.product_reduction_amount )';
+			//          $sql.= '    WHEN (d.product_price <=0 OR d.product_price IS NULL) AND (d.reduction <= 0 OR  d.reduction IS NULL) ';
+			//          $sql.= '        THEN '.doubleval($baseSubprice).' - d.product_reduction_amount )';
 			$sql.= ' 	ELSE '.doubleval($baseSubprice).' - d.product_reduction_amount';
 			$sql.= ' END as net_subprice ';
 		}
 
 		$sql.= ' FROM '.$this->db->prefix().$this->table_element.' d ';
 
-	    // Les conditions de jointure sont dans le WHERE car il y a une condition
-	    $sql.= ' LEFT JOIN '.$this->db->prefix().self::table_element_category_company.' cc ON ( cc.fk_discountrule = d.rowid ) ';
-	    $sql.= ' LEFT JOIN '.$this->db->prefix().self::table_element_category_product.' cp ON ( cp.fk_discountrule = d.rowid ) ';
-	    $sql.= ' LEFT JOIN '.$this->db->prefix().self::table_element_category_project.' cpj ON ( cpj.fk_discountrule = d.rowid ) ';
+		// Les conditions de jointure sont dans le WHERE car il y a une condition
+		$sql.= ' LEFT JOIN '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_COMPANY.' cc ON ( cc.fk_discountrule = d.rowid ) ';
+		$sql.= ' LEFT JOIN '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PRODUCT.' cp ON ( cp.fk_discountrule = d.rowid ) ';
+		$sql.= ' LEFT JOIN '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PROJECT.' cpj ON ( cpj.fk_discountrule = d.rowid ) ';
 
-	    $sql.= ' WHERE from_quantity <= '.floatval($from_quantity).' AND `fk_status` = 1 ' ;
+		$sql.= ' WHERE from_quantity <= '.floatval($from_quantity).' AND `fk_status` = 1 ' ;
 
 		if (!empty($fk_country)) {
 			$sql.= self::prepareSearch('fk_country', $fk_country);
@@ -1191,8 +1178,14 @@ class DiscountRule extends CommonObject
 	        $date = $this->db->idate(time()); 
 	    }
 
-	    $sql.= ' AND ( date_from <= \''.$date.'\'  OR date_from IS NULL  OR YEAR(`date_from`) = 0 )'; // le YEAR(`date_from`) = 0 est une astuce MySQL pour chercher les dates vides le tout compatible avec les diférentes versions de MySQL
-	    $sql.= ' AND ( date_to >= \''.$date.'\' OR date_to IS NULL OR YEAR(`date_to`) = 0 )'; // le YEAR(`date_to`) = 0 est une astuce MySQL pour chercher les dates vides le tout compatible avec les diférentes versions de MySQL
+		if (!empty($date)) {
+			$date = $this->db->idate($date);
+		} else {
+			$date = $this->db->idate(time());
+		}
+
+		$sql.= ' AND ( date_from <= \''.$date.'\'  OR date_from IS NULL  OR YEAR(`date_from`) = 0 )'; // le YEAR(`date_from`) = 0 est une astuce MySQL pour chercher les dates vides le tout compatible avec les diférentes versions de MySQL
+		$sql.= ' AND ( date_to >= \''.$date.'\' OR date_to IS NULL OR YEAR(`date_to`) = 0 )'; // le YEAR(`date_to`) = 0 est une astuce MySQL pour chercher les dates vides le tout compatible avec les diférentes versions de MySQL
 
 		// test for "FOR ALL CAT"
 		if (!empty($fk_category_product)) {
@@ -1210,8 +1203,8 @@ class DiscountRule extends CommonObject
 		// Prise en compte des priorités de règles
 		$sql.= ' priority_rank DESC, ' ;
 
-	    // Ce qui nous intéresse c'est le meilleur prix pour le client
-		if(!empty($fk_product)){
+		// Ce qui nous intéresse c'est le meilleur prix pour le client
+		if (!empty($fk_product)) {
 			$sql.= ' net_subprice ASC, ' ;
 		}
 	    $sql.= ' reduction DESC, from_quantity DESC, fk_company DESC';
@@ -1224,35 +1217,34 @@ class DiscountRule extends CommonObject
 
 		$sql.= ' LIMIT 1';
 
-	    $res = $this->db->query($sql);
+		$res = $this->db->query($sql);
 		$this->lastquery = $this->db->lastquery;
-	    if($res)
-	    {
-	        if ($obj = $this->db->fetch_object($res))
-	        {
-	            $this->lastFetchByCritResult = $obj; // return search result object to know exactly matching parameters in JOIN part
-	            return $this->fetch($obj->rowid);
-	        }
+		if ($res) {
+			if ($obj = $this->db->fetch_object($res)) {
+				$this->lastFetchByCritResult = $obj; // return search result object to know exactly matching parameters in JOIN part
+				return $this->fetch($obj->rowid);
+			}
 			$this->db->free($res);
-	    }
-	    else
-	    {
+		} else {
 			$this->error = $this->db->error();
-	    }
+		}
 
-	    return 0;
+		return 0;
 	}
 
 	/**
-	 * Clear product cache
+	 * Clear product cache.
+	 *
+	 * @return void
 	 */
-	public static function clearProductCache(){
+	public static function clearProductCache()
+	{
 		global $discountRuleProductCache;
 
-		if(!empty($discountRuleProductCache) && is_array($discountRuleProductCache)){
+		if (!empty($discountRuleProductCache) && is_array($discountRuleProductCache)) {
 			// Because it's an array of objects so unset doesn't really clear
-			$discountRuleProductCache = array_map(function ($a){
-				return NULL;
+			$discountRuleProductCache = array_map(function ($a) {
+				return null;
 			}, $discountRuleProductCache);
 		}
 
@@ -1260,24 +1252,26 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * @param int $fk_product
-	 * @param bool $forceFetch
-	 * @return Product|bool
+	 * Get cached product object.
+	 *
+	 * @param int  $fk_product Product id
+	 * @param bool $forceFetch Force refetch from database
+	 * @return Product|false   Product object or false
 	 */
-	static function getProductCache($fk_product, $forceFetch = false){
+	public static function getProductCache($fk_product, $forceFetch = false)
+	{
 		global $db, $discountRuleProductCache;
 
-		if(empty($fk_product) || $fk_product < 0){
+		if (empty($fk_product) || $fk_product < 0) {
 			return false;
 		}
 
-		if(!empty($discountRuleProductCache[$fk_product]) && !$forceFetch){
+		if (!empty($discountRuleProductCache[$fk_product]) && !$forceFetch) {
 			return $discountRuleProductCache[$fk_product];
-		}
-		else{
+		} else {
 			$product = new Product($db);
 			$res = $product->fetch($fk_product);
-			if($res>0){
+			if ($res>0) {
 				$discountRuleProductCache[$fk_product] = $product;
 				return $discountRuleProductCache[$fk_product];
 			}
@@ -1288,24 +1282,26 @@ class DiscountRule extends CommonObject
 
 
 	/**
-	 * @param $fk_project
-	 * @param bool $forceFetch
-	 * @return Product
+	 * Get cached project object.
+	 *
+	 * @param int  $fk_project Project id
+	 * @param bool $forceFetch Force refetch from database
+	 * @return Project|false   Project object or false
 	 */
-	static function getProjectCache($fk_project, $forceFetch = false){
+	public static function getProjectCache($fk_project, $forceFetch = false)
+	{
 		global $db, $discountRuleProjectCache;
 
-		if(empty($fk_project) || $fk_project < 0){
+		if (empty($fk_project) || $fk_project < 0) {
 			return false;
 		}
 
-		if(!empty($discountRuleProjectCache[$fk_project]) && !$forceFetch){
+		if (!empty($discountRuleProjectCache[$fk_project]) && !$forceFetch) {
 			return $discountRuleProjectCache[$fk_project];
-		}
-		else{
+		} else {
 			$project = new Project($db);
 			$res = $project->fetch($fk_project);
-			if($res>0){
+			if ($res>0) {
 				$discountRuleProjectCache[$fk_project] = $project;
 				return $discountRuleProjectCache[$fk_project];
 			}
@@ -1315,24 +1311,26 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * @param $fk_soc
-	 * @param bool $forceFetch
-	 * @return Societe
+	 * Get cached thirdparty object.
+	 *
+	 * @param int  $fk_soc     Thirdparty id
+	 * @param bool $forceFetch Force refetch from database
+	 * @return Societe|false   Thirdparty object or false
 	 */
-	static function getSocieteCache($fk_soc, $forceFetch = false){
+	public static function getSocieteCache($fk_soc, $forceFetch = false)
+	{
 		global $db, $discountRuleSocieteCache;
 
-		if(empty($fk_soc) || $fk_soc < 0){
+		if (empty($fk_soc) || $fk_soc < 0) {
 			return false;
 		}
 
-		if(!empty($discountRuleSocieteCache[$fk_soc]) && !$forceFetch){
+		if (!empty($discountRuleSocieteCache[$fk_soc]) && !$forceFetch) {
 			return $discountRuleSocieteCache[$fk_soc];
-		}
-		else{
+		} else {
 			$societe = new Societe($db);
 			$res = $societe->fetch($fk_soc);
-			if($res>0){
+			if ($res>0) {
 				$discountRuleSocieteCache[$fk_soc] = $societe;
 				return $discountRuleSocieteCache[$fk_soc];
 			}
@@ -1342,50 +1340,51 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * Clear product cache
+	 * Clear thirdparty cache.
+	 *
+	 * @return void
 	 */
-	public function clearSocieteCache(){
+	public function clearSocieteCache()
+	{
 		global $discountRuleSocieteCache;
 		$discountRuleSocieteCache = array();
 	}
 
 	/**
-	 * 	Get children of line
+	 * Fetch company categories linked to rule.
 	 *
-	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of children lines id
+	 * @return array Array with list of category ids
 	 */
-	function fetch_categoryCompany()
+	public function fetchCategoryCompany()
 	{
-	    $this->TCategoryCompany=array();
-	    
-	    $sql = 'SELECT * FROM '.$this->db->prefix().self::table_element_category_company;
-	    $sql.= ' WHERE fk_discountrule = '.$this->id;
-	    
-	    $resql = $this->db->query($sql);
-	    if ($resql)
-	    {
-	        while ($row = $this->db->fetch_object($resql) )
-	        {
-	            $this->TCategoryCompany[] = $row->fk_category_company;
-	        }
+		$this->TCategoryCompany=array();
+
+		$sql = 'SELECT * FROM '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_COMPANY;
+		$sql.= ' WHERE fk_discountrule = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($row = $this->db->fetch_object($resql) ) {
+				$this->TCategoryCompany[] = $row->fk_category_company;
+			}
 			$this->db->free($resql);
-	    }
-	    
-	    return $this->TCategoryCompany;
+		}
+
+		return $this->TCategoryCompany;
 	}
 
 	/**
-	 * Calcule le prix net une fois toutes les reductions appliquées
-	 * @param $subprice
-	 * @param $reduction
-	 * @param int $reductionAmount
-	 * @return float|int
+	 * Calcule le prix net une fois toutes les reductions appliquées.
+	 *
+	 * @param float $subprice        Base price
+	 * @param float $reduction       Percentage discount
+	 * @param int   $reductionAmount Fixed discount amount
+	 * @return float|int             Net price
 	 */
-	static function calcNetPrice($subprice, $reduction, $reductionAmount = 0){
+	public static function calcNetPrice($subprice, $reduction, $reductionAmount = 0)
+	{
 		$netPrice = $subprice - $reductionAmount;
-		if(!empty($reduction) && $reduction > 0)
-		{
+		if (!empty($reduction) && $reduction > 0) {
 			$netPrice-= $netPrice * $reduction / 100;
 		}
 
@@ -1393,206 +1392,200 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * Retourne le prix net du produit fonction du client et une fois toutes les reductions appliquées
-	 * @param $fk_product
-	 * @param $fk_company
-	 * @return float|int
+	 * Retourne le prix net du produit fonction du client et une fois toutes les reductions appliquées.
+	 *
+	 * @param int $fk_product Product id
+	 * @param int $fk_company Company id
+	 * @return float|int      Net price or false if no base price
 	 */
-	public function getNetPrice($fk_product, $fk_company){
+	public function getNetPrice($fk_product, $fk_company)
+	{
 		$baseSubprice = self::getProductSellPrice($fk_product, $fk_company);
-		if(empty($baseSubprice)){
+		if (empty($baseSubprice)) {
 			return false;
 		}
 		return self::calcNetPrice($baseSubprice, $this->remise_percent, $this->product_reduction_amount);
 	}
-	
+
 	/**
-	 * @param boolean $replace  if false do not remove cat not in TCategoryCompany
-	 * @return array
-	 */
-	function update_categoryCompany($replace = false)
-	{
-	    $TcatList = $this->TCategoryCompany; // store actual
-	    $this->fetch_categoryCompany();
-
-	    if(!is_array($this->TCategoryCompany) || !is_array($TcatList) || empty($this->id)){
-	        return -1;
-	    }
-
-	    // Ok let's show what we got !
-	    $TToAdd = array_diff ( $TcatList, $this->TCategoryCompany );
-	    $TToDel = array_diff ( $this->TCategoryCompany, $TcatList );
-	    
-	    if(!empty($TToAdd)){
-	        
-	        // Prepare insert query
-	        $TInsertSql = array();
-	        foreach($TToAdd as $fk_category_company){
-	            $TInsertSql[] = '('.intval($this->id).','.intval($fk_category_company).')';
-	        }
-	        
-	        $sql = 'INSERT INTO '.$this->db->prefix().self::table_element_category_company;
-	        $sql.= ' (fk_discountrule,fk_category_company) VALUES '.implode(',', $TInsertSql );
-
-	        $resql = $this->db->query($sql);
-	        if (!$resql){
-	            dol_print_error($this->db);
-	            return -2;
-	        }
-	        else{
-	            $this->TCategoryCompany = array_merge($TToDel,$TToAdd);
-				$this->db->free($resql);
-	        }
-	    }
-	    
-	    if(!empty($TToDel) && $replace){
-	        $TToDel = array_map('intval', $TToDel);
-	        
-	        foreach($TToDel as $fk_category_company){
-	            $TInsertSql[] = '('.intval($this->id).','.intval($fk_category_company).')';
-	        }
-	        
-	        $sql = 'DELETE FROM '.$this->db->prefix().self::table_element_category_company.' WHERE fk_category_company IN ('.implode(',', $TToDel).')  AND fk_discountrule = '.intval($this->id).';';
-
-	        $resql = $this->db->query($sql);
-	        if (!$resql){
-	            dol_print_error($this->db);
-	            return -2;
-	        }
-	        else{
-	            $this->TCategoryCompany = $TToAdd; // erase all to Del
-				$this->db->free($resql);
-	        }
-	    }
-
-
-        $sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET all_category_company = '.intval(empty($this->TCategoryCompany)).' WHERE rowid='.$this->id ;
-        $resql = $this->db->query($sql);
-        if (!$resql){
-            dol_print_error($this->db);
-            return -3;
-        }
-		$this->db->free($resql);
-	    
-	    return 1;
-	}
-	
-	/**
-	 * 	Get children of line
+	 * Update company categories linked to rule.
 	 *
-	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of children lines id
+	 * @param boolean $replace if false do not remove cat not in TCategoryCompany
+	 * @return int             >0 if OK, <0 if error
 	 */
-	function fetch_categoryProduct()
+	public function updateCategoryCompany($replace = false)
 	{
-	    $this->TCategoryProduct=array();
-	    
-	    $sql = 'SELECT * FROM '.$this->db->prefix().self::table_element_category_product;
-	    $sql.= ' WHERE fk_discountrule = '.$this->id;
-	    
-	    $resql = $this->db->query($sql);
-	    if ($resql)
-	    {
-	        while ($row = $this->db->fetch_object($resql) )
-	        {
-	            $this->TCategoryProduct[] = $row->fk_category_product;
-	        }
-			$this->db->free($resql);
-	    }
-	    
-	    return $this->TCategoryProduct;
-	}
-	
-	
+		$TcatList = $this->TCategoryCompany; // store actual
+		$this->fetchCategoryCompany();
 
-	/**
-	 * @param boolean $replace  if false do not remove cat not in TCategoryProduct
-	 * @return array
-	 */
-	function update_categoryProduct($replace = false)
-	{
-	    $TcatList = $this->TCategoryProduct; // store actual 
-	    $this->fetch_categoryProduct();
+		if (!is_array($this->TCategoryCompany) || !is_array($TcatList) || empty($this->id)) {
+			return -1;
+		}
 
-	    if(!is_array($this->TCategoryProduct) || !is_array($TcatList) || empty($this->id)){
-	        return -1;
-	    }
+		// Ok let's show what we got !
+		$TToAdd = array_diff($TcatList, $this->TCategoryCompany);
+		$TToDel = array_diff($this->TCategoryCompany, $TcatList);
 
-	    // Ok let's show what we got !
-	    $TToAdd = array_diff ( $TcatList, $this->TCategoryProduct );
-	    $TToDel = array_diff ( $this->TCategoryProduct, $TcatList );
-	    
-	    if(!empty($TToAdd)){
-	        
-	        // Prepare insert query
-	        $TInsertSql = array();
-	        foreach($TToAdd as $fk_category_product){
-	            $TInsertSql[] = '('.intval($this->id).','.intval($fk_category_product).')';
-	        }
-	        
-	        $sql = 'INSERT INTO '.$this->db->prefix().self::table_element_category_product;
-	        $sql.= ' (fk_discountrule,fk_category_product) VALUES '.implode(',', $TInsertSql );
-	        
-	        $resql = $this->db->query($sql);
-	        if (!$resql){
-	            return -2;
-	        }
-	        else{
-	            $this->TCategoryProduct = array_merge($TToDel,$TToAdd); // erase all to Del
+		if (!empty($TToAdd)) {
+			// Prepare insert query
+			$TInsertSql = array();
+			foreach ($TToAdd as $fk_category_company) {
+				$TInsertSql[] = '('.intval($this->id).','.intval($fk_category_company).')';
+			}
+
+			$sql = 'INSERT INTO '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_COMPANY;
+			$sql.= ' (fk_discountrule,fk_category_company) VALUES '.implode(',', $TInsertSql);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				dol_print_error($this->db);
+				return -2;
+			} else {
+				$this->TCategoryCompany = array_merge($TToDel, $TToAdd);
 				$this->db->free($resql);
-	        }
-	    }
-	    
-	    if(!empty($TToDel) && $replace){
-	        $TToDel = array_map('intval', $TToDel);
+			}
+		}
 
-	        foreach($TToDel as $fk_category_product){
-	            $TInsertSql[] = '('.intval($this->id).','.intval($fk_category_product).')';
-	        }
-	        
-	        $sql = 'DELETE FROM '.$this->db->prefix().self::table_element_category_product.' WHERE fk_category_product IN ('.implode(',', $TToDel).')  AND fk_discountrule = '.intval($this->id).';';
-	        
-	        $resql = $this->db->query($sql);
-	        if (!$resql){
-	            return -2;
-	        }
-	        else{
-	            $this->TCategoryProduct = $TToAdd; // erase all to Del
+		if (!empty($TToDel) && $replace) {
+			$TToDel = array_map('intval', $TToDel);
+
+			foreach ($TToDel as $fk_category_company) {
+				$TInsertSql[] = '('.intval($this->id).','.intval($fk_category_company).')';
+			}
+
+			$sql = 'DELETE FROM '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_COMPANY.' WHERE fk_category_company IN ('.implode(',', $TToDel).')  AND fk_discountrule = '.intval($this->id).';';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				dol_print_error($this->db);
+				return -2;
+			} else {
+				$this->TCategoryCompany = $TToAdd; // erase all to Del
 				$this->db->free($resql);
-	        }
-	    }
+			}
+		}
 
 
-        $sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET all_category_product = '.intval(empty($this->TCategoryProduct)).' WHERE rowid='.$this->id ;
-        $resql = $this->db->query($sql);
-        if (!$resql){
-            dol_print_error($this->db);
-            return -3;
-        }
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET all_category_company = '.intval(empty($this->TCategoryCompany)).' WHERE rowid='.$this->id ;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -3;
+		}
 		$this->db->free($resql);
-	    
-	    return 1;
+
+		return 1;
 	}
 
-
 	/**
-	 * 	Get children of line
+	 * Fetch product categories linked to rule.
 	 *
-	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of children lines id
+	 * @return array Array with list of category ids
 	 */
-	function fetch_categoryProject()
+	public function fetchCategoryProduct()
 	{
-		$this->TCategoryProject=array();
+		$this->TCategoryProduct=array();
 
-		$sql = 'SELECT * FROM '.$this->db->prefix().self::table_element_category_project;
+		$sql = 'SELECT * FROM '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PRODUCT;
 		$sql.= ' WHERE fk_discountrule = '.$this->id;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($row = $this->db->fetch_object($resql) )
-			{
+		if ($resql) {
+			while ($row = $this->db->fetch_object($resql) ) {
+				$this->TCategoryProduct[] = $row->fk_category_product;
+			}
+			$this->db->free($resql);
+		}
+
+		return $this->TCategoryProduct;
+	}
+
+
+
+	/**
+	 * Update product categories linked to rule.
+	 *
+	 * @param boolean $replace if false do not remove cat not in TCategoryProduct
+	 * @return int             >0 if OK, <0 if error
+	 */
+	public function updateCategoryProduct($replace = false)
+	{
+		$TcatList = $this->TCategoryProduct; // store actual
+		$this->fetchCategoryProduct();
+
+		if (!is_array($this->TCategoryProduct) || !is_array($TcatList) || empty($this->id)) {
+			return -1;
+		}
+
+		// Ok let's show what we got !
+		$TToAdd = array_diff($TcatList, $this->TCategoryProduct);
+		$TToDel = array_diff($this->TCategoryProduct, $TcatList);
+
+		if (!empty($TToAdd)) {
+			// Prepare insert query
+			$TInsertSql = array();
+			foreach ($TToAdd as $fk_category_product) {
+				$TInsertSql[] = '('.intval($this->id).','.intval($fk_category_product).')';
+			}
+
+			$sql = 'INSERT INTO '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PRODUCT;
+			$sql.= ' (fk_discountrule,fk_category_product) VALUES '.implode(',', $TInsertSql);
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				return -2;
+			} else {
+				$this->TCategoryProduct = array_merge($TToDel, $TToAdd); // erase all to Del
+				$this->db->free($resql);
+			}
+		}
+
+		if (!empty($TToDel) && $replace) {
+			$TToDel = array_map('intval', $TToDel);
+
+			foreach ($TToDel as $fk_category_product) {
+				$TInsertSql[] = '('.intval($this->id).','.intval($fk_category_product).')';
+			}
+
+			$sql = 'DELETE FROM '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PRODUCT.' WHERE fk_category_product IN ('.implode(',', $TToDel).')  AND fk_discountrule = '.intval($this->id).';';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				return -2;
+			} else {
+				$this->TCategoryProduct = $TToAdd; // erase all to Del
+				$this->db->free($resql);
+			}
+		}
+
+
+		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET all_category_product = '.intval(empty($this->TCategoryProduct)).' WHERE rowid='.$this->id ;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			dol_print_error($this->db);
+			return -3;
+		}
+		$this->db->free($resql);
+
+		return 1;
+	}
+
+
+	/**
+	 * Fetch project categories linked to rule.
+	 *
+	 * @return array Array with list of category ids
+	 */
+	public function fetchCategoryProject()
+	{
+		$this->TCategoryProject=array();
+
+		$sql = 'SELECT * FROM '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PROJECT;
+		$sql.= ' WHERE fk_discountrule = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($row = $this->db->fetch_object($resql) ) {
 				$this->TCategoryProject[] = $row->fk_category_project;
 			}
 			$this->db->free($resql);
@@ -1604,57 +1597,56 @@ class DiscountRule extends CommonObject
 
 
 	/**
-	 * @param boolean $replace  if false do not remove cat not in TCategoryProject
-	 * @return array
+	 * Update project categories linked to rule.
+	 *
+	 * @param boolean $replace if false do not remove cat not in TCategoryProject
+	 * @return int             >0 if OK, <0 if error
 	 */
-	function update_categoryProject($replace = false)
+	public function updateCategoryProject($replace = false)
 	{
 		$TcatList = $this->TCategoryProject; // store actual
-		$this->fetch_categoryProject();
+		$this->fetchCategoryProject();
 
-		if(!is_array($this->TCategoryProject) || !is_array($TcatList) || empty($this->id)){
+		if (!is_array($this->TCategoryProject) || !is_array($TcatList) || empty($this->id)) {
 			return -1;
 		}
 
 		// Ok let's show what we got !
-		$TToAdd = array_diff ( $TcatList, $this->TCategoryProject );
-		$TToDel = array_diff ( $this->TCategoryProject, $TcatList );
+		$TToAdd = array_diff($TcatList, $this->TCategoryProject);
+		$TToDel = array_diff($this->TCategoryProject, $TcatList);
 
-		if(!empty($TToAdd)){
-
+		if (!empty($TToAdd)) {
 			// Prepare insert query
 			$TInsertSql = array();
-			foreach($TToAdd as $fk_category_project){
+			foreach ($TToAdd as $fk_category_project) {
 				$TInsertSql[] = '('.intval($this->id).','.intval($fk_category_project).')';
 			}
 
-			$sql = 'INSERT INTO '.$this->db->prefix().self::table_element_category_project;
-			$sql.= ' (fk_discountrule,fk_category_project) VALUES '.implode(',', $TInsertSql );
+			$sql = 'INSERT INTO '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PROJECT;
+			$sql.= ' (fk_discountrule,fk_category_project) VALUES '.implode(',', $TInsertSql);
 
 			$resql = $this->db->query($sql);
-			if (!$resql){
+			if (!$resql) {
 				return -2;
-			}
-			else{
-				$this->TCategoryProject = array_merge($TToDel,$TToAdd); // erase all to Del
+			} else {
+				$this->TCategoryProject = array_merge($TToDel, $TToAdd); // erase all to Del
 				$this->db->free($resql);
 			}
 		}
 
-		if(!empty($TToDel) && $replace){
+		if (!empty($TToDel) && $replace) {
 			$TToDel = array_map('intval', $TToDel);
 
-			foreach($TToDel as $fk_category_project){
+			foreach ($TToDel as $fk_category_project) {
 				$TInsertSql[] = '('.intval($this->id).','.intval($fk_category_project).')';
 			}
 
-			$sql = 'DELETE FROM '.$this->db->prefix().self::table_element_category_project.' WHERE fk_category_project IN ('.implode(',', $TToDel).')  AND fk_discountrule = '.intval($this->id).';';
+			$sql = 'DELETE FROM '.$this->db->prefix().self::TABLE_ELEMENT_CATEGORY_PROJECT.' WHERE fk_category_project IN ('.implode(',', $TToDel).')  AND fk_discountrule = '.intval($this->id).';';
 
 			$resql = $this->db->query($sql);
-			if (!$resql){
+			if (!$resql) {
 				return -2;
-			}
-			else{
+			} else {
 				$this->TCategoryProject = $TToAdd; // erase all to Del
 				$this->db->free($resql);
 			}
@@ -1663,7 +1655,7 @@ class DiscountRule extends CommonObject
 
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET all_category_project = '.intval(empty($this->TCategoryProject)).' WHERE rowid='.$this->id ;
 		$resql = $this->db->query($sql);
-		if (!$resql){
+		if (!$resql) {
 			dol_print_error($this->db);
 			return -3;
 		}
@@ -1673,52 +1665,52 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * @param string $element
-	 * @param int $fk_product
-	 * @param int $fk_company
-	 * @param int $from_quantity
-	 * @param int $fk_project 0 search in all $fk_project values, -1 search in documents not linked to a project, > 0 search documents linked to project $fk_project
-	 * @return false|Object
+	 * Search last/best discount applied in documents for a product/customer.
+	 *
+	 * @param string $element      Document type ('facture', 'commande', 'propal')
+	 * @param int    $fk_product   Product id
+	 * @param int    $fk_company   Company id
+	 * @param int    $from_quantity Minimum quantity threshold
+	 * @param int    $fk_project   0=search in all projects, -1=only documents without project, >0=only documents for this project
+	 * @return false|object        False if not found, or document line object
 	 */
 	public static function searchDiscountInDocuments($element, $fk_product, $fk_company, $from_quantity = 1, $fk_project = 0)
-    {
-        global $conf, $db;
+	{
+		global $conf, $db;
 
-        $table = $tableDet = $fkObjectCol = false;
+		$table = $tableDet = $fkObjectCol = false;
 
-        $refCol = 'ref';
+		$refCol = 'ref';
 		$fkProjectCol = 'fk_projet';
-        $fk_product = intval($fk_product);
-        $fk_company = intval($fk_company);
+		$fk_product = intval($fk_product);
+		$fk_company = intval($fk_company);
 		$fk_project = intval($fk_project);
 		$from_quantity = doubleval($from_quantity);
 
-        $dateDocCol = '';
+		$dateDocCol = '';
 
-        if($element === 'facture'){
-            $table          = 'facture';
-            $tableDet       = 'facturedet';
-            $fkObjectCol    = 'fk_facture';
+		if ($element === 'facture') {
+			$table          = 'facture';
+			$tableDet       = 'facturedet';
+			$fkObjectCol    = 'fk_facture';
 			$dateDocCol		= 'datef';
-        }
-        elseif($element === 'commande'){
-            $table          = 'commande';
-            $tableDet       = 'commandedet';
-            $fkObjectCol    = 'fk_commande';
+		} elseif ($element === 'commande') {
+			$table          = 'commande';
+			$tableDet       = 'commandedet';
+			$fkObjectCol    = 'fk_commande';
 			$dateDocCol		= 'date_commande';
-        }
-        elseif($element === 'propal'){
-            $table          = 'propal';
-            $tableDet       = 'propaldet';
-            $fkObjectCol    = 'fk_propal';
+		} elseif ($element === 'propal') {
+			$table          = 'propal';
+			$tableDet       = 'propaldet';
+			$fkObjectCol    = 'fk_propal';
 			$dateDocCol		= 'datep';
-        }
+		}
 
-        if(empty($table) || empty($dateDocCol)){
-            return false;
-        }
+		if (empty($table) || empty($dateDocCol)) {
+			return false;
+		}
 
-        $sql = 'SELECT line.remise_percent, object.rowid, object.'.$refCol.' as ref, object.entity, line.qty, line.subprice ' ;
+		$sql = 'SELECT line.remise_percent, object.rowid, object.'.$refCol.' as ref, object.entity, line.qty, line.subprice ' ;
 
 		$sql.= ', '.$dateDocCol.' as date_object ';
 
@@ -1729,76 +1721,71 @@ class DiscountRule extends CommonObject
 		$sql.= ' END as net_subprice ';
 
 
-        $sql.= ' FROM '.$db->prefix().$tableDet.' line ';
-        $sql.= ' JOIN '.$db->prefix().$table.' object ON ( line.'.$fkObjectCol.' = object.rowid ) ';
+		$sql.= ' FROM '.$db->prefix().$tableDet.' line ';
+		$sql.= ' JOIN '.$db->prefix().$table.' object ON ( line.'.$fkObjectCol.' = object.rowid ) ';
 
-        $sql.= ' WHERE object.fk_statut > 0 ';
-        $sql.= ' AND object.fk_soc = '. $fk_company;
-        $sql.= ' AND line.fk_product = '. $fk_product;
-        $sql.= ' AND object.entity = '. $conf->entity;
+		$sql.= ' WHERE object.fk_statut > 0 ';
+		$sql.= ' AND object.fk_soc = '. $fk_company;
+		$sql.= ' AND line.fk_product = '. $fk_product;
+		$sql.= ' AND object.entity = '. $conf->entity;
 
-        $sql.= ' AND line.subprice > 0 '; // parceque l'on offre peut-être pas à chaque fois les produits
+		$sql.= ' AND line.subprice > 0 '; // parceque l'on offre peut-être pas à chaque fois les produits
 
 		$sql.= ' AND line.qty > 0 '; // pour garder les options a part
-        if (!empty($from_quantity)) {
-            $sql.= ' AND line.qty <= '.$from_quantity;
-        }
+		if (!empty($from_quantity)) {
+			$sql.= ' AND line.qty <= '.$from_quantity;
+		}
 
-        if ($fk_project < 0) {
+		if ($fk_project < 0) {
 			// Search documents not linked to project
 			$sql.= ' AND (ISNULL(object.'.$fkProjectCol.') OR  object.'.$fkProjectCol.' = 0 )';
-		}
-        elseif ($fk_project > 0) {
+		} elseif ($fk_project > 0) {
 			// Search documents linked to project
 			$sql.= ' AND object.'.$fkProjectCol.' = '.$fk_project;
-		}
-        else {
-        	// Search documents in all projects
+		} else {
+			// Search documents in all projects
 		}
 
-        if(getDolGlobalInt('DISCOUNTRULES_SEARCH_DAYS')){
-            $sql.= ' AND object.'.$dateDocCol.' >= CURDATE() - INTERVAL '.abs(getDolGlobalInt('DISCOUNTRULES_SEARCH_DAYS')).' DAY ';
-        }
+		if (getDolGlobalInt('DISCOUNTRULES_SEARCH_DAYS')) {
+			$sql.= ' AND object.'.$dateDocCol.' >= CURDATE() - INTERVAL '.abs(getDolGlobalInt('DISCOUNTRULES_SEARCH_DAYS')).' DAY ';
+		}
 
-        $sql.= ' ORDER BY ';
-		if(getDolGlobalString('DISCOUNTRULES_DOCUMENT_SEARCH_TYPE') == 'last_price'){
+		$sql.= ' ORDER BY ';
+		if (getDolGlobalString('DISCOUNTRULES_DOCUMENT_SEARCH_TYPE') == 'last_price') {
 			$sql.= ' object.'.$dateDocCol.' DESC ';
 		} else { // DISCOUNTRULES_DOCUMENT_SEARCH_TYPE == 'best_price'
 			$sql.= ' net_subprice ASC ';
 		}
 
-        $sql.= ' LIMIT 1';
+		$sql.= ' LIMIT 1';
 
-        $res = $db->query($sql);
+		$res = $db->query($sql);
 
-        if($res)
-        {
-            if ($obj = $db->fetch_object($res))
-            {
-                $obj->date_object = $db->jdate($obj->date_object);
-                $obj->element = $element;
-                return $obj;
-            }
-        }
-        else
-        {
-            $db->reserror = $db->error;
-        }
-        //print '<p>'.$sql.'</p>';
-        return false;
-    }
+		if ($res) {
+			if ($obj = $db->fetch_object($res)) {
+				$obj->date_object = $db->jdate($obj->date_object);
+				$obj->element = $element;
+				return $obj;
+			}
+		} else {
+			$db->reserror = $db->error;
+		}
+		//print '<p>'.$sql.'</p>';
+		return false;
+	}
 
 	/**
 	 * Return HTML string to show a field into a page
 	 *
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $moreparam      To add more parameters on html input tag
-	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
+	 * @param  string $key       Key of attribute
+	 * @param  string $moreparam To add more parameters on html input tag
+	 * @param  string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed  $morecss   Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
-	public function showInputFieldQuick($key, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = ''){
+	public function showInputFieldQuick($key, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
 		return $this->showInputField($this->fields[$key], $key, $this->{$key}, $moreparam, $keysuffix, $keyprefix, $morecss);
 	}
 
@@ -1806,13 +1793,14 @@ class DiscountRule extends CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param  array   		$val	       Array of properties for field to show
-	 * @param  string  		$key           Key of attribute
-	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  		$moreparam     To add more parameters on html input tag
-	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  array       $val         Array of properties for field to show
+	 * @param  string      $key         Key of attribute
+	 * @param  string      $value       Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string      $moreparam   To add more parameters on html input tag
+	 * @param  string      $keysuffix   Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string      $keyprefix   Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string|int  $morecss     Value for css to define style/length of field. May also be a numeric.
+	 * @param  int         $nonewbutton 1=Disable "new" button if any
 	 * @return string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
@@ -1824,26 +1812,24 @@ class DiscountRule extends CommonObject
 		}
 
 		// Load langs
-		if(!empty($this->fields[$key]['langfile'])){
+		if (!empty($this->fields[$key]['langfile'])) {
 			if (is_array($this->fields[$key]['langfile'])) $langs->loadLangs($this->fields[$key]['langfile']);
 			else $langs->load($this->fields[$key]['langfile']);
 		}
 
-		if(empty($form)){ $form=new Form($this->db); }
+		if (empty($form)) { $form=new Form($this->db); }
 
 		$required = '';
-		if(!empty($this->fields[$key]['notnull']) && abs($this->fields[$key]['notnull']) > 0){
+		if (!empty($this->fields[$key]['notnull']) && abs($this->fields[$key]['notnull']) > 0) {
 			$required = ' required ';
 		}
 
-		if ($key == 'fk_country'){
+		if ($key == 'fk_country') {
 			$out = $form->select_country($value, $keyprefix.$key.$keysuffix);
-		}
-		elseif ($key == 'fk_product'){
+		} elseif ($key == 'fk_product') {
 			// pas de modification possible pour eviter les MEGA GROSSES BOULETTES utilisateur
 			$out = $this->showOutputFieldQuick($key, $moreparam, $keysuffix, $keyprefix, $morecss);
-		}
-		elseif ($key == 'fk_c_typent'){
+		} elseif ($key == 'fk_c_typent') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 			$formcompany = new FormCompany($this->db);
 			$sortparam = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : getDolGlobalString('SOCIETE_SORT_ON_TYPEENT')); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
@@ -1851,45 +1837,32 @@ class DiscountRule extends CommonObject
 			//$TTypent[0] = $langs->trans('AllTypeEnt');
 			$out = Form::selectarray("fk_c_typent", $TTypent, $this->fk_c_typent, 1, 0, 0, '', 0, 0, 0, $sortparam);
 			if ($user->admin) $out.=' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		elseif ($key == 'all_category_product'){
+		} elseif ($key == 'all_category_product') {
 			// Petite astuce car je ne peux pas creer de input pour les categories donc je les ajoutent là
-			$out = $this->generateFormCategorie('product',$keyprefix.'TCategoryProduct'.$keysuffix, $this->TCategoryProduct, $morecss);
-		}
-		elseif ($key == 'all_category_company'){
+			$out = $this->generateFormCategorie('product', $keyprefix.'TCategoryProduct'.$keysuffix, $this->TCategoryProduct, $morecss);
+		} elseif ($key == 'all_category_company') {
 			// Petite astuce car je ne peux pas creer de input pour les categories donc je les ajoutent là
-			$out = $this->generateFormCategorie('customer',$keyprefix.'TCategoryCompany'.$keysuffix, $this->TCategoryCompany, $morecss);
-		}
-		elseif ($key == 'all_category_project'){
+			$out = $this->generateFormCategorie('customer', $keyprefix.'TCategoryCompany'.$keysuffix, $this->TCategoryCompany, $morecss);
+		} elseif ($key == 'all_category_project') {
 			// Petite astuce car je ne peux pas creer de input pour les categories donc je les ajoutent là
-			$out = $this->generateFormCategorie('project',$keyprefix.'TCategoryProject'.$keysuffix, $this->TCategoryProject, $morecss);
-		}
-		elseif ($key == 'fk_status'){
+			$out = $this->generateFormCategorie('project', $keyprefix.'TCategoryProject'.$keysuffix, $this->TCategoryProject, $morecss);
+		} elseif ($key == 'fk_status') {
 			$options = array( self::STATUS_DISABLED => $langs->trans('Disable') ,self::STATUS_ACTIVE => $langs->trans('Enable') );
-			$out = Form::selectarray($keyprefix.$key.$keysuffix, $options,$value);
-		}
-		elseif ($key == 'priority_rank'){
+			$out = Form::selectarray($keyprefix.$key.$keysuffix, $options, $value);
+		} elseif ($key == 'priority_rank') {
 			$options = array();
 			foreach ($this->fields['priority_rank']['arrayofkeyval'] as $arraykey => $arrayval) {
 				$options[$arraykey] = $langs->trans($arrayval);
 			}
-			$out = Form::selectarray($keyprefix.$key.$keysuffix, $options,$value);
-		}
-		elseif (in_array($key, array('reduction', 'product_price', 'product_reduction_amount')))
-		{
+			$out = Form::selectarray($keyprefix.$key.$keysuffix, $options, $value);
+		} elseif (in_array($key, array('reduction', 'product_price', 'product_reduction_amount'))) {
 			$out = '<input '.$required.' class="flat" type="number" name="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" placeholder="xx.xx" min="0" step="any" >';
-		}
-		elseif ($key == 'from_quantity')
-		{
+		} elseif ($key == 'from_quantity') {
 			$out = '<input '.$required.' class="flat" type="number" name="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" placeholder="xx" min="0" step="any" >';
-		}
-		elseif ($this->fields[$key]['type'] == 'date')
-		{
-			if(is_int($value) && !empty($value)){$value = date('Y-m-d',$value);}
+		} elseif ($this->fields[$key]['type'] == 'date') {
+			if (is_int($value) && !empty($value)) {$value = date('Y-m-d', $value);}
 			$out = '<input '.$required.' class="flat" type="date" name="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" >';
-		}
-		else
-		{
+		} else {
 			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss, $nonewbutton);
 		}
 
@@ -1900,14 +1873,15 @@ class DiscountRule extends CommonObject
 	/**
 	 * Return HTML string to show a field into a page
 	 *
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $moreparam      To add more parameters on html input tag
-	 * @param  string  $keysuffix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  mixed   $morecss        Value for css to define size. May also be a numeric.
+	 * @param  string $key       Key of attribute
+	 * @param  string $moreparam To add more parameters on html input tag
+	 * @param  string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  mixed  $morecss   Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
-	public function showOutputFieldQuick($key, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = ''){
+	public function showOutputFieldQuick($key, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	{
 		return $this->showOutputField($this->fields[$key], $key, $this->{$key}, $moreparam, $keysuffix, $keyprefix, $morecss);
 	}
 
@@ -1929,45 +1903,36 @@ class DiscountRule extends CommonObject
 		global $conf, $langs, $form;
 
 		$out = '';
-		if ($key == 'fk_country'){
-			if(!empty($value)){
-				$tmparray=getCountry($value,'all');
+		if ($key == 'fk_country') {
+			if (!empty($value)) {
+				$tmparray=getCountry($value, 'all');
 				$out =  $tmparray['label'];
-			}
-			else{
+			} else {
 				$out =  '<span class="discountrule-all-text" >'.$langs->trans('AllCountries').'</span>';
 			}
-		}
-		elseif ($key == 'fk_company' && empty($value)){
+		} elseif ($key == 'fk_company' && empty($value)) {
 			$out =  '<span class="discountrule-all-text" >'.$langs->trans('AllCustomers').'</span>';
-		}
-		elseif ($key == 'all_category_product'){
+		} elseif ($key == 'all_category_product') {
 			// Petite astuce car je ne peux pas creer de input pour les categories donc je les ajoutent là
 			$out = $this->getCategorieBadgesList($this->TCategoryProduct, $langs->trans('AllProductCategories'));
-		}
-		elseif ($key == 'all_category_company'){
+		} elseif ($key == 'all_category_company') {
 			// Petite astuce car je ne peux pas creer de input pour les categories donc je les ajoutent là
 			$out = $this->getCategorieBadgesList($this->TCategoryCompany, $langs->trans('AllCustomersCategories'));
-		}
-		elseif ($key == 'all_category_project'){
+		} elseif ($key == 'all_category_project') {
 			// Petite astuce car je ne peux pas creer de input pour les categories donc je les ajoutent là
 			$out = $this->getCategorieBadgesList($this->TCategoryProject, $langs->trans('AllProjectCategories'));
-		}
-		elseif ($key == 'fk_c_typent'){
+		} elseif ($key == 'fk_c_typent') {
 			$out = getTypeEntLabel($this->fk_c_typent);
-			if(!$out){ $out = ''; }
-		}
-		elseif ($key == 'fk_status'){
+			if (!$out) { $out = ''; }
+		} elseif ($key == 'fk_status') {
 			$out =  $this->getLibStatut(5); // to fix dolibarr using 3 instead of 2
-		}
-		elseif ($key == 'priority_rank'){
-			if(isset($this->fields['priority_rank']['arrayofkeyval'][$value])){
+		} elseif ($key == 'priority_rank') {
+			if (isset($this->fields['priority_rank']['arrayofkeyval'][$value])) {
 				$out = $langs->trans($this->fields['priority_rank']['arrayofkeyval'][$value]);
-			}elseif (empty($value)){
+			} elseif (empty($value)) {
 				$out = $langs->trans($this->fields['priority_rank']['arrayofkeyval'][0]);
 			}
-		}
-		else{
+		} else {
 			$out = parent::showOutputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
 		}
 
@@ -1975,35 +1940,35 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * @param $Tcategorie array of category ID
-	 * @return string
+	 * Build HTML badges list for categories.
+	 *
+	 * @param int[]  $Tcategorie Array of category IDs
+	 * @param string $emptyMsg   Message to show when list is empty
+	 * @return string            HTML string
 	 */
-	public function getCategorieBadgesList($Tcategorie, $emptyMsg = ''){
+	public function getCategorieBadgesList($Tcategorie, $emptyMsg = '')
+	{
 
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		$toprint = array();
-		foreach($Tcategorie as $cid)
-		{
+		foreach ($Tcategorie as $cid) {
 			$c = new Categorie($this->db);
-			if($c->fetch($cid)>0)
-			{
+			if ($c->fetch($cid)>0) {
 				$ways = $c->print_all_ways();       // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
-				foreach($ways as $way)
-				{
+				foreach ($ways as $way) {
 					// Check contrast with background and correct text color
 					$forced_color = 'categtextwhite';
-					if ($c->color)
-					{
+					if ($c->color) {
 						if (colorIsLight($c->color)) $forced_color = 'categtextblack';
 					}
 
-					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.'"'.($c->color?' style="background: #'.$c->color.';"':' style="background: #aaa"').'>'.img_object('','category').' '.$way.'</li>';
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories '.$forced_color.'"'.($c->color?' style="background: #'.$c->color.';"':' style="background: #aaa"').'>'.img_object('', 'category').' '.$way.'</li>';
 				}
 			}
 		}
 
-		if(empty($toprint)){
+		if (empty($toprint)) {
 			$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #ebebeb">'.$emptyMsg.'</li>';
 		}
 
@@ -2011,23 +1976,28 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 *    @param	string|int	            $type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 *    @param    string		            $name			HTML field name
-	 *    @param    array		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
-	 * 	  @return string
+	 * Generate HTML multiselect for categories.
+	 *
+	 * @param string|int $type     Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param string     $name     HTML field name
+	 * @param array      $selected Id of category preselected or 'auto' (autoselect category if there is only one element)
+	 * @param string     $morecss  CSS class for the select
+	 * @return string
 	 */
-	public function generateFormCategorie($type,$name,$selected=array(), $morecss = "")
+	public function generateFormCategorie($type, $name, $selected = array(), $morecss = "")
 	{
 		global $form;
-		if(empty($morecss)) $morecss = 'minwidth200';
+		if (empty($morecss)) $morecss = 'minwidth200';
 		$TOptions = $form->select_all_categories($type, $selected, $name, 0, 0, 1);
 		return  $form->multiselectarray($name, $TOptions, $selected, 0, 0, $morecss, 0, 0, '', '', '', 1);
 	}
 
 
 	/**
-	 * Function to update current object
-	 * @param $key
+	 * Function to update current object from POST data for one field.
+	 *
+	 * @param string $key Field name to update
+	 * @return void
 	 */
 	public function setValueFromPost($key)
 	{
@@ -2035,50 +2005,39 @@ class DiscountRule extends CommonObject
 		$request = $_POST;
 
 		// prepare data
-		if(!is_array($request)){
+		if (!is_array($request)) {
 			$request[$key] = $request;
 		}
 
 		// set default value
 		$value = '';
-		if(isset($request[$key])){
+		if (isset($request[$key])) {
 			$value = $request[$key];
 		}
 
 		// TODO : implementer l'utilisation de la class Validate introduite en V15 de Dolibarr
 
-		if(isset($this->fields[$key]))
-		{
-			if($this->fields[$key]['type'] == 'datetime'){
+		if (isset($this->fields[$key])) {
+			if ($this->fields[$key]['type'] == 'datetime') {
 				$value .= ' '. $request[$key.'hour'] .':'.$request[$key.'min'].':'.$request[$key.'sec'];
 				$this->setDate($key, $value);
-			}
-			else if($this->checkFieldType($key, 'date'))
-			{
+			} elseif ($this->checkFieldType($key, 'date')) {
 				$this->setDate($key, $value);
-			}
-			else if( $this->checkFieldType($key, 'array'))
-			{
+			} elseif ( $this->checkFieldType($key, 'array')) {
 				$this->{$key} = $value;
-			}
-			else if( $this->checkFieldType($key, 'float') )
-			{
+			} elseif ( $this->checkFieldType($key, 'float') ) {
 				$this->{$key} = (double) price2num($value);
-			}
-			else if( $this->checkFieldType($key, 'int') ) {
+			} elseif ( $this->checkFieldType($key, 'int') ) {
 				$this->{$key} = (int) price2num($value);
-			}
-			else
-			{
+			} else {
 				$this->{$key} = $value;
 			}
 
 			// for query search optimisation (or just working), only save 0 or a real id value and not the -1 empty value used by select form
-			if(in_array($key, array('fk_country', 'fk_company', 'fk_project', 'fk_c_typent')) && ( $this->{$key} < 0 || $this->{$key} == '' ) ){
+			if (in_array($key, array('fk_country', 'fk_company', 'fk_project', 'fk_c_typent')) && ( $this->{$key} < 0 || $this->{$key} == '' ) ) {
 				$this->{$key} = 0;
 			}
 		}
-
 	}
 
 
@@ -2091,12 +2050,9 @@ class DiscountRule extends CommonObject
 	 */
 	private function checkFieldType($field, $type)
 	{
-		if (isset($this->fields[$field]) && method_exists($this, 'is' . ucfirst($type)))
-		{
+		if (isset($this->fields[$field]) && method_exists($this, 'is' . ucfirst($type))) {
 			return $this->{'is' . ucfirst($type)}($this->fields[$field]);
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -2105,18 +2061,15 @@ class DiscountRule extends CommonObject
 	/**
 	 * Function to set date in field
 	 *
-	 * @param   string  $field  field to set
-	 * @param   string  $date   formatted date to convert
-	 * @return                  mixed
+	 * @param string $field Field to set
+	 * @param string $date  Formatted date to convert
+	 * @return int|string   Timestamp or empty string
 	 */
 	public function setDate($field, $date)
 	{
-		if (empty($date))
-		{
+		if (empty($date)) {
 			$this->{$field} = '';
-		}
-		else
-		{
+		} else {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$this->{$field} = dol_stringtotime($date);
 		}
@@ -2141,10 +2094,12 @@ class DiscountRule extends CommonObject
 
 	/**
 	 * Method automatically called by Dolibarr to display the badge on the product tab.
-	 * @param object $object      (product object, sometimes useful to get the id)
-	 * @return int   The number to display in the badge (0 if none)
+	 *
+	 * @param int    $id     Product id
+	 * @param object $object Product object (sometimes useful to get the id)
+	 * @return int           The number to display in the badge (0 if none)
 	 */
-	public static function countProductOccurrences(int $id , object $object) : int
+	public static function countProductOccurrences(int $id, object $object) : int
 	{
 		global $db, $conf;
 
@@ -2154,7 +2109,7 @@ class DiscountRule extends CommonObject
 
 		$sql = 'SELECT COUNT(d.rowid)';
 		$sql .= ' FROM ' . $db->prefix() . 'discountrule as d';
-		$sql .= ' WHERE d.fk_product = ' . (int)$id;
+		$sql .= ' WHERE d.fk_product = ' . (int) $id;
 		$sql .= ' AND d.entity = '. $conf->entity;
 
 		$resql = $db->query($sql);
@@ -2162,11 +2117,12 @@ class DiscountRule extends CommonObject
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				return (int)$row[0];
+				return (int) $row[0];
 			}
 		} else {
 			dol_syslog('SQL Error in DiscountRule::countProductOccurrences: ' . $db->lasterror(), LOG_ERR);
 		}
 
 		return 0;
-	}}
+	}
+}

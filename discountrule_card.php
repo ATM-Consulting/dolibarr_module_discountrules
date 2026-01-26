@@ -84,9 +84,9 @@ $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$TCategoryProduct = GETPOST('TCategoryProduct','array');
-$TCategoryCompany = GETPOST('TCategoryCompany','array');
-$TCategoryProject = GETPOST('TCategoryProject','array');
+$TCategoryProduct = GETPOST('TCategoryProduct', 'array');
+$TCategoryCompany = GETPOST('TCategoryCompany', 'array');
+$TCategoryProject = GETPOST('TCategoryProject', 'array');
 
 $fk_product = GETPOST('fk_product', 'int');
 
@@ -95,9 +95,8 @@ $object = new DiscountRule($db);
 $newToken = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
 $object->picto = 'discountrules_card@discountrules';
 
-if($id>0)
-{
-    $object->fetch($id);
+if ($id>0) {
+	$object->fetch($id);
 	$fk_product = $object->fk_product;
 }
 
@@ -107,14 +106,13 @@ $hookmanager->initHooks(array('discountrulecard'));     // Note that conf->hooks
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('discountrule');
 
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels, '', 'search_');
 
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all",'alpha'));
+$search_all=trim(GETPOST("search_all", 'alpha'));
 $search=array();
-foreach($object->fields as $key => $val)
-{
-    if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
+foreach ($object->fields as $key => $val) {
+	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
 if (empty($action)) $action='view';
@@ -124,8 +122,7 @@ if (empty($action)) $action='view';
 if (!(isModEnabled('discountrules'))) accessforbidden('Module not enabled');
 if ($user->socid > 0 // Protection if external user
 	|| !$user->hasRight('discountrules', 'read') // Check user right
-)
-{
+) {
 	accessforbidden();
 }
 
@@ -145,72 +142,65 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook))
-{
+if (empty($reshook)) {
 	$error=0;
 
-	if ($cancel)
-	{
-		if ($action != 'addlink')
-		{
-			$urltogo=$backtopage?$backtopage:dol_buildpath('/discountrules/discountrule_list.php',1);
+	if ($cancel) {
+		if ($action != 'addlink') {
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/discountrules/discountrule_list.php', 1);
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id,$ref);
+		if ($id > 0 || ! empty($ref)) $ret = $object->fetch($id, $ref);
 		$action='';
 	}
 
 	// Action to add record
-	if (($action == 'add' || $action == 'update') && $user->hasRight('discountrules', 'create'))
-	{
+	if (($action == 'add' || $action == 'update') && $user->hasRight('discountrules', 'create')) {
 		$errors = 0;
 
 		// for new rules
-		if(empty($object->id)){
+		if (empty($object->id)) {
 			$object->fk_product = $fk_product;
 
 			$object->initFieldsParams();
 		}
 
 
-        foreach ($object->fields as $key => $val)
-        {
+		foreach ($object->fields as $key => $val) {
 			if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'import_key'))) continue;	// Ignore special fields
 			if (isset($val['visible']) && in_array($val['visible'], array(0,2))) continue;
 
 			$object->setValueFromPost($key); // Set standard attributes
-            
-            if (!empty($val['notnull']) && $object->$key == '')
-            {
-                $error++;
-                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label']) ), null, 'errors');
-            }
-        }
 
-        if(empty($object->product_price) && empty($object->reduction) && empty($object->product_reduction_amount)){
+			if (!empty($val['notnull']) && $object->$key == '') {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
+		}
+
+		if (empty($object->product_price) && empty($object->reduction) && empty($object->product_reduction_amount)) {
 			$error++;
 			$fieldsList = $langs->transnoentitiesnoconv($object->fields['reduction']['label'])
 				 . ', ' . $langs->transnoentitiesnoconv($object->fields['product_price']['label'])
 				 . ', ' . $langs->transnoentitiesnoconv($object->fields['product_reduction_amount']['label']);
-			setEventMessages($langs->trans("ErrorOneOffThisFieldsAreRequired", $fieldsList ), null, 'errors');
+			setEventMessages($langs->trans("ErrorOneOffThisFieldsAreRequired", $fieldsList), null, 'errors');
 		}
 
 		$object->TCategoryProduct =  array();
-		if(empty($object->fk_product)){ $object->TCategoryProduct =  $TCategoryProduct; }
+		if (empty($object->fk_product)) { $object->TCategoryProduct =  $TCategoryProduct; }
 
 		$object->TCategoryProject =  array();
-		if(empty($object->fk_project)){ $object->TCategoryProject =  $TCategoryProject; }
+		if (empty($object->fk_project)) { $object->TCategoryProject =  $TCategoryProject; }
 
 		$object->TCategoryCompany =  $TCategoryCompany;
 
 
 
-		if ($object->id > 0)
-		{
+		if ($object->id > 0) {
 			// Fill array 'array_options' with data from add form
 			if (!$error) {
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -233,8 +223,7 @@ if (empty($reshook))
 			} else {
 				$action = 'edit';
 			}
-		}
-		else{
+		} else {
 			// Fill array 'array_options' with data from add form
 			if (!$error) {
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '', 1);
@@ -243,69 +232,58 @@ if (empty($reshook))
 				}
 			}
 
-			if (! $error)
-			{
+			if (! $error) {
 				$result=$object->createCommon($user);
-				if ($result > 0)
-				{
+				if ($result > 0) {
 					// Creation OK
-					if(!empty($backtopage) && filter_var($backtopage, FILTER_VALIDATE_URL)){
+					if (!empty($backtopage) && filter_var($backtopage, FILTER_VALIDATE_URL)) {
 						$urltogo = $backtopage;
-					}
-					else{
-						$urltogo = dol_buildpath('/discountrules/discountrule_card.php',1);
-						$urltogo.= '?id=' . intval($object->id) ;
-						if(!empty($fk_product)){
-							$urltogo.= '&fk_product=' . intval($fk_product) ;
+					} else {
+						$urltogo = dol_buildpath('/discountrules/discountrule_card.php', 1);
+						$urltogo.= '?id=' . intval($object->id);
+						if (!empty($fk_product)) {
+							$urltogo.= '&fk_product=' . intval($fk_product);
 						}
 					}
 
 					header("Location: ".$urltogo);
 					exit;
-				}
-				else
-				{
+				} else {
 					// Creation KO
 					if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-					else  setEventMessages($object->error, null, 'errors');
+					else setEventMessages($object->error, null, 'errors');
 					$action='create';
 				}
-			}
-			else
-			{
+			} else {
 				$action='create';
 			}
 		}
 	}
 
 
-    if ($action == 'activate' && $user->hasRight('discountrules', 'create')){
-        $object->setActive($user);
-    }
+	if ($action == 'activate' && $user->hasRight('discountrules', 'create')) {
+		$object->setActive($user);
+	}
 
-    if ($action == 'disable' && $user->hasRight('discountrules', 'create')){
-        $object->setDisabled($user);
-    }
+	if ($action == 'disable' && $user->hasRight('discountrules', 'create')) {
+		$object->setDisabled($user);
+	}
 
 
 
 	// Action to delete
-	if ($action == 'confirm_delete' && $user->hasRight('discountrules', 'delete'))
-	{
+	if ($action == 'confirm_delete' && $user->hasRight('discountrules', 'delete')) {
 		$result=$object->delete($user);
-		if ($result > 0)
-		{
+		if ($result > 0) {
 			// Delete OK
 			setEventMessages("RecordDeleted", null, 'mesgs');
-            $url = dol_buildpath('/discountrules/discountrule_list.php',1);
-            if(!empty($fk_product)){
-                $url.= '?fk_product=' . intval($fk_product) ;
-            }
+			$url = dol_buildpath('/discountrules/discountrule_list.php', 1);
+			if (!empty($fk_product)) {
+				$url.= '?fk_product=' . intval($fk_product);
+			}
 			header("Location: ".$url);
 			exit;
-		}
-		else
-		{
+		} else {
 			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 			else setEventMessages($object->error, null, 'errors');
 		}
@@ -323,20 +301,18 @@ if (empty($reshook))
 
 $form=new Form($db);
 
-llxHeader('','discountrule','');
+llxHeader('', 'discountrule', '');
 
 
 
 
 
-if(!empty($fk_product)){
+if (!empty($fk_product)) {
 	$product = $object->product = new Product($db);
-	if($object->product->fetch($fk_product) > 0)
-	{
+	if ($object->product->fetch($fk_product) > 0) {
 		$object->fields['product_price']['visible'] = 1;
 		$object->fields['fk_product']['visible'] = 1;
-	}
-	else{
+	} else {
 		$object->product = false;
 	}
 }
@@ -344,10 +320,9 @@ if(!empty($fk_product)){
 
 
 // Part to create
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$title = $langs->trans("NewDiscountRule");
-	if(!empty($product)){
+	if (!empty($product)) {
 		$title = $langs->trans("NewDiscountRuleForProduct", $product->label);
 	}
 	print load_fiche_titre($title, '', 'discountrules@discountrules');
@@ -356,11 +331,11 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-    if(!empty($fk_product)){
+	if (!empty($fk_product)) {
 		$object->fk_product = $fk_product;
 		$object->initFieldsParams();
-        print '<input type="hidden" name="fk_product" value="'.intval($fk_product).'">';
-    }
+		print '<input type="hidden" name="fk_product" value="'.intval($fk_product).'">';
+	}
 
 	print dol_get_fiche_head(array(), '');
 
@@ -379,10 +354,10 @@ if ($action == 'create')
 	print dol_get_fiche_end();
 
 
-    $linkbackUrl = dol_buildpath('discountrules/discountrule_list.php',1);
-    if(!empty($fk_product)){
-        $linkbackUrl.= '?fk_product=' . intval($fk_product);
-    }
+	$linkbackUrl = dol_buildpath('discountrules/discountrule_list.php', 1);
+	if (!empty($fk_product)) {
+		$linkbackUrl.= '?fk_product=' . intval($fk_product);
+	}
 
 	print '<div class="center"><input type="submit" class="butAction" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
 	print ' &nbsp; <a class="butAction" href="'.$linkbackUrl.'" >'.$langs->trans("Cancel").'</a>';
@@ -393,16 +368,15 @@ if ($action == 'create')
 
 
 // Part to edit record
-if ($id && $action == 'edit')
-{
+if ($id && $action == 'edit') {
 	print load_fiche_titre($langs->trans("discountrules"), '', 'discountrules@discountrules');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-    print '<input type="hidden" name="fk_product" value="'.$object->fk_product.'">';
-    print '<input type="hidden" name="token" value="'.$newToken.'">';
+	print '<input type="hidden" name="fk_product" value="'.$object->fk_product.'">';
+	print '<input type="hidden" name="token" value="'.$newToken.'">';
 
 	print dol_get_fiche_head();
 
@@ -420,10 +394,10 @@ if ($id && $action == 'edit')
 
 	print dol_get_fiche_end();
 
-    $linkbackUrl = dol_buildpath('discountrules/discountrule_card.php',1).'?id='.$object->id;
-    if(!empty($fk_product)){
-        $linkbackUrl.= '&fk_product=' . intval($fk_product);
-    }
+	$linkbackUrl = dol_buildpath('discountrules/discountrule_card.php', 1).'?id='.$object->id;
+	if (!empty($fk_product)) {
+		$linkbackUrl.= '&fk_product=' . intval($fk_product);
+	}
 
 	print '<div class="center"><input type="submit" class="butAction" name="save" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; <a class="butAction" href="'. $linkbackUrl .'" >'.$langs->trans("Cancel").'</a>';
@@ -434,11 +408,10 @@ if ($id && $action == 'edit')
 
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
-    //$res = $object->fetch_optionals($object->id, $extralabels);
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+	//$res = $object->fetch_optionals($object->id, $extralabels);
 
-    $head = discountrulesPrepareHead($object);
+	$head = discountrulesPrepareHead($object);
 
 	print '<div class="discount-rule-head-container --status-'.$object->fk_status.'">';
 	print dol_get_fiche_head($head, 'card', $langs->trans("Discountrule"), -1);
@@ -448,15 +421,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation to delete
 	if ($action == 'delete') {
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Delete'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Delete'), $langs->trans('ConfirmDelete'), 'confirm_delete', '', 0, 1);
 	}
 
 	if (! $formconfirm) {
-
-	    $parameters = array();
-	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-	    elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
 	}
 
 	// Print form confirm
@@ -468,7 +440,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	discountRulesBannerTab($object, 1);
 
-	
+
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
@@ -485,34 +457,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 	print '</div>';
 
-    print '<div class="clearboth"></div><br />';
+	print '<div class="clearboth"></div><br />';
 
-    print '<div class="tabsAction">'."\n";
-    $parameters=array();
-    $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	print '<div class="tabsAction">'."\n";
+	$parameters=array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-    if (empty($reshook))
-    {
-        $actionUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.$newToken.'&amp;action=';
+	if (empty($reshook)) {
+		$actionUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.$newToken.'&amp;action=';
 
-        if ($object->fk_status !== $object::STATUS_ACTIVE) {
-            print dolGetButtonAction($langs->trans("Activate"), '', 'default', $actionUrl . 'activate', '', $user->hasRight('discountrules', 'create'));
-        }
-        elseif ($object->fk_status === $object::STATUS_ACTIVE) {
-            print dolGetButtonAction($langs->trans("Disable"), '', 'default', $actionUrl . 'disable', '', $user->hasRight('discountrules', 'create'));
-        }
+		if ($object->fk_status !== $object::STATUS_ACTIVE) {
+			print dolGetButtonAction($langs->trans("Activate"), '', 'default', $actionUrl . 'activate', '', $user->hasRight('discountrules', 'create'));
+		} elseif ($object->fk_status === $object::STATUS_ACTIVE) {
+			print dolGetButtonAction($langs->trans("Disable"), '', 'default', $actionUrl . 'disable', '', $user->hasRight('discountrules', 'create'));
+		}
 
-        //print dolGetButtonAction($langs->trans("Clone"), '', 'default', $actionUrl . 'clone', '', $user->rights->discountrules->create);
-        print dolGetButtonAction($langs->trans("Modify"), '', 'default', $actionUrl . 'edit', '', $user->hasRight('discountrules', 'create'));
-        print dolGetButtonAction($langs->trans("Delete"), '', 'danger', $actionUrl . 'delete', '', $user->hasRight('discountrules', 'delete'));
-    }
-    print '</div>'."\n";
+		//print dolGetButtonAction($langs->trans("Clone"), '', 'default', $actionUrl . 'clone', '', $user->hasRight('discountrules', 'create'));
+		print dolGetButtonAction($langs->trans("Modify"), '', 'default', $actionUrl . 'edit', '', $user->hasRight('discountrules', 'create'));
+		print dolGetButtonAction($langs->trans("Delete"), '', 'danger', $actionUrl . 'delete', '', $user->hasRight('discountrules', 'delete'));
+	}
+	print '</div>'."\n";
 
 	print dol_get_fiche_end();
-
-
-
 }
 
 

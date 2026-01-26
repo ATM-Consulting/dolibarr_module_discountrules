@@ -53,6 +53,7 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 	 */
 	public $resprints;
 
+    private static $lineData = [];
 
 	/**
 	 * Constructor
@@ -580,85 +581,75 @@ class Actionsdiscountrules extends \discountrules\RetroCompatCommonHookActions
 
 	public function llxFooter($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $langs;
+        if (empty(self::$lineData)) {
+            return 0;
+        }
 
-		//Recup le taux selectionné + Taux minimum
-		$options = array(0 => 'MarkRate', 1 => 'MarginRate');
-		$valueConfMarkupMarginRate = $options[getDolGlobalInt('DISCOUNTRULES_MARKUP_MARGIN_RATE')];
-		if (intval(DOL_VERSION) <= 19)
-		{
-			$minimumRate = (float)getDolGlobalString('DISCOUNTRULES_MINIMUM_RATE');
-		} else {
-			$minimumRate = getDolGlobalFloat('DISCOUNTRULES_MINIMUM_RATE');
-		}
+        // 1. Prepare the data payload.
+        $dataForJs = ['lines' => self::$lineData];
 
-		?>
-		<script type="text/javascript">
-			$(document).ready(function () {
-				// Get config value from PHP (either 'MarginRate' or 'MarkRate')
-				let valueConf = '<?php echo addslashes($valueConfMarkupMarginRate); ?>';
+        // 2. Echo the JSON data script tag directly.
+        echo '<script type="application/json" id="discountrules-pagedata">' . json_encode($dataForJs) . '</script>';
 
-				// Get warning image with translated message
-				let imgWarning = '<?php echo img_warning($langs->trans("WarningDiscountrulesMinimumRate", ($langs->trans($valueConfMarkupMarginRate)), $minimumRate)); ?>';
+        // 3. Build the JS file URL using the robust dol_buildpath() function.
+        // The second parameter '1' specifies that we want a web URL, not a server path.
+        $jsUrl = dol_buildpath('/discountrules/js/document_rate_checker.js', 1);
 
-				// Select all <tr> rows whose id starts with "row"
-				let tr = $('tr[id^="row"]');
+        // 4. Echo the script tag to load the external file.
+        echo '<script src="' . $jsUrl . '" defer></script>';
 
-				// Initialize the array of target <td> cells (depending on valueConf)
-				let tdArray = [];
-				if (valueConf === 'MarginRate') {
-					tdArray = $('td.linecolmargin2.margininfos');
-				}
-				if (valueConf === 'MarkRate') {
-					tdArray = $('td.linecolmark1.margininfos');
-				}
+        // Reset the static array to prevent data leakage.
+        self::$lineData = [];
 
-				// Loop over all margin cells to append the warning icon if the value is below the minimum
-				$(tdArray).each(function (index, td) {
-					let raw = $(td).text().trim();
-					let value = parseFloat(raw.replace(',', '.').replace('%', ''));
+        return 0;
+    }
 
-					if (value < <?php echo $minimumRate ?>) {
-						$(td).append(imgWarning);
-					}
-				});
+    /**
+     * Overloading the printObjectLine function : replacing the parent's function with the one below
+     *
+     * @param   array           $parameters     Hook metadatas (context, etc...)
+     * @param   CommonObject    $object         The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+     * @param   string          $action         Current action (if set). Generally create or edit or null
+     * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+     * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+     */
+    public function printObjectLine($parameters, &$object, &$action, $hookmanager) : int
+    {
+        global $db, $langs;
+        $TContexts = explode(':', $parameters['context']);
+        $TAllowedContexts = ['propalcard', 'ordercard', 'invoicecard'];
 
-				// Loop over each row in the table
-				$(tr).each(function (indexTr, elementTr) {
-					let tdChildren = $(elementTr).children('td');
+        $commonContexts = array_intersect($TContexts, $TAllowedContexts);
 
-					// Depending on the configuration, find the related margin or mark column in the same row
-					let margeMarkTd;
-					if (valueConf === 'MarginRate') {
-						margeMarkTd = $(elementTr).find('td.linecolmargin2');
-					} else if (valueConf === 'MarkRate') {
-						margeMarkTd = $(elementTr).find('td.linecolmark1');
-					}
+        if(!empty($commonContexts) && getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE')) {
+            $options = array(0 => 'MarkRate', 1 => 'MarginRate');
+            $valueConfMarkupMarginRate = $options[getDolGlobalInt('DISCOUNTRULES_MARKUP_MARGIN_RATE')];
+            if (intval(DOL_VERSION) <= 19)
+            {
+                $minimumRate = (float)getDolGlobalString('DISCOUNTRULES_MINIMUM_RATE');
+            } else {
+                $minimumRate = getDolGlobalFloat('DISCOUNTRULES_MINIMUM_RATE');
+            }
 
-					// Attach a change event handler to each <td> in the row
-					$(tdChildren).each(function (indexTd, elementTd) {
-						$(elementTd).on('change', function () {
+            if(!empty($parameters['line']->fk_product)){
+                $parameters['line']->fetch_product();
+            }
+            if (!empty($object->thirdparty->array_options['options_discountrules_min_markup_margin_percent'])) {
+                $minimumRate = (float) $object->thirdparty->array_options['options_discountrules_min_markup_margin_percent'];
+            } elseif (!empty($parameters['line']->fk_product) && !empty($parameters['line']->product->array_options['options_discountrules_min_markup_margin_percent'])) {
+                $minimumRate = (float) $parameters['line']->product->array_options['options_discountrules_min_markup_margin_percent'];
+            }
 
-							// Delay execution to let other scripts (e.g., quickcustomerprice) update the DOM first
-							setTimeout(function () {
-								let rawMargeMarkTd = $(margeMarkTd).text().trim();
-								let value = parseFloat(rawMargeMarkTd.replace(',', '.').replace('%', ''));
+            self::$lineData[$parameters['line']->id] = [
+                    'minRate' => $minimumRate,
+                    'rateType' => $valueConfMarkupMarginRate,
+                    'imgWarning' => img_warning($langs->trans("WarningDiscountrulesMinimumRate", ($langs->trans($valueConfMarkupMarginRate)), $minimumRate))
+            ];
+        }
 
-								// If value is below threshold, show warning icon
-								if (value < <?php echo $minimumRate ?>) {
-									$(margeMarkTd).children('span').remove();
-									$(margeMarkTd).append($(imgWarning));
-								} else {
-									// Otherwise, remove any existing warning
-									$(margeMarkTd).children('span').remove();
-								}
-							}, 200); // Delay must be enough to ensure other DOM updates complete
-						});
-					});
-				});
-			});
-		</script>
 
-		<?php
-	}
+        return 0;
+    }
 }
+
+

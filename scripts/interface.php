@@ -1,4 +1,19 @@
 <?php
+/* Copyright (C) 2025 ATM Consulting
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
@@ -29,10 +44,10 @@ $path = dirname(__FILE__) . '/';
 
 // Include and load Dolibarr environment variables
 $res = 0;
-if (!$res && file_exists($path . "main.inc.php")) $res = @include($path . "main.inc.php");
-if (!$res && file_exists($path . "../main.inc.php")) $res = @include($path . "../main.inc.php");
-if (!$res && file_exists($path . "../../main.inc.php")) $res = @include($path . "../../main.inc.php");
-if (!$res && file_exists($path . "../../../main.inc.php")) $res = @include($path . "../../../main.inc.php");
+if (!$res && file_exists($path . "main.inc.php")) $res = @include $path . "main.inc.php";
+if (!$res && file_exists($path . "../main.inc.php")) $res = @include $path . "../main.inc.php";
+if (!$res && file_exists($path . "../../main.inc.php")) $res = @include $path . "../../main.inc.php";
+if (!$res && file_exists($path . "../../../main.inc.php")) $res = @include $path . "../../../main.inc.php";
 if (!$res) die("Include of master fails");
 require_once __DIR__ . '/../class/discountrule.class.php';
 require_once __DIR__ . '/../class/discountSearch.class.php';
@@ -56,7 +71,6 @@ if (!isModEnabled('discountrules')) accessforbidden('Module not enabled');
 
 // DISPLAY OBJECT LINES OF DOCUMENTS
 if ($action === 'display-documents-lines') {
-
 	$jsonResponse = new stdClass();
 	$jsonResponse->result = false;
 	$jsonResponse->msg = '';
@@ -66,9 +80,9 @@ if ($action === 'display-documents-lines') {
 	$fk_element = GETPOST("fk_element", "int");
 
 	$TWriteRight = array(
-		'commande' => $user->hasRight('commande','creer'),
-		'propal' => $user->hasRight('propal','creer'),
-		'facture' => $user->hasRight('facture','creer'),
+		'commande' => $user->hasRight('commande', 'creer'),
+		'propal' => $user->hasRight('propal', 'creer'),
+		'facture' => $user->hasRight('facture', 'creer'),
 	);
 
 	$object = false;
@@ -77,14 +91,14 @@ if ($action === 'display-documents-lines') {
 	} else {
 		$object = DiscountRuleTools::objectAutoLoad($element, $db);
 		if ($object->fetch($fk_element)>0) {
-			if(!empty($object->lines)){
+			if (!empty($object->lines)) {
 				$jsonResponse->html = discountRuleDocumentsLines($object);
 				$jsonResponse->html.= '<input type="hidden" name="token" value="'.newToken().'" />';
 				$jsonResponse->result = true;
-			}else{
-                $jsonResponse->html = '<div class="dr-big-info-msg">'.$langs->trans('NoProductService').'</div>';
-                $jsonResponse->result = true;
-            }
+			} else {
+				$jsonResponse->html = '<div class="dr-big-info-msg">'.$langs->trans('NoProductService').'</div>';
+				$jsonResponse->result = true;
+			}
 		}
 	}
 
@@ -104,8 +118,7 @@ if ($action === 'display-documents-lines') {
 
 if ($action === 'product-discount'
 	&& ($user->socid > 0 || !$user->hasRight('discountrules', 'read'))
-)
-{
+) {
 	$jsonResponse = new stdClass();
 	$jsonResponse->result = false;
 	$jsonResponse->log = array("Not enough rights");
@@ -118,7 +131,6 @@ if ($action === 'product-discount'
 
 // RECHERCHE DE REMISES
 if ($action === 'product-discount') {
-
 	$fk_product = GETPOST('fk_product', 'int');
 	$fk_project = GETPOST('fk_project', 'int');
 	$fk_company = GETPOST('fk_company', 'int');
@@ -130,7 +142,7 @@ if ($action === 'product-discount') {
 	$search = new DiscountSearch($db);
 	$jsonResponse = $search->search($qty, $fk_product, $fk_company, $fk_project, array(), array(), $fk_c_typent, $fk_country, 0, $date);
 
-	if(is_object($jsonResponse)){
+	if (is_object($jsonResponse)) {
 		// Mise en page du résultat
 		$jsonResponse->tpMsg = getDiscountRulesInterfaceMessageTpl($langs, $jsonResponse, $action);
 	}
@@ -154,10 +166,7 @@ if ($action === 'product-discount') {
 
 	// output
 	print json_encode($jsonResponse, JSON_PRETTY_PRINT);
-}
-
-elseif($action === 'export-price')
-{
+} elseif ($action === 'export-price') {
 	_exportProductsPrices();
 }
 
@@ -170,7 +179,18 @@ $db->close();    // Close $db database opened handler
  * LIBRAIRIES UNIQUEMENT POUR CETTE PAGE
  */
 
-function _exportProductsPrices(){
+
+/**
+ * Export products and their simulated discount prices to a CSV file.
+ *
+ * Uses current search filters (GET/POST parameters) on products
+ * and runs DiscountSearch for each product to compute prices,
+ * then streams a CSV file to the browser.
+ *
+ * @return void
+ */
+function _exportProductsPrices()
+{
 	global $hookmanager,$user, $db, $mysoc, $langs, $conf;
 
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -212,18 +232,18 @@ function _exportProductsPrices(){
 	$from_quantity = GETPOST("from_quantity", 'int');
 	$fk_country = GETPOST("fk_country", 'int');
 	$fk_country = intval($fk_country);
-	if($fk_country<0){ $fk_country = 0; }
+	if ($fk_country<0) { $fk_country = 0; }
 	$fk_project = GETPOST("fk_project", 'int');
 	$fk_project = intval($fk_project);
-	if($fk_project<0){ $fk_project = 0; }
+	if ($fk_project<0) { $fk_project = 0; }
 	$fk_c_typent = GETPOST("fk_c_typent", 'int');
 	$fk_c_typent = intval($fk_c_typent);
-	if($fk_c_typent<0){ $fk_c_typent = 0; }
+	if ($fk_c_typent<0) { $fk_c_typent = 0; }
 	$TCategoryCompany = GETPOST("TCategoryCompany", 'array');
 	$fk_company = GETPOST("fk_company", 'int');
 	$fk_company = intval($fk_company);
-	if($fk_company<0){ $fk_company = 0; }
-	if(!empty($fk_company)){
+	if ($fk_company<0) { $fk_company = 0; }
+	if (!empty($fk_company)) {
 		// si societé selectionné, les champs suivants ne sont pas utiles
 		$fk_country = 0;
 		$fk_c_typent = 0;
@@ -259,8 +279,7 @@ function _exportProductsPrices(){
 	// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 	$canvas = GETPOST("canvas");
 	$objcanvas = null;
-	if (!empty($canvas))
-	{
+	if (!empty($canvas)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 		$objcanvas = new Canvas($db, $action);
 		$objcanvas->getCanvas('product', 'list', $canvas);
@@ -285,8 +304,7 @@ function _exportProductsPrices(){
 	);
 
 	// multilang
-	if (getDolGlobalInt('MAIN_MULTILANGS'))
-	{
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$fieldstosearchall['pl.label'] = 'ProductLabelTranslated';
 		$fieldstosearchall['pl.description'] = 'ProductDescriptionTranslated';
 		$fieldstosearchall['pl.note'] = 'ProductNoteTranslated';
@@ -316,21 +334,21 @@ function _exportProductsPrices(){
 		'discountreduction'=>array('label'=>$langs->transnoentities("DiscountPercent"), 'checked'=>1,  'position'=>90),
 		'discountfinalsubprice'=>array('label'=>$langs->transnoentities("FinalDiscountPrice"), 'checked'=>1,  'position'=>100),
 
-//		'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-//		'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+	//      'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	//      'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 		'p.tosell'=>array('label'=>$langs->transnoentities("Status").' ('.$langs->transnoentities("Sell").')', 'checked'=>1, 'position'=>1000)
 	);
 
 	// Extra fields
-//	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
-//	{
-//		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-//		{
-//			if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
-//				$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
-//		}
-//	}
-//	$object->fields = dol_sort_array($object->fields, 'position');
+	//  if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
+	//  {
+	//      foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	//      {
+	//          if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+	//              $arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	//      }
+	//  }
+	//  $object->fields = dol_sort_array($object->fields, 'position');
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
@@ -346,9 +364,9 @@ function _exportProductsPrices(){
 		$sql .= ', pac.rowid prod_comb_id';
 	}
 	// Add fields from extrafields
-//	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-//		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
-//	}
+	//  if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	//      foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+	//  }
 	// Add fields from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -368,9 +386,8 @@ function _exportProductsPrices(){
 
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 	if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-// if the type is not 1, we show all products (type = 0,2,3)
-	if (dol_strlen($search_type) && $search_type != '-1')
-	{
+	// if the type is not 1, we show all products (type = 0,2,3)
+	if (dol_strlen($search_type) && $search_type != '-1') {
 		if ($search_type == 1) $sql .= " AND p.fk_product_type = 1";
 		else $sql .= " AND p.fk_product_type <> 1";
 	}
@@ -452,15 +469,14 @@ function _exportProductsPrices(){
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
-	if ($resql)
-	{
+	if ($resql) {
 		header("Content-disposition: attachment; filename=test.csv");
 		header("Content-Type: text/csv");
 		$csv = fopen("php://output", 'w');
 		$outputRow = array();
-		foreach ($arrayfields as $key => $values){
+		foreach ($arrayfields as $key => $values) {
 			$outputRow[$key] = '';
-			if(isset($values['label'])){
+			if (isset($values['label'])) {
 				$outputRow[$key] = $values['label'];
 			}
 		}
@@ -478,17 +494,16 @@ function _exportProductsPrices(){
 		);
 
 		$lastRowid = 0;
-		while ($obj = $db->fetch_object($resql))
-		{
+		while ($obj = $db->fetch_object($resql)) {
 			$currentRowCount++;
 
 			// ROW control test only for developer test
-//			if($lastRowid == $obj->rowid){ var_dump('error duplicate content'); exit; }
-//			$lastRowid = $obj->rowid;
+			//          if($lastRowid == $obj->rowid){ var_dump('error duplicate content'); exit; }
+			//          $lastRowid = $obj->rowid;
 
 			// second step of trick :  I use a trick to avoid  $db->query($sql) memory leak with huge database
 			// I use this trick because Dolibarr can't allow me to use Unbuffered queries : https://www.php.net/manual/en/mysqlinfo.concepts.buffering.php
-			if($currentRowCount == $limit){
+			if ($currentRowCount == $limit) {
 				$db->free($resql);
 				$offset += $currentRowCount;
 				$resql = $db->query($sqlNoLimit.$db->plimit($limit, $offset));
@@ -496,8 +511,7 @@ function _exportProductsPrices(){
 			}
 
 			// Multilangs
-			if (getDolGlobalInt('MAIN_MULTILANGS'))  // If multilang is enabled
-			{
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {  // If multilang is enabled
 				$sql = "SELECT label";
 				$sql .= " FROM ".$db->prefix()."product_lang";
 				$sql .= " WHERE fk_product=".$obj->rowid;
@@ -505,8 +519,7 @@ function _exportProductsPrices(){
 				$sql .= " LIMIT 1";
 
 				$result = $db->query($sql);
-				if ($result)
-				{
+				if ($result) {
 					$objtp = $db->fetch_object($result);
 					if (!empty($objtp->label)) $obj->label = $objtp->label;
 					$db->free($result);
@@ -566,7 +579,7 @@ function _exportProductsPrices(){
 			else $line['p.fk_product_type'] = $langs->trans("Service");
 
 			// DISCOUNT
-			if (!is_object($discountSearchResult)){
+			if (!is_object($discountSearchResult)) {
 				continue;
 			}
 
@@ -576,26 +589,26 @@ function _exportProductsPrices(){
 			$line['discountsubprice'] = !empty($discountSearchResult->subprice)?$discountSearchResult->subprice:'';
 			$line['discountreduction'] = $discountSearchResult->reduction;
 
-			if ($discountSearchResult->result){
+			if ($discountSearchResult->result) {
 				$line['discountfinalsubprice'] = $discountSearchResult->calcFinalSubprice();
-			}else{
+			} else {
 				$line['discountfinalsubprice'] = DiscountRule::getProductSellPrice($product_static->id, $fk_company);
 			}
 
 
 			$outputRow = array();
-			foreach ($arrayfields as $key => $values){
+			foreach ($arrayfields as $key => $values) {
 				$outputRow[$key] = '';
-				if(isset($line[$key])){
+				if (isset($line[$key])) {
 					$outputRow[$key] = $line[$key];
 
-					if(in_array($key, $colForNumbers)){
+					if (in_array($key, $colForNumbers)) {
 						$outputRow[$key] = price($line[$key]);
 					}
 				}
 			}
 
-			if(!empty($line['discountfinalsubprice'])){
+			if (!empty($line['discountfinalsubprice'])) {
 				fputcsv($csv, $outputRow, $csvDelimiter);
 			}
 		}
@@ -603,9 +616,7 @@ function _exportProductsPrices(){
 		fclose($csv);
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
