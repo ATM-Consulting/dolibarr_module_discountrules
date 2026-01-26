@@ -295,9 +295,9 @@ class DiscountrulesApi extends DolibarrApi
 			throw new RestException(401, 'Access to instance id='.$this->discountrule->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($this->discountrule->delete(DolibarrApiAccess::$user) == 0) {
+		if ($delret = $this->discountrule->delete(DolibarrApiAccess::$user) == 0) {
 			throw new RestException(409, 'Error when deleting DiscountRule : '.$this->discountrule->error);
-		} elseif ($this->discountrule->delete(DolibarrApiAccess::$user) < 0) {
+		} elseif ($delret < 0) {
 			throw new RestException(500, 'Error when deleting DiscountRule : '.$this->discountrule->error);
 		}
 
