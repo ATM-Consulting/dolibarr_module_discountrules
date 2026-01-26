@@ -81,7 +81,7 @@ class DiscountrulesApi extends DolibarrApi
 			throw new RestException(404, 'DiscountRule not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, 'discountrules_discountrule')) {
+		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, $this->discountrule->table_element)) {
 			throw new RestException(401, 'Access to instance id='.$this->discountrule->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -250,7 +250,7 @@ class DiscountrulesApi extends DolibarrApi
 			throw new RestException(404, 'DiscountRule not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, 'discountrules_discountrule')) {
+		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, $this->discountrule->table_element)) {
 			throw new RestException(401, 'Access to instance id='.$this->discountrule->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -291,7 +291,7 @@ class DiscountrulesApi extends DolibarrApi
 			throw new RestException(404, 'DiscountRule not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, 'discountrules_discountrule')) {
+		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, $this->discountrule->table_element)) {
 			throw new RestException(401, 'Access to instance id='.$this->discountrule->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -360,7 +360,7 @@ class DiscountrulesApi extends DolibarrApi
 			throw new RestException(404, 'DiscountRule not found for product/client pair');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, 'discountrules_discountrule')) {
+		if (!DolibarrApi::_checkAccessToResource('discountrule', $this->discountrule->id, $this->discountrule->table_element)) {
 			throw new RestException(401, 'Access to instance id='.$this->discountrule->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
