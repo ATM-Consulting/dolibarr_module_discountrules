@@ -117,6 +117,8 @@ class DiscountRule extends CommonObject
     public $fk_project;
     public $fk_status;
     public $lastFetchByCritResult;
+	public $lastquery;
+	public $remise_percent;
 
 	/**
 	 *  'type' is the field format.
@@ -888,8 +890,8 @@ class DiscountRule extends CommonObject
 	
 	
 	/**
-	 * @param unknown $cat
-	 * @param number $deep
+	 * @param int $cat
+	 * @param int $deep
 	 * @return array|NULL[]
 	 */
 	static function getCategoryChild($cat,$deep=0)
@@ -923,8 +925,8 @@ class DiscountRule extends CommonObject
 	
 	/**
 	 * @param int $cat
-	 * @param number $isParent
-	 * @param number $reverse
+	 * @param bool $isParent
+	 * @param bool $reverse
 	 * @return array
 	 */
 	static function getCategoryParent($cat,$isParent = 0, $reverse = 0)
@@ -1056,8 +1058,8 @@ class DiscountRule extends CommonObject
 
 
 	/**
-	 * @param $fk_product
-	 * @param $fk_company
+	 * @param int $fk_product
+	 * @param int $fk_company
 	 * @return bool|float|mixed
 	 */
 	public static function getProductSellPrice($fk_product, $fk_company){ // TODO add Cache for result
@@ -1258,9 +1260,9 @@ class DiscountRule extends CommonObject
 	}
 
 	/**
-	 * @param $fk_product
+	 * @param int $fk_product
 	 * @param bool $forceFetch
-	 * @return Product
+	 * @return Product|bool
 	 */
 	static function getProductCache($fk_product, $forceFetch = false){
 		global $db, $discountRuleProductCache;
