@@ -115,12 +115,14 @@ class DiscountRule extends CommonObject
 	public $all_category_company;
 	public $all_category_project;
 
-	public $TCategoryProduct = array();
-	public $TCategoryProject = array();
-	public $TCategoryCompany = array();
-	public $fk_project;
-	public $fk_status;
-	public $lastFetchByCritResult;
+    public $TCategoryProduct = array();
+    public $TCategoryProject = array();
+    public $TCategoryCompany = array();
+    public $fk_project;
+    public $fk_status;
+    public $lastFetchByCritResult;
+	public $lastquery;
+	public $remise_percent;
 
 	/**
 	 *  'type' is the field format.
@@ -1101,9 +1103,30 @@ class DiscountRule extends CommonObject
 
 		$product = $this->getProductCache($fk_product);
 
-		$baseSubprice = 0;
-		if (!empty($product)) {
-			// Dans le cas d'une règle liée à un produit, c'est le prix net qui sert de base de comparaison
+		if (empty($fk_category_product) && !empty($fk_product)) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+			$prod = new Product($this->db);
+			$prod->id = $fk_product;
+			$fk_category_product = $prod->getCategoriesCommon('product');
+		}
+
+		if (empty($fk_category_company) && !empty($fk_company)) {
+			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+			$company = new Societe($this->db);
+			$company->id = $fk_company;
+			$fk_category_company = $company->getCategoriesCommon('customer');
+		}
+
+		if (empty($fk_category_project) && !empty($fk_project)) {
+			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+			$proj = new Project($this->db);
+			$proj->id = $fk_project;
+			$fk_category_project = $proj->getCategoriesCommon('project');
+		}
+
+	    $baseSubprice = 0;
+	    if(!empty($product)){
+	    	// Dans le cas d'une règle liée à un produit, c'est le prix net qui sert de base de comparaison
 
 			// récupération du prix client
 			$baseSubprice = $this->getProductSellPrice($fk_product, $fk_company);
@@ -1134,12 +1157,16 @@ class DiscountRule extends CommonObject
 		$sql.= self::prepareSearch('fk_c_typent', $fk_c_typent);
 		$sql.= self::prepareSearch('fk_company', $fk_company);
 		$sql.= self::prepareSearch('fk_project', $fk_project);
-
 		$sql.= self::prepareSearch('fk_product', $fk_product);
 
+	    $this->lastFetchByCritResult = false;
 
-		$this->lastFetchByCritResult = false;
-
+	    if(!empty($date)){
+	        $date = $this->db->idate($date);
+	    }
+	    else {
+	        $date = $this->db->idate(time()); 
+	    }
 
 		if (!empty($date)) {
 			$date = $this->db->idate($date);
@@ -1164,7 +1191,13 @@ class DiscountRule extends CommonObject
 		if (!empty($fk_product)) {
 			$sql.= ' net_subprice ASC, ' ;
 		}
-		$sql.= ' reduction DESC, from_quantity DESC, fk_company DESC, '.self::prepareOrderByCase('fk_category_company', $fk_category_company).', '.self::prepareOrderByCase('fk_category_product', $fk_category_product);
+	    $sql.= ' reduction DESC, from_quantity DESC, fk_company DESC';
+		if (!empty($fk_category_company)) {
+			$sql .= ', ' . self::prepareOrderByCase('fk_category_company', $fk_category_company);
+		}
+		if (!empty($fk_category_product)) {
+			$sql .= ', '.self::prepareOrderByCase('fk_category_product', $fk_category_product);
+		}
 
 		$sql.= ' LIMIT 1';
 
