@@ -1153,21 +1153,11 @@ class DiscountRule extends CommonObject
 
 		$sql.= ' WHERE from_quantity <= '.floatval($from_quantity).' AND `fk_status` = 1 ' ;
 
-		if (!empty($fk_country)) {
-			$sql.= self::prepareSearch('fk_country', $fk_country);
-		}
-		if (!empty($fk_c_typent)) {
-			$sql.= self::prepareSearch('fk_c_typent', $fk_c_typent);
-		}
-		if (!empty($fk_company)) {
-			$sql.= self::prepareSearch('fk_company', $fk_company);
-		}
-		if (!empty($fk_project)) {
-			$sql.= self::prepareSearch('fk_project', $fk_project);
-		}
-		if (!empty($fk_product)) {
-			$sql.= self::prepareSearch('fk_product', $fk_product);
-		}
+		$sql.= self::prepareSearch('fk_country', $fk_country);
+		$sql.= self::prepareSearch('fk_c_typent', $fk_c_typent);
+		$sql.= self::prepareSearch('fk_company', $fk_company);
+		$sql.= self::prepareSearch('fk_project', $fk_project);
+		$sql.= self::prepareSearch('fk_product', $fk_product);
 
 	    $this->lastFetchByCritResult = false;
 
@@ -1188,15 +1178,9 @@ class DiscountRule extends CommonObject
 		$sql.= ' AND ( date_to >= \''.$date.'\' OR date_to IS NULL OR YEAR(`date_to`) = 0 )'; // le YEAR(`date_to`) = 0 est une astuce MySQL pour chercher les dates vides le tout compatible avec les diférentes versions de MySQL
 
 		// test for "FOR ALL CAT"
-		if (!empty($fk_category_product)) {
-			$sql.= ' AND ( (d.all_category_product > 0 AND cp.fk_category_product IS NULL) OR (d.all_category_product = 0 AND cp.fk_category_product > 0 '.self::prepareSearch('cp.fk_category_product', $fk_category_product).' )) ';
-		}
-		if (!empty($fk_category_company)) {
-			$sql.= ' AND ( (d.all_category_company > 0 AND cc.fk_category_company IS NULL) OR (d.all_category_company = 0 AND cc.fk_category_company > 0 '.self::prepareSearch('cc.fk_category_company', $fk_category_company).' )) ';
-		}
-		if (!empty($fk_category_project)) {
-			$sql.= ' AND ( (d.all_category_project > 0 AND cpj.fk_category_project IS NULL) OR (d.all_category_project = 0 AND cpj.fk_category_project > 0 '.self::prepareSearch('cpj.fk_category_project', $fk_category_project).' )) ';
-		}
+		$sql.= ' AND ( (d.all_category_product > 0 AND cp.fk_category_product IS NULL) OR (d.all_category_product = 0 AND cp.fk_category_product > 0 '.self::prepareSearch('cp.fk_category_product', $fk_category_product).' )) ';
+		$sql.= ' AND ( (d.all_category_company > 0 AND cc.fk_category_company IS NULL) OR (d.all_category_company = 0 AND cc.fk_category_company > 0 '.self::prepareSearch('cc.fk_category_company', $fk_category_company).' )) ';
+		$sql.= ' AND ( (d.all_category_project > 0 AND cpj.fk_category_project IS NULL) OR (d.all_category_project = 0 AND cpj.fk_category_project > 0 '.self::prepareSearch('cpj.fk_category_project', $fk_category_project).' )) ';
 
 		$sql.= ' ORDER BY ';
 
