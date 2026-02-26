@@ -173,6 +173,7 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 						$myProduct = new Product($this->db);
 						$myProduct->fetch($currentObject->fk_product);
 						$parentObject->fetch_thirdparty();
+
 						if (! empty($parentObject->thirdparty->array_options['options_discountrules_min_markup_margin_percent'])) {
 							$minimumRate = $parentObject->thirdparty->array_options['options_discountrules_min_markup_margin_percent'];
 						} else if (! empty($myProduct->array_options['options_discountrules_min_markup_margin_percent'])) {
@@ -204,7 +205,7 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 			}
 
 			// Utilisation du mode forcé
-			if(getDolGlobalInt('DISCOUNTRULES_FORCE_RULES_PRICES') && !$user->hasRight('discountrules', 'overrideForcedMod')){
+			if(getDolGlobalInt('DISCOUNTRULES_FORCE_RULES_PRICES') && $user->hasRight('discountrules', 'overrideForcedMod')){
 				$forceUpdateDiscount = true;
 			}
 
@@ -216,7 +217,6 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 			){
 				$forceUpdateDiscount = true;
 			}
-
 
 			if($forceUpdateDiscount){
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$line->id);
