@@ -126,7 +126,7 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 			'LINEPROPAL_INSERT', 'LINEPROPAL_MODIFY',
 			'LINEORDER_INSERT', 'LINEORDER_MODIFY'
 			))) {
-			$forceUpdateDiscount = false;
+			$forceUpdateDiscount = true;
 
 			$line = $currentObject;
 
@@ -206,7 +206,7 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 
 			// Utilisation du mode forcé
 			if(getDolGlobalInt('DISCOUNTRULES_FORCE_RULES_PRICES') && $user->hasRight('discountrules', 'overrideForcedMod')){
-				$forceUpdateDiscount = true;
+				$forceUpdateDiscount = false;
 			}
 
 			// FOR TAKE POS there no Hook for udpate lines when changing qty
