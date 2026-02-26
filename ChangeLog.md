@@ -4,6 +4,7 @@
 ## Unreleased
 
 ## RELEASE 2.28
+- FIX : DA027835 Invert user->right condition when insert line in trigger - *26/02/2026* - 2.28.3
 - FIX : Retours CompatV23 - *08/12/2025* - 2.28.2
 - FIX : Compat V23 - *11/12/2025* - 2.28.1
 - NEW : Min markup/margin extrafield now shows on customer third parties (wrong display condition on Societe object) - *05/12/2025* - 2.28.0
