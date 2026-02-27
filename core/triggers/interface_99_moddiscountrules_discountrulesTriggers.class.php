@@ -138,6 +138,13 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 				return 0;
 			}
 
+			// IMPORTANT: Do not apply rules if product is marked as "free" (100% discount)
+			// This happens when creating invoice from order with free products
+			if ($line->remise_percent >= 100) {
+				dol_syslog("Trigger '".$this->name."' : Product marked as free (discount >= 100%) - skip discount rules", LOG_DEBUG);
+				return 0;
+			}
+
 			if($line->element == 'facturedet'){
 				/** @var FactureLigne $line  */
 				$parentObject = new Facture($line->db);
