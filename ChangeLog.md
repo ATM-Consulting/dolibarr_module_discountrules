@@ -5,9 +5,10 @@
 
 ## RELEASE 2.28
 - FIX : Discount rules no longer reapply on line modifications (MODIFY action) - *27/02/2026* - 2.28.4
-  - Discount rules now only apply when adding a new line (INSERT action)
-  - All manual modifications are preserved (price, discount, quantity, VAT)
-  - Custom VAT rates are preserved on line creation
+  + Discount rules now only apply when adding a new line (INSERT action)
+  + All manual modifications are preserved (price, discount, quantity, VAT)
+  + Custom VAT rates are preserved on line creation
+  + Do not apply rules if product is marked as "free"
 - FIX : DA027835 Invert user->right condition when insert line in trigger - *26/02/2026* - 2.28.3
 - FIX : Retours CompatV23 - *08/12/2025* - 2.28.2
 - FIX : Compat V23 - *11/12/2025* - 2.28.1
