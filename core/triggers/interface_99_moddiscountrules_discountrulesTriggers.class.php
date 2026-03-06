@@ -130,6 +130,21 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 
 			$line = $currentObject;
 
+			// IMPORTANT: Only apply discount rules on INSERT, never on MODIFY
+			// When user modifies a line (price, discount, qty, etc.), we preserve their changes
+			// Discount rules are only applied when adding a new line
+			if (in_array($action, array('LINEBILL_MODIFY', 'LINEPROPAL_MODIFY', 'LINEORDER_MODIFY'))) {
+				dol_syslog("Trigger '".$this->name."' : MODIFY action detected - skip discount rules to preserve user changes", LOG_DEBUG);
+				return 0;
+			}
+
+			// IMPORTANT: Do not apply rules if product is marked as "free" (100% discount)
+			// This happens when creating invoice from order with free products
+			if ($line->remise_percent >= 100) {
+				dol_syslog("Trigger '".$this->name."' : Product marked as free (discount >= 100%) - skip discount rules", LOG_DEBUG);
+				return 0;
+			}
+
 			if($line->element == 'facturedet'){
 				/** @var FactureLigne $line  */
 				$parentObject = new Facture($line->db);
@@ -154,6 +169,25 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 				$this->errors[] = 'Error fetching parent document for discount rules';
 				return -1;
 			}
+
+			// IMPORTANT: Detect document conversion (e.g., order -> invoice, propal -> order)
+			// When creating a document from another source, preserve prices from the source document
+			// Do NOT recalculate prices based on discount rules in this case
+			if (in_array($action, array('LINEBILL_INSERT', 'LINEORDER_INSERT', 'LINEPROPAL_INSERT'))) {
+				if (!empty($line->origin) || !empty($line->context['link_origin'])) {
+					$origin = $line->origin ?? 'unknown';
+					$link_origin = !empty($line->context['link_origin']) ? json_encode($line->context['link_origin']) : 'none';
+					dol_syslog("Trigger '".$this->name."' : Document conversion detected (line->origin: ".$origin.", link_origin: ".$link_origin.") - preserving prices from source document", LOG_DEBUG);
+					return 0;
+				} else {
+					// Log context for debugging if no conversion detected
+					dol_syslog("Trigger '".$this->name."' : No conversion detected - line->origin: ".($line->origin ?? 'empty').", line->context: ".json_encode($line->context), LOG_DEBUG);
+				}
+			}
+
+			// Store current VAT rate to detect if user customized it
+			$currentVat = $line->tva_tx;
+			$keepCustomVat = false;
 
 			//Only on propal cause error during conversion
 			if(getDolGlobalInt('DISCOUNTRULES_USE_MARKUP_MARGIN_RATE') && $action == 'LINEPROPAL_INSERT' && !getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND')){
@@ -232,6 +266,13 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 					return -1;
 				}
 
+				// Check if VAT rate has been customized (user changed it before adding the line)
+				// Compare current line VAT rate with product VAT rate
+				if ($currentVat != $product->tva_tx) {
+					$keepCustomVat = true;
+					dol_syslog("Trigger '".$this->name."' : custom VAT rate detected (".$currentVat."% vs ".$product->tva_tx."% from product) - preserving custom rate", LOG_DEBUG);
+				}
+
 				// Search discount
 				require_once __DIR__ . '/../../class/discountSearch.class.php';
 				$discountSearch = new DiscountSearch($line->db);
@@ -243,7 +284,11 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 				$oldsubprice = $line->subprice;
 				$oldremise = $line->remise_percent;
 				$oldVat = $line->tva_tx;
-				$line->tva_tx = $product->tva_tx;
+
+				// Only reapply product VAT rate if it's not a custom rate
+				if (!$keepCustomVat) {
+					$line->tva_tx = $product->tva_tx;
+				}
 
 				// ne pas appliquer les prix à 0 (par contre, les remises de 100% sont possibles)
 				if ($discountSearchResult->subprice > 0) {
