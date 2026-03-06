@@ -170,6 +170,21 @@ class InterfaceDiscountrulesTriggers extends DolibarrTriggers
 				return -1;
 			}
 
+			// IMPORTANT: Detect document conversion (e.g., order -> invoice, propal -> order)
+			// When creating a document from another source, preserve prices from the source document
+			// Do NOT recalculate prices based on discount rules in this case
+			if (in_array($action, array('LINEBILL_INSERT', 'LINEORDER_INSERT', 'LINEPROPAL_INSERT'))) {
+				if (!empty($line->origin) || !empty($line->context['link_origin'])) {
+					$origin = $line->origin ?? 'unknown';
+					$link_origin = !empty($line->context['link_origin']) ? json_encode($line->context['link_origin']) : 'none';
+					dol_syslog("Trigger '".$this->name."' : Document conversion detected (line->origin: ".$origin.", link_origin: ".$link_origin.") - preserving prices from source document", LOG_DEBUG);
+					return 0;
+				} else {
+					// Log context for debugging if no conversion detected
+					dol_syslog("Trigger '".$this->name."' : No conversion detected - line->origin: ".($line->origin ?? 'empty').", line->context: ".json_encode($line->context), LOG_DEBUG);
+				}
+			}
+
 			// Store current VAT rate to detect if user customized it
 			$currentVat = $line->tva_tx;
 			$keepCustomVat = false;
